@@ -1,9 +1,7 @@
 # Client Meeting 1 - Agenda
 ### Introductions - Client and Project
-- Team Introduction
-- Brief overview of Project Understanding
+- Team Introduction and Brief overview of Project Understanding
 
-## Define scope of work - General statement of what the project is to achieve.
 ### Clarifying Project Scope
 - Confirm primary users and environments (whether the application is designed predominantly for field or office use)
 - Validate feature priorities
@@ -22,7 +20,7 @@
     - Account for specific data security requirements.
 - Potential stakeholders we will need access to? (For example: garden manager, field staff)
 
-### Risks and Mitigation (Early Discussion)
+### Risks and Mitigation
 - Data Security
 - Potential considerations: Field usability or connectivity limitations 
 - User onboarding and access control clarity (role management - systems security)

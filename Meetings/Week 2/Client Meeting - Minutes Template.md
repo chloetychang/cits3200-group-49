@@ -60,7 +60,7 @@
 - Potential stakeholders we will need access to? (For example: garden manager, field staff)
 
 ### Suggest possible risks to the project and how the team will avoid or mitigate those risks.
-**Risks and Mitigation (Early Discussion)**
+**Risks and Mitigation**
 - Data Security and Role Management
 - Potential considerations: Field usability or connectivity limitations 
 - User onboarding and access control clarity (role management - systems security)
