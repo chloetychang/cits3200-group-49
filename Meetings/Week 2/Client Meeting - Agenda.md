@@ -25,6 +25,6 @@
 - Potential considerations: Field usability or connectivity limitations 
 - User onboarding and access control clarity
 
-### Definition of "success" to the client. According to the client, what will the ideal sprint 1 product look like? What components should we prioritise?
+### Sprint 1 Expectations
 - What would a successful first sprint deliverable look like?
 - Key components to prioritise?
