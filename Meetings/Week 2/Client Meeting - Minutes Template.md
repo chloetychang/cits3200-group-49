@@ -1,6 +1,14 @@
 # Client Meeting 1 - Minutes Template
 
-### Introductions - Client and Project
+- Date: 
+- Present:
+- Absent:
+- Apologies:
+- Venue:
+- Minutes by:
+- Meeting Start:
+
+## Introductions - Client and Project
 Interpretations from the Project Description:
 - This project proposes the design and implementation of Botanic Guide, a tablet and desktop application designed to support staff managing the botanical garden under development in Yanchep, Western Australia. The app will be primarily used by the garden manager and field staff to capture, view, and update records relevant to planting activities, seed suppliers, plant breeding trials, and other operational data. The application will provide streamlined access to a complex relational dataset.
 
@@ -35,3 +43,9 @@ Interpretation from the Project Description:
 Interpretation from the Project Description:
 - Initial release of the database may be implemented in Microsoft Access. (PostgreSQL version, packaged in a Docker container, is expected to follow shortly for ongoing development and deployment.)
 
+## Action Items
+
+- Meeting Closed:
+- Next Scheduled Meeting:
+
+## Digressions
