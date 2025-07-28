@@ -25,7 +25,7 @@
 <br> 
 
 **Clarifying Project Scope**
-- Confirm primary users and environments (e.g., field vs office)
+- Confirm primary users and environments (whether the application is designed predominantly for field or office use)
 - Validate feature priorities
     - Record creation & updates (planting, seed lots, suppliers, breeding)
     - Lookup tables (taxonomy, planting zones, user roles)
@@ -51,17 +51,20 @@
 <br> 
 
 **Tech Stack Confirmation**
+- Confirm Frontend, Backend, User Management and Role Management (Access Control), along with DevOps and Testing Requirements 
 - Are there any preferences or constraints not captured in the brief?
 
 **Skills and Resources**
 - Any existing data records, schemas, documentation, or prior systems we should review?
-- Potential stakeholders we will need access to? (garden manager, field staff, etc.)
+    - Account for specific data security requirements
+- Potential stakeholders we will need access to? (For example: garden manager, field staff)
 
 ### Suggest possible risks to the project and how the team will avoid or mitigate those risks.
 **Risks and Mitigation (Early Discussion)**
-- Data migration challenges (Access to PostgreSQL)
+- Data Security and Role Management
 - Potential considerations: Field usability or connectivity limitations 
-- User onboarding and access control clarity
+- User onboarding and access control clarity (role management - systems security)
+- Data migration challenges (Access to PostgreSQL)
 
 ### Definition of "success" to the client. According to the client, what will the ideal sprint 1 product look like? What components should we prioritise?
 > Interpretation from the Project Description:
@@ -72,6 +75,7 @@
 **Sprint 1 Expectations**
 - What would a successful first sprint deliverable look like?
 - Key components to prioritise?
+- Overall success criteria for project?
 
 ## Action Items
 
