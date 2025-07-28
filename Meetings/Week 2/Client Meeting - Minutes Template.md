@@ -9,12 +9,12 @@
 - Meeting Start:
 
 ## Introductions - Client and Project
-> Interpretations from the Project Description:
+> **Interpretation from the Project Description:**
 > - This project proposes the design and implementation of Botanic Guide, a tablet and desktop application designed to support staff managing the botanical garden under development in Yanchep, Western Australia. The app will be primarily used by the garden manager and field staff to capture, view, and update records relevant to planting activities, seed suppliers, plant breeding trials, and other operational data. The application will provide streamlined access to a complex relational dataset.
 
 ## Sprint 1 Requirements - Information required from the Client
 ### Define scope of work - General statement of what the project is to achieve.
-> Interpretation from the Project Description:
+> **Interpretation from the Project Description:**
 > - Cross-platform application using Flutter, targeting iPad, Android Tablets, and desktop systems (Windows, macOS, and Linux).
 > - Simple, robust user interface that accommodates both data entry in the field and reporting needs in the management via AWS Cognito, enabling secure user authentication and role-based access.
 > - Features: 
@@ -34,7 +34,7 @@
     - UI Considerations?
 
 ### Skills and Resources Audit. What skills and tools the team needs to successfully carry out the project. Confirm tech stack required.
-> Interpretation from the Project Description:
+> **Interpretation from the Project Description:**
 > - Frontend: Flutter (cross-platform: iPad, Android tablets, desktop)
 > - Backend: FastAPI (Python)
     > - Lightweight and maintainable interface that connects directly to the database
@@ -67,7 +67,7 @@
 - Data migration challenges (Access to PostgreSQL)
 
 ### Definition of "success" to the client. According to the client, what will the ideal sprint 1 product look like? What components should we prioritise?
-> Interpretation from the Project Description:
+> **Interpretation from the Project Description:**
 > - Initial release of the database may be implemented in Microsoft Access. (PostgreSQL version, packaged in a Docker container, is expected to follow shortly for ongoing development and deployment.)
 
 <br> 
