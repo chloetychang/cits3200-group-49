@@ -1,12 +1,15 @@
 # Client Meeting 1 - Minutes Template
 
-- Date: 
-- Present:
-- Absent:
-- Apologies:
-- Venue:
-- Minutes by:
-- Meeting Start:
+- Date: 30 July 2025
+- Present (Team): Tri, Ryan, Naren, Harper, Chloe, Dennis 
+- Present (Client): Kevin, DR. Val
+- Absent: N.A.
+- Apologies: N.A.
+- Venue: ICRAR Lobby 
+- Minutes by: Dennis 
+- Meet Preparation: 1430-1500H
+- Meeting Start/End: 1500-1600H
+- Meeting Post Debrief: 1600-1700H
 
 ## Introductions - Client and Project
 > **Interpretation from the Project Description:**
@@ -24,13 +27,13 @@
 
 <br> 
 
-**Clarifying Project Scope**
+**Clarifying Project Scope**c
 - Confirm primary users and environments (whether the application is designed predominantly for field or office use)
 - Validate feature priorities
     - Record creation & updates (planting, seed lots, suppliers, breeding)
     - Lookup tables (taxonomy, planting zones, user roles)
     - Reporting features
-    - Will offline capability be required?
+    - Will offline capability be required?v
     - UI Considerations?
 
 ### Skills and Resources Audit. What skills and tools the team needs to successfully carry out the project. Confirm tech stack required.
@@ -83,3 +86,86 @@
 - Next Scheduled Meeting:
 
 ## Digressions
+
+## Rundown of Meeting presentation slides
+- Organisation: Yhub Coworking 
+- Existing data:
+    - Species: Good for food, orniments, medicinal 
+    - VAL: Volunteer to discover research on species and record data
+    - VAL: Species names to be flexible (Changed frequently by scientists), 
+    - Ryan: Mentioned that database considerations for the species name have to be careful (Due to primary keys)
+- Planting and zones: 17 Zones (Currently) referred to sector of where these plants are housed at (beside Yanchep Train Station) 
+    - Seed lots: Packet of seeds bought externally of specific species. [IDs of plant species]
+    - VAL: Mentions that with seed lots, they need to know the orignation of where these seedlot comes from. [Swan coast plains?]
+    - VAL: Current problem: Plants planted now have no source of origination, provenance and records. [Posing as a problem with data recording]
+- Users and roles:
+    - VAL: No access control at the moment. [Currently, focused on preventing accidental deletions of data records - not so much on security]
+- Look up tables: Slide missing 1 column "removal clause" column [Why it was removed? E.g. vandalised, dead]
+    - Aspect: Which direction plants facing (N,S,E,W)
+    - Bioregion: Based on seedlot record data
+    - Conservation_Status: Which species, is it endangered, etc.
+    - Container: 
+    - Location type: What location these plants where taken from (E.g. from which town, surburb)
+    - Propogation type: tbc.
+- Botanical Research: 
+    - VAL: Potential collaboraion with kings park for plant breeding experiments? [New research family/variety - New data entry in database?]
+        - With each single seed planted from CROSS BREEDING, a record/provenance data column is needed to track.
+- Registration:
+    - VAL: Record keeping of who has add/made/change data [Due to this being a formal registration as a park - needs to follow aus data legislation compliance]
+- Users (Target Audience): [UI DESIGN]
+    - VAL: Non-techincal (EASY UI interface), when designing new app UI, try to accomodate to old design used 
+    - VAL: Deploying for live users ["NOT SO DIFFERENT FROM OLD RECORD SYSTEM UI DESIGN"] 
+- Login Screen: 
+    - VAL: Currently no security features (Seems like not a requirement yet - useful for scope of work drafting)
+- Add/Update record session & Planting and Pivot Table:
+    - VAL: Showing the run through on what the old app looks like, how to interact
+- Some techincal details:
+    - VAL Emphasis: Built in primary keys are all AutoNumber fields that MS access deals with
+    - VAL Emphasis: Ensure flexibility of database design with new copy 
+    - VAL Emphasis: Existing PRIMARY KEYS ARE NOT TO BE CHANGED (Must be preserved) 
+    - VAL: Mentions MS ACCESS ER Diagram 
+- Future implementations:
+    - VAL: Hope to implement a GIS extension [When developing app, it will accomodate for identifying plants to associate with which Zone are planted in.]
+    - Val: PostGIS extensions
+
+Questions:
+- Chloe: Database design change? - VAL: preferred not to change the database schema originally. [Handling who recording/update database + Access control on this database requirement]
+- Chloe: Sprint 1 deliverables expectations 
+    - Kevin: Flutter on the GUI, Why do we need to use flutte? As other project leverages this system and helps with their integration. 
+    - Target of device: Google Tablets, Ipads. 
+    - Database: Postgres database, maintain alembic migrations.
+    - Server: Linux server - FASTAPI. - Another project has the roles/access controls working 
+- Chloe: Raised Database migrations: Be it Online/Offline [Migration from MS Access database to Docker PostGRES]
+    - Kevin: Response - Docker should have no secrets/online password/enviroment variables.
+- Tri: Clarification on app use-cases
+    - Kevin: Main focus will be on generic access and admin of metatables, conditions, why was this removed of specifc data. (Add/edit/delete) [Add/Update/Delete Slide]
+    - Kevin: FASTAPI, sending and request small set of data to and from the database and app. (Helpful tools: SQL model and Pydantic)
+- Chloe: Server design?
+    - Kevin: FASTAPI and PostGRES integration 
+
+Sprint 1 Deliverables: 
+- Kevin: Actionable steps: 
+    - Design actionable plan on how to migrate the huge database (How to map MS Access to another DB tool)
+    - Creating mockup of the GUI design (FIGMA?), Paginations concerns? (Don't want data to transfer for ages), when designing GUI, think about volunteers, admin (Claire), botanists, garderners (Think from the old perspective where it needs to be simple and dummy proof)
+    - Mock up/draw diagram: Using MDB tools to convert from MS Access DB to PostGRES DB to convert into CSV of data [Helpful tool: MDB-tools (linux/mac only), python tool (PyODBC) - Windows]
+
+Further concerns: 
+- Kevin & Val: Designing of security system for this database/app? [Added on later AWS Cognitio, MFA]
+
+Actions/Stakeholder/Due date/Status:
+- OneDrive link: Provides all the access of MS access database, link for old app, etc / Kevin / 31st July / In Progress
+- Collate and send all 6 github IDs to Kevin [Set it to public and send to Kevin] / Chloe / 30th July / In Progress
+
+Hidden Agenda/Motivation:
+- Yanchep botanic guide is the start, Kings Albert Park is next. [External pressure to get this done well and implement for next parks]
+- Photos, videos, of this species of trees/plants over the years.
+- Kevin: History/motivation of this app/project, conservation motivation, where 1930, all trees were cut down, water level rises, trees becoming less resistent to salt. Therefore, with seedlots being found "salt resistent", they can be used for cross breeding to conserve. 
+
+Tips:
+- Kevin: Postgres to be in Docker [Ease packaging and usability between different hardwares (mac/windows)]
+- Kevin: UI Design Tablets. Tabs are not user friendly.
+- Kevin: Testing can be done using Flutter (enables computer visualisation on tablet UI design)
+- Kevin: Use intelliJ tool when coding?
+
+Question: 
+- Data retention policy? 
