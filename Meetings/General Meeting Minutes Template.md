@@ -1,4 +1,4 @@
-# Client Meeting 1 - Minutes Template
+# Minutes Template
 
 - Date: 
 - Present:
