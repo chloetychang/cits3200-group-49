@@ -1,4 +1,4 @@
-# Client Meeting 1 - Minutes Template
+# Client Meeting 1 - Minutes
 
 - Date: 30 July 2025
 - Present (Team): Tri, Ryan, Naren, Harper, Chloe, Dennis 
@@ -6,7 +6,7 @@
 - Absent: N.A.
 - Apologies: N.A.
 - Venue: ICRAR Lobby 
-- Minutes by: Dennis. Finalising by Chloe.
+- Minutes by: Dennis. Finalised by Chloe.
 - Meet Preparation: 2:30pm - 3:00pm
 - Meeting Start: 3:00pm
 
@@ -31,14 +31,22 @@
 
 Confirm primary users and environments (whether the application is designed predominantly for field or office use)
 - Organisation: Yhub Coworking 
+- Paid manager (only employee) and additional volunteers, botanists, gardeners (stakeholders)
+
+<br>
+
 Validate feature priorities
 - Record creation & updates (planting, seed lots, suppliers, breeding)
     - Add/Update record session & Planting and Pivot Table:
         - VAL: Showing the run through on what the old app looks like, how to interact
+
 - Lookup tables (taxonomy, planting zones, user roles)
+    - Removal cause should be in lookup table
+
 - Reporting features
+
 - Server Design
-    - Kevin: FASTAPI and PostGRES integration 
+    - Kevin: FastAPI and PostgreSQL integration 
 
 - Login Screen: 
     - VAL: Currently no security features (Seems like not a requirement yet - useful for scope of work drafting)
@@ -54,6 +62,8 @@ Validate feature priorities
 - Clarification on app use-cases (by Tri)
     - Kevin: Main focus will be on generic access and admin of metatables, conditions, why was this removed of specifc data. (Add/edit/delete) [Add/Update/Delete Slide]
     - Kevin: FASTAPI, sending and request small set of data to and from the database and app. (Helpful tools: SQL model and Pydantic)
+
+- Figma - Can generate Flutter 
 
 ### Skills and Resources Audit. What skills and tools the team needs to successfully carry out the project. Confirm tech stack required.
 > **Interpretation from the Project Description:**
@@ -73,18 +83,23 @@ Validate feature priorities
 <br> 
 
 **Tech Stack Confirmation**
-- Confirm Frontend, Backend, User Management and Role Management (Access Control), along with DevOps and Testing Requirements 
-- Are there any preferences or constraints not captured in the brief?
+- Confirmed Frontend, Backend, User Management and Role Management (Access Control), along with DevOps and Testing Requirements. 
+- Are there any preferences or constraints not captured in the brief? Refer to this document + presentation in shared drive to get the full picture.
 
 Tips:
 - Kevin: Postgres to be in Docker [Ease packaging and usability between different hardwares (mac/windows)]
+    - Do it in Docker. If you can do it in Docker, do it there. Package FastAPI. 
 - Kevin: UI Design Tablets. Tabs are not user friendly.
 - Kevin: Testing can be done using Flutter (enables computer visualisation on tablet UI design)
 - Kevin: Use intelliJ tool when coding?
+- Can run most of this on our Laptop. FastAPI. ODBMigration. Defines database using SQL model. 
+- Read what access columns are, look at Python. Have I been missing anything? Then generate Postgres.
+- Alembic. 
 
 **Skills and Resources**
 Any existing data records, schemas, documentation, or prior systems we should review?
 - Existing data:
+    - You can see the complete ER diagram in the Database tools section of Microsoft Access.
     - Species: Good for food, orniments, medicinal 
     - VAL: Volunteer to discover research on species and record data
     - VAL: Species names to be flexible (Changed frequently by scientists), 
@@ -99,12 +114,16 @@ Any existing data records, schemas, documentation, or prior systems we should re
     - Aspect: Which direction plants facing (N,S,E,W)
     - Bioregion: Based on seedlot record data
     - Conservation_Status: Which species, is it endangered, etc.
-    - Container: 
+    - Container: What container did the plant come in when it initially arrived? (in the planting table)
     - Location type: What location these plants where taken from (E.g. from which town, surburb)
     - Propogation type: tbc.
+        - Cross-breeding experiments with King's Park
+        - New research family - One/Two Parents. Family will have children (progeny).
 
 - Registration:
     - VAL: Record keeping of who has add/made/change data [Due to this being a formal registration as a park - needs to follow aus data legislation compliance]
+    - Conservation Status has to be kept
+    - ASAP: A record be kept of who has added or made changes to the data
 
 - Account for specific data security requirements:
     - Security not a main priority at this point in time. 
@@ -119,12 +138,14 @@ Any existing data records, schemas, documentation, or prior systems we should re
     - VAL Emphasis: Existing PRIMARY KEYS ARE NOT TO BE CHANGED (Must be preserved) 
     - VAL: Mentions MS ACCESS ER Diagram 
 
-Potential stakeholders we will need access to? (For example: garden manager, field staff)
-- 
+Potential stakeholders we will need to consider? (For example: garden manager, field staff)
+- Paid manager (only employee) and additional volunteers, botanists, gardeners (stakeholders)
 
 
 ### Suggest possible risks to the project and how the team will avoid or mitigate those risks.
 **Risks and Mitigation**
+<br>
+
 Role Management (Systems Security - User onboarding and access control clarity)
 - Users and roles:
     - VAL: No access control at the moment. [Currently, focused on preventing accidental deletions of data records - not so much on security]
@@ -148,10 +169,18 @@ Database
 <br>
 
 > What would a successful first sprint deliverable look like?
-- Kevin: Flutter on the GUI, Why do we need to use flutte? As other project leverages this system and helps with their integration. 
+- Kevin: Flutter on the GUI, Why do we need to use Flutter? As other project leverages this system and helps with their integration. 
 - Target of device: Google Tablets, Ipads. 
 - Database: Postgres database, maintain alembic migrations.
 - Server: Linux server - FASTAPI. - Another project has the roles/access controls working 
+
+> Expected deliverable for Sprint 1:
+- Screen designs
+- Show understanding of how FastAPI routes work
+- Start thinking about how to do mapping of Access to another database (Postgres).
+- Export tables and data, but not all the constraints. Can actually access the internal relationship files within Access. Another form of ERL diagrams. Read internal diagrams to discover internal constraints. 
+    - Don't need all constraints in to start working. 
+- Have an understanding of how Flutter apps are built
 
 > Key components to prioritise?
 - Kevin: Actionable steps: 
@@ -160,15 +189,30 @@ Database
     - Mock up/draw diagram: Using MDB tools to convert from MS Access DB to PostGRES DB to convert into CSV of data [Helpful tool: MDB-tools (linux/mac only), python tool (PyODBC) - Windows]
 
 > Overall success criteria for project? Complete app to be utilised by users.
+- Current Requirements:
+    - Database migration
+        - Conversion from Access to PostgreSQL. Look at MDB-tools - only runs on Mac and Linux. Migration - doesn't matter time. Only do it once and share it to everyone. 
+    - Mockup of GUI (Figma Designs inspired by Prototype) - screens. 
+    - Simple routes going (static data). Consider pagination.
+    - Useability - no complex mouse movements. Accessbility is crucial. 
+    - Security: To be added later. Not our top priority. Unsure but probably run on the Amazon Cloud. AWS Cognito. (reset passwords, multi-factor authentication...)
+    - No passwords, no environment settings. Environment public. (perhaps for now?)
+    - Access for Administrators: Capturing plantings. 
+        - Generic access and admin of metatables.
+            - Conditions. Why is this here? Same basic functions. Add, Edit, Delete. 
+            - Routes connected to FastAPI. Web-based server. POST and GET with data. 
+            - FASTAPI - SQL Model. Define lots of little classes.
 
 **Future implementations:**
 - VAL: Hope to implement a GIS extension [When developing app, it will accomodate for identifying plants to associate with which Zone are planted in.]
 - Val: PostGIS extensions
+- Consider: What else can be built for it? Customer facing app?
 
 ## Action Items
 Actions/Stakeholder/Due date/Status:
 - OneDrive link: Provides all the access of MS access database, link for old app, etc / Kevin / 31st July / In Progress
 - Collate and send all 6 github IDs to Kevin [Set it to public and send to Kevin] / Chloe / 30th July / In Progress
+- Run software: Let Val know if it actually works / ASAP / In Progress
 
 ## Closing
 - Meeting Closed: 4:00pm
@@ -178,4 +222,5 @@ Actions/Stakeholder/Due date/Status:
 - Yanchep botanic guide is the start, Kings Albert Park is next. [External pressure to get this done well and implement for next parks]
 - Photos, videos, of this species of trees/plants over the years.
 - Kevin: History/motivation of this app/project, conservation motivation, where 1930, all trees were cut down, water level rises, trees becoming less resistent to salt. Therefore, with seedlots being found "salt resistent", they can be used for cross breeding to conserve. 
+- Economics: Just ask questions. Communication - Any way, any means. CC everybody.
 - Internal Meeting should happen to debrief contents - Minutes Documented Separately: Refer to `Internal Meeting 1.md`
