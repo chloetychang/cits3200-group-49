@@ -7,9 +7,8 @@
 - Apologies: N.A.
 - Venue: ICRAR Lobby 
 - Minutes by: Dennis. Finalising by Chloe.
-- Meet Preparation: 1430-1500H
-- Meeting Start/End: 1500-1600H
-- Meeting Post Debrief: 1600-1700H
+- Meet Preparation: 2:30pm - 3:00pm
+- Meeting Start: 3:00pm
 
 ## Introductions - Client and Project
 > **Interpretation from the Project Description:**
@@ -172,8 +171,8 @@ Actions/Stakeholder/Due date/Status:
 - Collate and send all 6 github IDs to Kevin [Set it to public and send to Kevin] / Chloe / 30th July / In Progress
 
 ## Closing
-- Meeting Closed:
-- Next Scheduled Meeting:
+- Meeting Closed: 4:00pm
+- Next Scheduled Meeting: Debrief - Estimate: 4:00pm-5:00pm
 
 ## Digressions
 - Yanchep botanic guide is the start, Kings Albert Park is next. [External pressure to get this done well and implement for next parks]
