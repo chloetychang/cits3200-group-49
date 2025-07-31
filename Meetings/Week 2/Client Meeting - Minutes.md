@@ -97,6 +97,8 @@ Tips:
 - Alembic. 
 
 **Skills and Resources**
+<br>
+
 Any existing data records, schemas, documentation, or prior systems we should review?
 - Existing data:
     - You can see the complete ER diagram in the Database tools section of Microsoft Access.
