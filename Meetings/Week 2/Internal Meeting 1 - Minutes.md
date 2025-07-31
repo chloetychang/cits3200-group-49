@@ -1,17 +1,15 @@
 # Internal Meeting 1 (Debrief Meeting) - Minutes Template
 
 - Date: 30/07/2025
-- Present:
+- Present: Chloe, Dennis, Harper, Naren, Ryan, Tri
 - Absent:
 - Apologies:
-- Venue: 
+- Venue: EZONE Meeting Room
 - Minutes by: Chloe
 - Meeting Start: 4:00pm
 
 ## Item 1 - Workflow Clarification
-- If we are working on something not involving code, have a log on Github (Markdown file on GitHub, will be created). (e.g. Figma)
-- Start Time, End Time, What did we do. 
-- Help with our organisation as well, if there's any clarification questions can just ask that person
+- If we are working on something not involving code, have a log on Github (Markdown file on GitHub, will be created, with links to external resources such as Figma and Shared Google Drive)
 
 ## Item 2 - For Tomorrow: Looking into Access Files in our Group.
 Preparation to start Project Work.
@@ -33,7 +31,7 @@ Chloe:
 - Set up a Markdown with external links related to the project (Figma, Google Drive)
 
 ## Item 3a: Deliverable 1.
-**Expected deliverable for Sprint 1 - Client:**
+### Expected deliverable for Sprint 1 - Client:
 - Preliminary draft designs - Mockup of GUI (Figma).
 - Show understanding of how FASTAPI routes work
     - Simple routes going (static data)
@@ -44,7 +42,7 @@ Chloe:
     - Don't need all constraints in to start working. 
 - Have an understanding of how Flutter apps are built
 
-**Expected deliverable for Sprint 1 - Auditor:**
+### Expected deliverable for Sprint 1 - Auditor:
 - A Scope of Work, or, in the language of the Scrum methodology, the Epic. That is, a general statement of what the project is to achieve. That statement can be as informal as a set of bullet points in a text document, or as formal as a Requirements Document (an example can be found here). 
 > Chloe. Potentially what client expects as well?
 > Requirements?
@@ -64,12 +62,13 @@ Chloe:
 *Format?*
 - Google Doc. Start with one Document first. If it gets too bad we'll split it. 
 
-**Requirements:**
+<br>
+ 
+### Requirements:
 - Database migration
 - Useability - no complex mouse movements. Accessbility is crucial. 
-- What else can be built for it? Customer facing app?
 - Security: To be added later. Not our top priority. Unsure but probably run on the Amazon Cloud. AWS Cognito. (reset passwords, multi-factor authentication...)
-- No passwords, no environment settings. Environment public.
+- No passwords, no environment settings. Environment public. (for now)
 - Access for Administrators: Capturing plantings. 
     - Generic access and admin of metatables.
         - Conditions. Why is this here? Same basic functions. Add, Edit, Delete. 
@@ -82,7 +81,8 @@ Chloe:
    - Chloe and Ryan - Week 3 Wednesday deadline (6th August). Others - Week 3 Friday deadline.
 3. Project itself. Client requirements. 
 
-ACTION: 
+
+### ACTION: 
 - Dennis and Tri: Skeleton. 
 - Everyone: Allocated Parts for Sprint 1 Google Doc. 
 
@@ -91,5 +91,17 @@ ACTION:
 ## Item - Hours Sheet
 Discussion on Hours Sheet. 
 
+## Action Items
+- Chloe: 
+    - Email Kevin. Send Kevin GitHub IDs of whole team. Create Figma document (tablet setting). Discord Server Invitation - Role: Client.
+    - Set up a Markdown with external links related to the project (Figma, Google Drive)
+
+- Dennis and Tri: Skeleton of Sprint 1 Google Doc [Done]
+
+- Everyone: Allocated Parts for Sprint 1 Google Doc. 
+    - Deadline for Chloe and Ryan: Week 3 Wednesday. (6th of August)
+    - Deadline for Dennis Harper, Naren, Tri: Week 3 Friday (8th of August)
+
+## Closing
 - Meeting Closed: 6:00pm
-- Next Scheduled Meeting: Saturday? To be decided.
+- Next Scheduled Meeting: To be decided. LettuceMeet created by Chloe. Dicussion on Project Work Allocation after Prototype and additional documents have been explored. 
