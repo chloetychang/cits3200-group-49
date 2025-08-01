@@ -1,4 +1,4 @@
-# Internal Meeting 1 (Debrief Meeting) - Minutes Template
+# Internal Meeting 1 (Debrief Meeting) - Minutes
 
 - Date: 30/07/2025
 - Present: Chloe, Dennis, Harper, Naren, Ryan, Tri
