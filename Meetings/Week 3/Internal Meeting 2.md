@@ -5,12 +5,12 @@
 - Absent: N.A
 - Apologies:N.A
 - Venue: EZONE Meeting Pod (In Person)
-- Minutes by: Naren
-- Meeting Start: 3:00PM
+- Minutes by: Naren. Finalised by Chloe.
+- Meeting Start: 4:00PM (straight after mentor meeting)
 
 ## Item 1 - Role Allocations for remainder of Sprint 1
 > **<Role and Task allocations to be carried throughout the rest of Sprint 1, and for future sprints>**
-> ### Discussion
+ ### Discussion
  - Project Manager: Chloe 
  - Tech Lead: Ryan 
  - Action Reinforcer: Dennis 
@@ -30,8 +30,8 @@
 
 ## Item 2 - Discussion on structure of Sprint 1 deliverables, and how to complete it.
 > **<Check up on whether everyone is happy with the skeleton created, any comments about how we are progressing, how to improve our workflow>**
-> ### Discussion
- - Database migration research will be integrated into the Sprint 1 deliverables - not into official document though, but something we have to work on
+ ### Discussion
+ - Database migration research will be integrated into the Sprint 1 deliverables - not part of official document, but something we have to work on
  - Implementing Tri's template into Chloe's document
  - Everyone is going to do the 1st deliverables
  - Meeting on Sunday regading the sprint 1 document
@@ -47,8 +47,7 @@
 
 ## Item 3 - Creation of new plan and schedule for sprint 1 deliverables
 > **<The group has not received a working prototype of the app with 1 week left before the deadline for sprint 1. So, need to discuss what is our plan of action>**
-> ### Discussion
- -
+ ### Discussion
  - Chloe -> Scope (Everyone Review)
  - Skill and Resources -> Naren (Harper Review) 
  - Risk Register -> Dennis + (Tri Review)
@@ -92,6 +91,9 @@ Chloe
 - Set-up Lettucemeet (Sunday Team meeting)
 - Send meeting invitation for mentor meeting (3-4PM), for the rest of the mentor meetings
 - Set up WhatsApp Chat group for Communication [Done]
+
+Everyone
+- Work on assigned Sprint 1 Deliverables (before Sunday's team meeting)
 
 ## Closing
 - Meeting Closed: 17:26
