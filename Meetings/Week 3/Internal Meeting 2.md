@@ -45,5 +45,13 @@
  -
  <br>
 
+ ## Item 5 - Discussion with team mentor
+> **<Guidance received by team mentor on successful project delivery>**
+> ### Discussion
+ - 
+ ### Actions
+ - 
+<br>
+
 - Meeting Closed:
 - Next Scheduled Meeting:
