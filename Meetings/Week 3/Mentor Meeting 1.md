@@ -1,4 +1,4 @@
-# Mentor Meeting 1 (Debrief Meeting) - Minutes
+# Mentor Meeting 1 - Minutes
 
 - Date: 06/08/2025
 - Present: Chloe, Dennis, Harper, Naren, Ryan, Tri
