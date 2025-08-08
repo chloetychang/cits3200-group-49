@@ -15,8 +15,8 @@
 
 - Chloe: Project briefing to Maureen (Mentor)
 
-- Maureen: Probing about the app technology used, Recounting experience on client mentioning they want specific XYZ software/tool,
-However, “Who from a technology perspective, deemed it’s fit for purpose?”
+- Maureen: Probing about the app technology used, recounting experience on client mentioning they want specific XYZ software/tool.
+    - However, “Who from a technology perspective, deemed it’s fit for purpose?”
 
 - Maureen: Database migration - Has anyone looked into the migration pathway? (E.g. any import/export tools, well worn - documentation
 available out there)
@@ -31,7 +31,7 @@ database schema and knowledge (To understand their database constraints and requ
 - Maureen: Log this key Assumption that Figma/Flutter deployment works on all platforms.
     - Try it out, design a simple screen and deploy the basic design to see if tech delivery app works.
 
-- Tri: Highlighted the clients background (Yhub cowering), the tech software suggested should have been tested by them.
+- Tri: Highlighted the clients background (Yhub co-working), the tech software suggested should have been tested by them.
 
 - Tri: Query on acceptance testing resources and guidances.
 
