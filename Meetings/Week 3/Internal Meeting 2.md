@@ -14,9 +14,9 @@
  - Project Manager: Chloe (until end of Week 3, to give most people a chance to become Project Manager)
  - Tech Lead: Ryan 
  - Action Reinforcer: Dennis 
- - Design Lead: TBA (Not neccesary for Sprint 1)
+ - Design Lead: TBA (Not necessary for Sprint 1)
  - Documentation Lead: TBA (Role incorporated into Project Manager Responsibilities)
- - Test Lead: TBA (Not neccesary for Sprint 1)
+ - Test Lead: TBA (Not necessary for Sprint 1)
    
  ### Actions
  - Discussing the responsibility of each roles
