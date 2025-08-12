@@ -1,11 +1,11 @@
 # Minutes Template
 
 - Date: 11/08/25
-- Present: Kevin, Tri, Dennis, Chloe, Naren, Ryan
-- Absent:
-- Apologies:
+- Present: Kevin, Tri, Dennis, Chloe, Naren, Harper
+- Absent: Ryan
+- Apologies: Ryan
 - Venue: ICRAR
-- Minutes by:
+- Minutes by: Naren
 - Meeting Start: 9:30AM
 
 ## Item 1 - Requirements, Out of Scope, Project Acceptance Test, and User Story Review
