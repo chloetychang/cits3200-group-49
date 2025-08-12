@@ -1,7 +1,7 @@
 # Minutes Template
 
 - Date: 11/08/25
-- Present: 
+- Present: Kevin, Tri, Dennis, Chloe, Naren, Ryan
 - Absent:
 - Apologies:
 - Venue: ICRAR
