@@ -5,8 +5,8 @@
 - Absent: Ryan
 - Apologies: Ryan
 - Venue: ICRAR
-- Minutes by: Naren
-- Meeting Start: 10:04AM
+- Minutes by: Naren, Chloe, Tri
+- Meeting Start: 10:00AM
 
 ## Item 1 - Requirements, Out of Scope, Project Acceptance Test, and User Story Review
 > **<Review that the requirements, tests and user stories listed in the sprint 1 deliverables reflect what the client is looking for>**
@@ -73,29 +73,60 @@
         - Getting all constraints and rules in. 
         - Functionally exactly the same. 
             - Database itself might take 2 sprints.
+    
+    - Scope of Work Requirements
+        - Login Screen: Username, Password, Okay?. Password doesn't need to do anything. 
+        - Tab & Roles: regular users can only see plantings tab. Superuser can see all tabs
+        - Non-functional: performance (~5 seconds)
+        - 3 components: Database migration, FastAPI, GUI (Figma)
 
  ### Actions
- - 
+ - Modify project acceptance tests to structure similar to $$ outline given - Tri
+ - Add Kevin to Discord server - Chloe
+ - Send details of setup error to Val. Need to get prototype up and running ASAP - Tri
+ - Review criteria for non-functional requirements - Chloe
+ - Submit Sprint 1 - Team
 <br>
 
 ## Item 2 - Other Questions
 > **<Description>**
 > ### Discussion
  - Is implementing a login system with AWS cognito part of scope?
+    - no
 
  - Can we get the finalized input fields for each tab in the lookup management form right now?
+    - To be Confirmed in sprint 2 is okay
 
  - Do the numbers/criteria used for the non-functional requirements seem right to you?
+    - Just consider what you would consider reasonable when using an app
+    - Criteria like reliability and modifiability not in scope. But, do what is considered good practice. 
 
  - Is offline capability something that is part of our scope?
+    -Not needed
 
  - Should we consider visitors to the garden as a significant stakeholder for this project (Guest)?
+    - No
 
  - Are there any performance, memory, throughput constraints we should consider for the app? 
+    - Don't need to worry about it if FastAPI can run on our machine. Go with lowest, cheapest specs for now. 
 
  - Risk RAID log questions (to be ran by Dennis)
+    - Val is only one working on database. 
+    - Next point of contact apart from Kevin: Val. Apart from that, can't do much
+    - Assume all data put into database correct
 
  - Do you have a preferred format for us to submit the sprint 1 deliverables? Should we email the deliverables to you? 
+    - English. 
+
+ - Should we put testing in requirements
+    - Not needed in requirements, but would recommend doing it because good practice. 
+    - Recommend using a Py environment rather than Github to run tests. 
+    - GUI tests may be an issue. Tedious and time-consuming to write. Recommend only check main functionality
+
+ - Are database changes in scope
+    - No, but expected that changes in AccessDB are reflected in PostGreSQL
+
+ - Remember that tablets will be used landscape, not portrait
  
  ### Actions
  - 
@@ -115,5 +146,5 @@
 <br>
 
 
-- Meeting Closed: 11:00AM
-- Next Scheduled Meeting:
+- Meeting Closed: 11:30AM
+- Next Scheduled Meeting: 10:00AM via Discord call
