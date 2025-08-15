@@ -9,7 +9,7 @@
 - Meeting Start: 1000
 
 ## Item 1 - 
-> **<Description Finalising Sprint 1 deliverables - SoW & User stories>**
+> **Finalising Sprint 1 deliverables - SoW & User stories**
 > ### Discussion
  - Finalising Scope of work doccumentation based on client meeting 2, ensuring functional requirements wording is appropriate
  - Discussed possible methods for testing hardware capabilites
@@ -22,7 +22,7 @@
 <br>
 
 ## Item 2 - 
-> **<Description Database Migration Timeline - User Stories>**
+> **Database Migration Timeline - User Stories**
 > ### Discussion
  - Discussed whether or not Database migration can be included in sprint 2
  - Client has expressed desire for us to repeat the migration of the Access DB
@@ -35,7 +35,7 @@
 <br>
 
 ## Item 3 - 
-> **<Description Project Acceptance test budgeting>**
+> **Project Acceptance test budgeting**
 > ### Discussion
  - Reviewing if tests based on database migration and technology stack are acceptable
  - Client has given input on how we should structure these tests
@@ -49,7 +49,7 @@
 <br>
 
 ## Item 4 - 
-> **<Description Sprint 2>**
+> **Sprint 2**
 > ### Discussion
  - Discussing allocation of project manager in the future
  - Tech Lead, design lead and other role allocation

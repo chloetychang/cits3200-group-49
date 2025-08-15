@@ -8,7 +8,6 @@
 - Meeting Start: 1400
 
 ## Item 1 - Skills and Resource Audit Review
-> **<Description>**
 > ### Discussion
  - the confidence of skills, solutions, look at the skills project requirement 
  ### Actions
@@ -19,7 +18,6 @@
 <br>
 
 ## Item 2 - Scope of Work Review
-> **<Description>**
 > ### Discussion
  - Sow summary should change the word for a better way? web base solution, phone?
  - General goals: Flutter (can be deployed on everything)- priority: desktop or tablets?
@@ -39,7 +37,6 @@
 <br>
 
 ## Item 3 - User Stories Review
-> **<Description>**
 > ### Discussion
  - Highlighting and finetuning User Stories. 
  - Agreed on 4 Stakeholders currently (Garden Manager, Garden Volunteer, System Administration, Yhub Coworking Management)
@@ -49,7 +46,6 @@
 <br>
 
 ## Item 3 - Project Acceptance Test Review
-> **<Description>**
 > ### Discussion
  - Structure choice for Acceptance Tests (Specification, Description, Pass/Fail Criteria) 
 
@@ -59,7 +55,6 @@
 <br>
 
 ## Item 4 - Risk Register Review
-> **<Description>**
 > ### Discussion
  - Sanity check and review of Risk Register document
 
