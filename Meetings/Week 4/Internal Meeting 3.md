@@ -49,6 +49,7 @@
 <br>
 
 ## Item 3 - Project Acceptance Test Review
+
 ### Discussion
  - Structure choice for Acceptance Tests (Specification, Description, Pass/Fail Criteria) 
 
@@ -58,6 +59,7 @@
 <br>
 
 ## Item 4 - Risk Register Review
+
 ### Discussion
  - Sanity check and review of Risk Register document
 

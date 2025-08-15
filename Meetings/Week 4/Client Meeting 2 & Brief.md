@@ -9,7 +9,7 @@
 - Meeting Start: 10:00AM
 
 ## Item 1 - Requirements, Out of Scope, Project Acceptance Test, and User Story Review
-**Review that the requirements, tests and user stories listed in the sprint 1 deliverables reflect what the client is looking for**
+> **Review that the requirements, tests and user stories listed in the sprint 1 deliverables reflect what the client is looking for**
 
 ### Discussion
  - User Stories:
@@ -134,7 +134,7 @@
 <br>
 
 ## Item 3 - Prioritize requirements/acceptance tests in terms of $100 system
-**Get the client to give definitive priorities for which features are most desirable (needed for Sprint 3)**
+> **Get the client to give definitive priorities for which features are most desirable (needed for Sprint 3)**
 
 ### Discussion
     - $50: Getting database working, without that, system is useless.

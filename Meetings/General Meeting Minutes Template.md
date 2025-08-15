@@ -9,7 +9,7 @@
 - Meeting Start:
 
 ## Item 1 - 
-**<Description>**
+> **<Description>**
 
 ### Discussion
  - 
@@ -19,7 +19,7 @@
 <br>
 
 ## Item 2 - 
-**<Description>**
+> **<Description>**
 
 ### Discussion
  - 
@@ -29,7 +29,7 @@
 <br>
 
 ## Item 3 - 
-**<Description>**
+> **<Description>**
 
 ### Discussion
  - 
