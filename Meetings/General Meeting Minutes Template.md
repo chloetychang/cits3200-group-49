@@ -9,28 +9,33 @@
 - Meeting Start:
 
 ## Item 1 - 
-> **<Description>**
-> ### Discussion
+**<Description>**
+
+### Discussion
  - 
- ### Actions
+
+### Actions
  - 
 <br>
 
 ## Item 2 - 
-> **<Description>**
-> ### Discussion
+**<Description>**
+
+### Discussion
  - 
- ### Actions
+
+### Actions
  - 
 <br>
 
 ## Item 3 - 
-> **<Description>**
-> ### Discussion
+**<Description>**
+
+### Discussion
  - 
- ### Actions
+### Actions
  - 
 <br>
 
-- Meeting Closed:
-- Next Scheduled Meeting:
+## Meeting Closed:
+## Next Scheduled Meeting:
