@@ -9,8 +9,9 @@
 - Meeting Start: 10:00AM
 
 ## Item 1 - Requirements, Out of Scope, Project Acceptance Test, and User Story Review
-> **Review that the requirements, tests and user stories listed in the sprint 1 deliverables reflect what the client is looking for**
-> ### Discussion
+**Review that the requirements, tests and user stories listed in the sprint 1 deliverables reflect what the client is looking for**
+
+### Discussion
  - User Stories:
     - Grouped User Stories by Stakeholder
     - Two roles: Admin and User
@@ -80,7 +81,7 @@
         - Non-functional: performance (~5 seconds)
         - 3 components: Database migration, FastAPI, GUI (Figma)
 
- ### Actions
+### Actions
  - Modify project acceptance tests to structure similar to $$ outline given - Tri
  - Add Kevin to Discord server - Chloe
  - Send details of setup error to Val. Need to get prototype up and running ASAP - Tri
@@ -89,7 +90,8 @@
 <br>
 
 ## Item 2 - Other Questions
-> ### Discussion
+
+### Discussion
  - Is implementing a login system with AWS cognito part of scope?
     - no
 
@@ -127,23 +129,23 @@
 
  - Remember that tablets will be used landscape, not portrait
  
- ### Actions
+### Actions
  - 
 <br>
 
 ## Item 3 - Prioritize requirements/acceptance tests in terms of $100 system
-> **Get the client to give definitive priorities for which features are most desirable (needed for Sprint 3)**
-> ### Discussion
+**Get the client to give definitive priorities for which features are most desirable (needed for Sprint 3)**
+
+### Discussion
     - $50: Getting database working, without that, system is useless.
     - $25: FastAPI Server
     - $10: Design and Implementation of GUI
     - $10: Android working
     - $5: IOS working.
  
- ### Actions
+### Actions
  - 
 <br>
 
-
-- Meeting Closed: 11:30AM
-- Next Scheduled Meeting: 10:00AM via Discord call
+## Meeting Closed: 11:30AM
+## Next Scheduled Meeting: 10:00AM via Discord call
