@@ -1,3 +1,4 @@
+import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -142,10 +143,10 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   String? Function(BuildContext, String?)? textController30Validator;
   // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController1 =
-      FlutterFlowDataTableController<dynamic>();
+      FlutterFlowDataTableController<ZonesStruct>();
   // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController2 =
-      FlutterFlowDataTableController<dynamic>();
+      FlutterFlowDataTableController<SubZonesStruct>();
 
   @override
   void initState(BuildContext context) {}

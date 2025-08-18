@@ -45,7 +45,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: AcquisitionsWidget.routeName,
           path: AcquisitionsWidget.routePath,
-          builder: (context, params) => AcquisitionsWidget(),
+          builder: (context, params) => AcquisitionsWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
           name: PlantingsWidget.routeName,

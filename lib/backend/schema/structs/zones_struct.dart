@@ -5,9 +5,8 @@ import '/backend/schema/util/schema_util.dart';
 import 'index.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
-/// Zone - Add/Update Records
-class ZoneStruct extends BaseStruct {
-  ZoneStruct({
+class ZonesStruct extends BaseStruct {
+  ZonesStruct({
     String? zoneNumber,
     String? zoneName,
     String? aspect,
@@ -19,119 +18,119 @@ class ZoneStruct extends BaseStruct {
         _exposureToWind = exposureToWind,
         _shade = shade;
 
-  // "ZoneNumber" field.
+  // "zoneNumber" field.
   String? _zoneNumber;
   String get zoneNumber => _zoneNumber ?? '';
   set zoneNumber(String? val) => _zoneNumber = val;
 
   bool hasZoneNumber() => _zoneNumber != null;
 
-  // "ZoneName" field.
+  // "zoneName" field.
   String? _zoneName;
   String get zoneName => _zoneName ?? '';
   set zoneName(String? val) => _zoneName = val;
 
   bool hasZoneName() => _zoneName != null;
 
-  // "Aspect" field.
+  // "aspect" field.
   String? _aspect;
   String get aspect => _aspect ?? '';
   set aspect(String? val) => _aspect = val;
 
   bool hasAspect() => _aspect != null;
 
-  // "ExposureToWind" field.
+  // "exposureToWind" field.
   String? _exposureToWind;
   String get exposureToWind => _exposureToWind ?? '';
   set exposureToWind(String? val) => _exposureToWind = val;
 
   bool hasExposureToWind() => _exposureToWind != null;
 
-  // "Shade" field.
+  // "shade" field.
   String? _shade;
   String get shade => _shade ?? '';
   set shade(String? val) => _shade = val;
 
   bool hasShade() => _shade != null;
 
-  static ZoneStruct fromMap(Map<String, dynamic> data) => ZoneStruct(
-        zoneNumber: data['ZoneNumber'] as String?,
-        zoneName: data['ZoneName'] as String?,
-        aspect: data['Aspect'] as String?,
-        exposureToWind: data['ExposureToWind'] as String?,
-        shade: data['Shade'] as String?,
+  static ZonesStruct fromMap(Map<String, dynamic> data) => ZonesStruct(
+        zoneNumber: data['zoneNumber'] as String?,
+        zoneName: data['zoneName'] as String?,
+        aspect: data['aspect'] as String?,
+        exposureToWind: data['exposureToWind'] as String?,
+        shade: data['shade'] as String?,
       );
 
-  static ZoneStruct? maybeFromMap(dynamic data) =>
-      data is Map ? ZoneStruct.fromMap(data.cast<String, dynamic>()) : null;
+  static ZonesStruct? maybeFromMap(dynamic data) =>
+      data is Map ? ZonesStruct.fromMap(data.cast<String, dynamic>()) : null;
 
   Map<String, dynamic> toMap() => {
-        'ZoneNumber': _zoneNumber,
-        'ZoneName': _zoneName,
-        'Aspect': _aspect,
-        'ExposureToWind': _exposureToWind,
-        'Shade': _shade,
+        'zoneNumber': _zoneNumber,
+        'zoneName': _zoneName,
+        'aspect': _aspect,
+        'exposureToWind': _exposureToWind,
+        'shade': _shade,
       }.withoutNulls;
 
   @override
   Map<String, dynamic> toSerializableMap() => {
-        'ZoneNumber': serializeParam(
+        'zoneNumber': serializeParam(
           _zoneNumber,
           ParamType.String,
         ),
-        'ZoneName': serializeParam(
+        'zoneName': serializeParam(
           _zoneName,
           ParamType.String,
         ),
-        'Aspect': serializeParam(
+        'aspect': serializeParam(
           _aspect,
           ParamType.String,
         ),
-        'ExposureToWind': serializeParam(
+        'exposureToWind': serializeParam(
           _exposureToWind,
           ParamType.String,
         ),
-        'Shade': serializeParam(
+        'shade': serializeParam(
           _shade,
           ParamType.String,
         ),
       }.withoutNulls;
 
-  static ZoneStruct fromSerializableMap(Map<String, dynamic> data) =>
-      ZoneStruct(
+  static ZonesStruct fromSerializableMap(Map<String, dynamic> data) =>
+      ZonesStruct(
         zoneNumber: deserializeParam(
-          data['ZoneNumber'],
+          data['zoneNumber'],
           ParamType.String,
           false,
         ),
         zoneName: deserializeParam(
-          data['ZoneName'],
+          data['zoneName'],
           ParamType.String,
           false,
         ),
         aspect: deserializeParam(
-          data['Aspect'],
+          data['aspect'],
           ParamType.String,
           false,
         ),
         exposureToWind: deserializeParam(
-          data['ExposureToWind'],
+          data['exposureToWind'],
           ParamType.String,
           false,
         ),
         shade: deserializeParam(
-          data['Shade'],
+          data['shade'],
           ParamType.String,
           false,
         ),
       );
 
   @override
-  String toString() => 'ZoneStruct(${toMap()})';
+  String toString() => 'ZonesStruct(${toMap()})';
 
   @override
   bool operator ==(Object other) {
-    return other is ZoneStruct &&
+    return other is ZonesStruct &&
         zoneNumber == other.zoneNumber &&
         zoneName == other.zoneName &&
         aspect == other.aspect &&
@@ -144,14 +143,14 @@ class ZoneStruct extends BaseStruct {
       .hash([zoneNumber, zoneName, aspect, exposureToWind, shade]);
 }
 
-ZoneStruct createZoneStruct({
+ZonesStruct createZonesStruct({
   String? zoneNumber,
   String? zoneName,
   String? aspect,
   String? exposureToWind,
   String? shade,
 }) =>
-    ZoneStruct(
+    ZonesStruct(
       zoneNumber: zoneNumber,
       zoneName: zoneName,
       aspect: aspect,
