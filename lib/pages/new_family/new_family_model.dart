@@ -1,9 +1,9 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
-import 'research_family_widget.dart' show ResearchFamilyWidget;
+import 'new_family_widget.dart' show NewFamilyWidget;
 import 'package:flutter/material.dart';
 
-class ResearchFamilyModel extends FlutterFlowModel<ResearchFamilyWidget> {
+class NewFamilyModel extends FlutterFlowModel<NewFamilyWidget> {
   ///  State fields for stateful widgets in this page.
 
   // State field(s) for TabBar widget.

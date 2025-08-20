@@ -1,6 +1,7 @@
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
 import 'acquisitions_widget.dart' show AcquisitionsWidget;
 import 'package:flutter/material.dart';
@@ -15,8 +16,15 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   int get tabBarPreviousIndex =>
       tabBarController != null ? tabBarController!.previousIndex : 0;
 
-  // State field(s) for Checkbox widget.
-  bool? checkboxValue1;
+  // State field(s) for DropDown widget.
+  String? dropDownValue1;
+  FormFieldController<String>? dropDownValueController1;
+  // State field(s) for DropDown widget.
+  String? dropDownValue2;
+  FormFieldController<String>? dropDownValueController2;
+  // State field(s) for DropDown widget.
+  String? dropDownValue3;
+  FormFieldController<String>? dropDownValueController3;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
@@ -33,6 +41,11 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   FocusNode? textFieldFocusNode4;
   TextEditingController? textController4;
   String? Function(BuildContext, String?)? textController4Validator;
+  // State field(s) for DropDown widget.
+  String? dropDownValue4;
+  FormFieldController<String>? dropDownValueController4;
+  // State field(s) for Checkbox widget.
+  bool? checkboxValue1;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode5;
   TextEditingController? textController5;
@@ -41,12 +54,12 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   FocusNode? textFieldFocusNode6;
   TextEditingController? textController6;
   String? Function(BuildContext, String?)? textController6Validator;
-  // State field(s) for Checkbox widget.
-  bool? checkboxValue2;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode7;
   TextEditingController? textController7;
   String? Function(BuildContext, String?)? textController7Validator;
+  // State field(s) for Checkbox widget.
+  bool? checkboxValue2;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode8;
   TextEditingController? textController8;
@@ -55,12 +68,15 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   FocusNode? textFieldFocusNode9;
   TextEditingController? textController9;
   String? Function(BuildContext, String?)? textController9Validator;
-  // State field(s) for Checkbox widget.
-  bool? checkboxValue3;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode10;
   TextEditingController? textController10;
   String? Function(BuildContext, String?)? textController10Validator;
+  // State field(s) for Checkbox widget.
+  bool? checkboxValue3;
+  // State field(s) for DropDown widget.
+  String? dropDownValue5;
+  FormFieldController<String>? dropDownValueController5;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode11;
   TextEditingController? textController11;
@@ -141,6 +157,10 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
   FocusNode? textFieldFocusNode30;
   TextEditingController? textController30;
   String? Function(BuildContext, String?)? textController30Validator;
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode31;
+  TextEditingController? textController31;
+  String? Function(BuildContext, String?)? textController31Validator;
   // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController1 =
       FlutterFlowDataTableController<ZonesStruct>();
@@ -243,6 +263,9 @@ class AcquisitionsModel extends FlutterFlowModel<AcquisitionsWidget> {
 
     textFieldFocusNode30?.dispose();
     textController30?.dispose();
+
+    textFieldFocusNode31?.dispose();
+    textController31?.dispose();
 
     paginatedDataTableController1.dispose();
     paginatedDataTableController2.dispose();

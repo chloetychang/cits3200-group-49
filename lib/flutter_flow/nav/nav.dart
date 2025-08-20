@@ -58,9 +58,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => PlantingsWidget(),
         ),
         FFRoute(
-          name: ResearchFamilyWidget.routeName,
-          path: ResearchFamilyWidget.routePath,
-          builder: (context, params) => ResearchFamilyWidget(),
+          name: NewFamilyWidget.routeName,
+          path: NewFamilyWidget.routePath,
+          builder: (context, params) => NewFamilyWidget(),
         ),
         FFRoute(
           name: ProgenyWidget.routeName,
