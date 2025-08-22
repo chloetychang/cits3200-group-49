@@ -9,6 +9,7 @@
 - Meeting Start: 15:00
 ## Item 0 - Project Manager Meeting Minutes
 >
+
 ### Discussion:
 Tri: Issues with submiting the minutes for Week 4
 Tri: Ensure that the minutes could be exported to PDF 
@@ -63,7 +64,6 @@ Intermediate deliverables: Migrate MS Acess DB to PosgreSQL
  - Tri: Clarify what are the expectaction of Sprint 2 (data migration flutter)
  - Chloe: Delivrables -> To make it more responsive
  - Chloe: Drafts of the front end
- - T
 
 FastApi
 - 
