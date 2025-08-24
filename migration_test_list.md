@@ -2,6 +2,8 @@
 **These tests were designed with V02 of the prototype in mind**
 Last updated: 24/08/25
 
+Ideas: Python (psycopg2/SQLAlchemy) and query schema
+
 ## Initial migration (postgres created) tests
 * Tables migrated
 Note: To test column types and constraints, may be only necessary to check one of each datatype, and every combination of Primary, Required (not NULL) and Unique available. 
@@ -14,7 +16,7 @@ Note: To test column types and constraints, may be only necessary to check one o
     - Conservation_status
         - conservation_status_id: integer Primary
         - status: string Required, Unique
-        - status_shart_name: string
+        - status_short_name: string
     - Container
         - container_type_id: Primary
         - container_type: string Required
