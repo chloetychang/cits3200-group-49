@@ -143,6 +143,15 @@ Note: To test column types and constraints, may be only necessary to check one o
 * Data migrated tests
     - First 5 rows match
     - Number of rows match
+* Foreign key tests
+    - Refer to the relationships diagram
 
-## Migrating to existing postgres tests
-
+## Migrating to existing postgres tests (sprint 3)
+* Additional data test
+    - New data added to accessDB is reflected in migrated database
+* Modified column
+    - Column datatype/constraint is modified, and is reflected in migration
+* Removed column
+    - Column is removed, and is not present after migration
+* Removed table
+    - Table is removed, and is not present after migration
