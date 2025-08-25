@@ -22,7 +22,7 @@ expected_schema = {
     },
     "family": {
         "family_id": {"type": "INTEGER", "primary_key": True},
-        "family_name": {"type": "VARCHAR", "nullable": False, "unique": True},
+        "famiy_name": {"type": "VARCHAR", "nullable": False, "unique": True}, # Typo in V02 accessDB
     },
     "genetic_source": {
         "genetic_source_id": {"type": "INTEGER", "primary_key": True},
@@ -30,15 +30,15 @@ expected_schema = {
         "variety_id": {"type": "INTEGER", "nullable": False},
         "supplier_id": {"type": "INTEGER", "nullable": False},
         "supplier_lot_number": {"type": "VARCHAR", "nullable": True},
-        "price": {"type": "NUMERIC", "nullable": True},
-        "gram_weight": {"type": "NUMERIC", "nullable": True},
+        "price": {"type": "DOUBLE PRECISION", "nullable": True},
+        "gram_weight": {"type": "INTEGER", "nullable": True},
         "provenance_id": {"type": "INTEGER", "nullable": True},
-        "viability": {"type": "NUMERIC", "nullable": True},
-        "propogation_type": {"type": "NUMERIC", "nullable": True},
-        "female_genetic_source": {"type": "NUMERIC", "nullable": True},
-        "male_genetic_source": {"type": "NUMERIC", "nullable": True},
-        "generation_number": {"type": "NUMERIC", "nullable": False},
-        "lanscape_only": {"type": "BOOLEAN", "nullable": False},
+        "viability": {"type": "INTEGER", "nullable": True},
+        "propagation_type": {"type": "INTEGER", "nullable": True},
+        "female_genetic_source": {"type": "INTEGER", "nullable": True},
+        "male_genetic_source": {"type": "INTEGER", "nullable": True},
+        "generation_number": {"type": "INTEGER", "nullable": False},
+        "landscape_only": {"type": "BOOLEAN", "nullable": False},
         "research_notes": {"type": "TEXT", "nullable": True},
     },
     "genus": {
@@ -57,33 +57,34 @@ expected_schema = {
     "planting": {
         "planting_id": {"type": "INTEGER", "primary_key": True},
         "date_planted": {"type": "TIMESTAMP", "nullable": False},
-        "planted_by": {"type": "NUMERIC", "nullable": True},
+        "planted_by": {"type": "INTEGER", "nullable": True},
         "zone_id": {"type": "INTEGER", "nullable": False},
         "variety_id": {"type": "INTEGER", "nullable": False},
         "number_planted": {"type": "INTEGER", "nullable": False},
-        "genetic_source": {"type": "NUMERIC", "nullable": True},
+        "genetic_source_id": {"type": "INTEGER", "nullable": True},
         "container_type_id": {"type": "INTEGER", "nullable": False},
+        "removal_date": {"type": "TIMESTAMP"},
         "number_removed": {"type": "INTEGER", "nullable": True},
         "removal_cause_id": {"type": "INTEGER", "nullable": True},
         "comments": {"type": "TEXT", "nullable": True},
     },
     # Plantings_view is a view, so we skip it for now
     "progeny": {
-        "progeny_id": {"type": "INTEGER", "unique": True, "nullable": True},
+        "progeny_id": {"type": "INTEGER", "unique": True},
         "genetic_source_id": {"type": "INTEGER", "primary_key": True},
         "sibling_number": {"type": "INTEGER", "primary_key": True},
         "child_name": {"type": "VARCHAR", "nullable": False},
         "date_germinated": {"type": "TIMESTAMP", "nullable": False},
         "comments": {"type": "VARCHAR", "nullable": True},
     },
-    "propogation_type": {
-        "propogation_type_id": {"type": "INTEGER", "primary_key": True},
-        "propogation_type": {"type": "VARCHAR", "nullable": True},
+    "propagation_type": {
+        "propagation_type_id": {"type": "INTEGER", "primary_key": True},
+        "propagation_type": {"type": "VARCHAR", "nullable": True},
         "needs_two_parents": {"type": "BOOLEAN", "nullable": False},
         "can_cross_genera": {"type": "BOOLEAN", "nullable": False},
     },
     "provenance": {
-        "provenance_id": {"type": "INTEGER", "nullable": True},
+        "provenance_id": {"type": "INTEGER"},
         "bioregion_code": {"type": "VARCHAR", "nullable": False},
         "location": {"type": "VARCHAR", "nullable": True},
         "location_type_id": {"type": "INTEGER", "nullable": True},
@@ -162,45 +163,80 @@ expected_schema = {
 }
 
 # Connect to your database
-engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/your_db")
+engine = create_engine("postgresql+psycopg2://postgres:postgresql@localhost:5432/postgres")
 inspector = inspect(engine)
 
-for table, columns in expected_schema.items():
-    print(f"\nChecking table: {table}")
-    if table not in inspector.get_table_names():
-        print(f"  Table {table} is missing!")
-        continue
+# Dictionary to count each type of mismatch
+mismatch_counts = {
+    'missing_tables': 0,
+    'extra_tables': 0,
+    'missing_columns': 0,
+    'extra_columns': 0,
+    'datatype_mismatches': 0,
+    'nullable_mismatches': 0,
+    'unique_mismatches': 0,
+    'primary_key_mismatches': 0,
+}
 
+actual_tables = set(inspector.get_table_names())
+expected_tables = set(expected_schema.keys())
+
+# Check for missing and extra tables
+for table in expected_tables:
+    if table not in actual_tables:
+        print(f"Table missing: {table}")
+        mismatch_counts['missing_tables'] += 1
+for table in actual_tables:
+    if table not in expected_tables:
+        print(f"Extra table: {table}")
+        mismatch_counts['extra_tables'] += 1
+
+# Check columns and constraints for tables that exist in both
+for table in expected_tables & actual_tables:
+    print(f"\nChecking table: {table}")
+    columns = expected_schema[table]
     actual_columns = {col["name"]: col for col in inspector.get_columns(table)}
-    for col_name, props in columns.items():
+
+    # Missing columns
+    for col_name in columns:
         if col_name not in actual_columns:
-            print(f"    Column {col_name} missing in {table}")
-            continue
-        actual_type = str(actual_columns[col_name]["type"]).upper()
-        expected_type = props["type"].upper()
-        if expected_type not in actual_type:
-            print(f"    Column {col_name} type mismatch: found {actual_type}, expected {expected_type}")
-        if "nullable" in props and props["nullable"] != actual_columns[col_name]["nullable"]:
-            print(f"    Column {col_name} nullability mismatch: found {actual_columns[col_name]['nullable']}, expected {props['nullable']}")
-    # Check for extra columns
+            print(f"    Column missing: {col_name}")
+            mismatch_counts['missing_columns'] += 1
+    # Extra columns
     for col_name in actual_columns:
         if col_name not in columns:
-            print(f"    Extra column {col_name} found in {table}")
-
-    # Check primary keys
+            print(f"    Extra column: {col_name}")
+            mismatch_counts['extra_columns'] += 1
+    # Datatype and nullable mismatches
+    for col_name, props in columns.items():
+        if col_name in actual_columns:
+            actual_type = str(actual_columns[col_name]["type"]).upper()
+            expected_type = props["type"].upper()
+            if expected_type not in actual_type:
+                print(f"    Datatype mismatch for {col_name}: found {actual_type}, expected {expected_type}")
+                mismatch_counts['datatype_mismatches'] += 1
+            if "nullable" in props and props["nullable"] != actual_columns[col_name]["nullable"]:
+                print(f"    Nullable mismatch for {col_name}: found {actual_columns[col_name]['nullable']}, expected {props['nullable']}")
+                mismatch_counts['nullable_mismatches'] += 1
+    # Primary key mismatches
     pk = inspector.get_pk_constraint(table)
     pk_cols = set(pk["constrained_columns"])
     for col_name, props in columns.items():
-        if props.get("primary_key") and col_name not in pk_cols:
-            print(f"    Column {col_name} should be PRIMARY KEY but is not.")
-
-    # Check unique constraints
+        if props.get("primary_key") and col_name in actual_columns and col_name not in pk_cols:
+            print(f"    Primary key missing for {col_name}")
+            mismatch_counts['primary_key_mismatches'] += 1
+    # Unique mismatches
     uniques = inspector.get_unique_constraints(table)
     unique_cols = set()
     for uq in uniques:
         unique_cols.update(uq["column_names"])
     for col_name, props in columns.items():
-        if props.get("unique") and col_name not in unique_cols:
-            print(f"    Column {col_name} should be UNIQUE but is not.")
+        if props.get("unique") and col_name in actual_columns and col_name not in unique_cols:
+            print(f"    Unique constraint missing for {col_name}")
+            mismatch_counts['unique_mismatches'] += 1
+
+print("\nDatabase mismatch summary:")
+for k, v in mismatch_counts.items():
+    print(f"  {k.replace('_', ' ').capitalize()}: {v}")
 
 engine.dispose()
