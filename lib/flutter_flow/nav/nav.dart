@@ -35,17 +35,17 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
-      errorBuilder: (context, state) => AcquisitionsWidget(),
+      errorBuilder: (context, state) => UsernamePasswordWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => AcquisitionsWidget(),
+          builder: (context, _) => UsernamePasswordWidget(),
         ),
         FFRoute(
-          name: AcquisitionsWidget.routeName,
-          path: AcquisitionsWidget.routePath,
-          builder: (context, params) => AcquisitionsWidget(
+          name: AddAcquisitionsWidget.routeName,
+          path: AddAcquisitionsWidget.routePath,
+          builder: (context, params) => AddAcquisitionsWidget(
             placeholder: params.getParam(
               'placeholder',
               ParamType.int,
@@ -53,49 +53,364 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           ),
         ),
         FFRoute(
-          name: PlantingsWidget.routeName,
-          path: PlantingsWidget.routePath,
-          builder: (context, params) => PlantingsWidget(),
+          name: LandingASuperuserWidget.routeName,
+          path: LandingASuperuserWidget.routePath,
+          builder: (context, params) => LandingASuperuserWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: NewFamilyWidget.routeName,
-          path: NewFamilyWidget.routePath,
-          builder: (context, params) => NewFamilyWidget(),
+          name: AddNewFamilyWidget.routeName,
+          path: AddNewFamilyWidget.routePath,
+          builder: (context, params) => AddNewFamilyWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: ProgenyWidget.routeName,
-          path: ProgenyWidget.routePath,
-          builder: (context, params) => ProgenyWidget(),
+          name: AddPlantingsWidget.routeName,
+          path: AddPlantingsWidget.routePath,
+          builder: (context, params) => AddPlantingsWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: VarietiesWidget.routeName,
-          path: VarietiesWidget.routePath,
-          builder: (context, params) => VarietiesWidget(),
+          name: AddProgenyWidget.routeName,
+          path: AddProgenyWidget.routePath,
+          builder: (context, params) => AddProgenyWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: ProvenancesWidget.routeName,
-          path: ProvenancesWidget.routePath,
-          builder: (context, params) => ProvenancesWidget(),
+          name: AddProvenancesWidget.routeName,
+          path: AddProvenancesWidget.routePath,
+          builder: (context, params) => AddProvenancesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: SuppliersWidget.routeName,
-          path: SuppliersWidget.routePath,
-          builder: (context, params) => SuppliersWidget(),
+          name: AddSubZonesWidget.routeName,
+          path: AddSubZonesWidget.routePath,
+          builder: (context, params) => AddSubZonesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: UsersWidget.routeName,
-          path: UsersWidget.routePath,
-          builder: (context, params) => UsersWidget(),
+          name: AddZoneWidget.routeName,
+          path: AddZoneWidget.routePath,
+          builder: (context, params) => AddZoneWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: ZoneWidget.routeName,
-          path: ZoneWidget.routePath,
-          builder: (context, params) => ZoneWidget(),
+          name: AddSuppliersWidget.routeName,
+          path: AddSuppliersWidget.routePath,
+          builder: (context, params) => AddSuppliersWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         ),
         FFRoute(
-          name: SubZonesWidget.routeName,
-          path: SubZonesWidget.routePath,
-          builder: (context, params) => SubZonesWidget(),
+          name: AddUsersWidget.routeName,
+          path: AddUsersWidget.routePath,
+          builder: (context, params) => AddUsersWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: AddVarietiesWidget.routeName,
+          path: AddVarietiesWidget.routePath,
+          builder: (context, params) => AddVarietiesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateAcquisitionsWidget.routeName,
+          path: UpdateAcquisitionsWidget.routePath,
+          builder: (context, params) => UpdateAcquisitionsWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdatePlantingsWidget.routeName,
+          path: UpdatePlantingsWidget.routePath,
+          builder: (context, params) => UpdatePlantingsWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateNewFamilyWidget.routeName,
+          path: UpdateNewFamilyWidget.routePath,
+          builder: (context, params) => UpdateNewFamilyWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateProgenyWidget.routeName,
+          path: UpdateProgenyWidget.routePath,
+          builder: (context, params) => UpdateProgenyWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateVarietiesWidget.routeName,
+          path: UpdateVarietiesWidget.routePath,
+          builder: (context, params) => UpdateVarietiesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateProvenancesWidget.routeName,
+          path: UpdateProvenancesWidget.routePath,
+          builder: (context, params) => UpdateProvenancesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateSuppliersWidget.routeName,
+          path: UpdateSuppliersWidget.routePath,
+          builder: (context, params) => UpdateSuppliersWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateUsersWidget.routeName,
+          path: UpdateUsersWidget.routePath,
+          builder: (context, params) => UpdateUsersWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateZoneWidget.routeName,
+          path: UpdateZoneWidget.routePath,
+          builder: (context, params) => UpdateZoneWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: UpdateSubZoneWidget.routeName,
+          path: UpdateSubZoneWidget.routePath,
+          builder: (context, params) => UpdateSubZoneWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: MConservationStatusWidget.routeName,
+          path: MConservationStatusWidget.routePath,
+          builder: (context, params) => MConservationStatusWidget(),
+        ),
+        FFRoute(
+          name: MContainerTypeWidget.routeName,
+          path: MContainerTypeWidget.routePath,
+          builder: (context, params) => MContainerTypeWidget(),
+        ),
+        FFRoute(
+          name: MPlantUtilityWidget.routeName,
+          path: MPlantUtilityWidget.routePath,
+          builder: (context, params) => MPlantUtilityWidget(),
+        ),
+        FFRoute(
+          name: MPlantingRemovalWidget.routeName,
+          path: MPlantingRemovalWidget.routePath,
+          builder: (context, params) => MPlantingRemovalWidget(),
+        ),
+        FFRoute(
+          name: MProvenanceWidget.routeName,
+          path: MProvenanceWidget.routePath,
+          builder: (context, params) => MProvenanceWidget(),
+        ),
+        FFRoute(
+          name: MProvenanceLocationTypesWidget.routeName,
+          path: MProvenanceLocationTypesWidget.routePath,
+          builder: (context, params) => MProvenanceLocationTypesWidget(),
+        ),
+        FFRoute(
+          name: MPropagationTypeWidget.routeName,
+          path: MPropagationTypeWidget.routePath,
+          builder: (context, params) => MPropagationTypeWidget(),
+        ),
+        FFRoute(
+          name: MSpeciesUtilityWidget.routeName,
+          path: MSpeciesUtilityWidget.routePath,
+          builder: (context, params) => MSpeciesUtilityWidget(),
+        ),
+        FFRoute(
+          name: MZoneAspectWidget.routeName,
+          path: MZoneAspectWidget.routePath,
+          builder: (context, params) => MZoneAspectWidget(),
+        ),
+        FFRoute(
+          name: VUsersWidget.routeName,
+          path: VUsersWidget.routePath,
+          builder: (context, params) => VUsersWidget(),
+        ),
+        FFRoute(
+          name: VSpeciesWidget.routeName,
+          path: VSpeciesWidget.routePath,
+          builder: (context, params) => VSpeciesWidget(),
+        ),
+        FFRoute(
+          name: VSuppliersWidget.routeName,
+          path: VSuppliersWidget.routePath,
+          builder: (context, params) => VSuppliersWidget(),
+        ),
+        FFRoute(
+          name: VGeneticSourceWidget.routeName,
+          path: VGeneticSourceWidget.routePath,
+          builder: (context, params) => VGeneticSourceWidget(),
+        ),
+        FFRoute(
+          name: VPlantingsWidget.routeName,
+          path: VPlantingsWidget.routePath,
+          builder: (context, params) => VPlantingsWidget(),
+        ),
+        FFRoute(
+          name: VProgenyWidget.routeName,
+          path: VProgenyWidget.routePath,
+          builder: (context, params) => VProgenyWidget(),
+        ),
+        FFRoute(
+          name: VProvenancesWidget.routeName,
+          path: VProvenancesWidget.routePath,
+          builder: (context, params) => VProvenancesWidget(),
+        ),
+        FFRoute(
+          name: VZoneWidget.routeName,
+          path: VZoneWidget.routePath,
+          builder: (context, params) => VZoneWidget(),
+        ),
+        FFRoute(
+          name: VSubzonesWidget.routeName,
+          path: VSubzonesWidget.routePath,
+          builder: (context, params) => VSubzonesWidget(),
+        ),
+        FFRoute(
+          name: UsernamePasswordWidget.routeName,
+          path: UsernamePasswordWidget.routePath,
+          builder: (context, params) => UsernamePasswordWidget(),
+        ),
+        FFRoute(
+          name: LandingClaireFrankynJonesWidget.routeName,
+          path: LandingClaireFrankynJonesWidget.routePath,
+          builder: (context, params) => LandingClaireFrankynJonesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: LandingLizBarbourWidget.routeName,
+          path: LandingLizBarbourWidget.routePath,
+          builder: (context, params) => LandingLizBarbourWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: LandingValMacduffWidget.routeName,
+          path: LandingValMacduffWidget.routePath,
+          builder: (context, params) => LandingValMacduffWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: LandingGuestWidget.routeName,
+          path: LandingGuestWidget.routePath,
+          builder: (context, params) => LandingGuestWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: FormUpdateSpeciesWidget.routeName,
+          path: FormUpdateSpeciesWidget.routePath,
+          builder: (context, params) => FormUpdateSpeciesWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
+        ),
+        FFRoute(
+          name: PlantingCrossTabReportWidget.routeName,
+          path: PlantingCrossTabReportWidget.routePath,
+          builder: (context, params) => PlantingCrossTabReportWidget(),
+        ),
+        FFRoute(
+          name: UserOtherWidget.routeName,
+          path: UserOtherWidget.routePath,
+          builder: (context, params) => UserOtherWidget(
+            placeholder: params.getParam(
+              'placeholder',
+              ParamType.int,
+            ),
+          ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );

@@ -21,12 +21,6 @@ class FFAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _selectedTab = 0;
-  int get selectedTab => _selectedTab;
-  set selectedTab(int value) {
-    _selectedTab = value;
-  }
-
   List<ZonesStruct> _mockZones = [];
   List<ZonesStruct> get mockZones => _mockZones;
   set mockZones(List<ZonesStruct> value) {
