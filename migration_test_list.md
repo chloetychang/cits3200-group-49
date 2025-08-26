@@ -147,6 +147,8 @@ Note: To test column types and constraints, may be only necessary to check one o
     - Number of rows match
 * Foreign key tests
     - Refer to the relationships diagram
+    ![alt text](https://github.com/chloetychang/cits3200-group-49/blob/main/Images/Yanchep_V2_ERD.jpg?raw=true)
+
 
 ## Migrating to existing postgres tests (sprint 3)
 * Additional data test
