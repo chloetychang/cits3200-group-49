@@ -206,7 +206,7 @@ class _LandingGuestWidgetState extends State<LandingGuestWidget>
                                           child: FFButtonWidget(
                                             onPressed: () async {
                                               context.pushNamed(
-                                                  VUsersWidget.routeName);
+                                                  ViewUsersWidget.routeName);
                                             },
                                             text: 'View Table Listings',
                                             options: FFButtonOptions(

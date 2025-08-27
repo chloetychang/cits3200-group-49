@@ -150,7 +150,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                     child: Align(
                       alignment: AlignmentDirectional(0.8, 0.0),
                       child: Text(
-                        'Acquistions',
+                        'Acquisitions',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context)
                             .headlineLarge

@@ -735,7 +735,8 @@ class _AddZoneWidgetState extends State<AddZoneWidget> {
                     .addToStart(SizedBox(width: 16.0))
                     .addToEnd(SizedBox(width: 16.0)),
               ),
-              Expanded(
+              Flexible(
+                flex: 6,
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Container(
@@ -745,228 +746,220 @@ class _AddZoneWidgetState extends State<AddZoneWidget> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     alignment: AlignmentDirectional(0.0, 0.0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Builder(
-                              builder: (context) {
-                                final zones = FFAppState().mockZones.toList();
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Builder(
+                            builder: (context) {
+                              final zones = FFAppState().mockZones.toList();
 
-                                return FlutterFlowDataTable<ZonesStruct>(
-                                  controller:
-                                      _model.paginatedDataTableController,
-                                  data: zones,
-                                  columnsBuilder: (onSortChanged) => [
-                                    DataColumn2(
-                                      label: DefaultTextStyle.merge(
-                                        softWrap: true,
-                                        child: Text(
-                                          'Zone Number',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelLargeFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelLargeIsCustom,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    DataColumn2(
-                                      label: DefaultTextStyle.merge(
-                                        softWrap: true,
-                                        child: Text(
-                                          'Zone name',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelLargeFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelLargeIsCustom,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    DataColumn2(
-                                      label: DefaultTextStyle.merge(
-                                        softWrap: true,
-                                        child: Text(
-                                          'Aspect',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelLargeFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelLargeIsCustom,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    DataColumn2(
-                                      label: DefaultTextStyle.merge(
-                                        softWrap: true,
-                                        child: Text(
-                                          'Exposure to wind',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelLargeFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelLargeIsCustom,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    DataColumn2(
-                                      label: DefaultTextStyle.merge(
-                                        softWrap: true,
-                                        child: Text(
-                                          'Shade',
-                                          style: FlutterFlowTheme.of(context)
-                                              .labelLarge
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .labelLargeFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .labelLargeIsCustom,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                  dataRowBuilder: (zonesItem, zonesIndex,
-                                          selected, onSelectChanged) =>
-                                      DataRow(
-                                    color: WidgetStateProperty.all(
-                                      zonesIndex % 2 == 0
-                                          ? FlutterFlowTheme.of(context)
-                                              .secondaryBackground
-                                          : FlutterFlowTheme.of(context)
-                                              .primaryBackground,
-                                    ),
-                                    cells: [
-                                      Text(
-                                        'Edit Column 1',
+                              return FlutterFlowDataTable<ZonesStruct>(
+                                controller: _model.paginatedDataTableController,
+                                data: zones,
+                                columnsBuilder: (onSortChanged) => [
+                                  DataColumn2(
+                                    label: DefaultTextStyle.merge(
+                                      softWrap: true,
+                                      child: Text(
+                                        'Zone Number',
                                         style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
+                                            .labelLarge
                                             .override(
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
+                                                      .labelLargeFamily,
                                               letterSpacing: 0.0,
                                               useGoogleFonts:
                                                   !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                                      .labelLargeIsCustom,
                                             ),
                                       ),
-                                      Text(
-                                        'Edit Column 2',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                      Text(
-                                        'Edit Column 3',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                      Text(
-                                        'Edit Column 4',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                      Text(
-                                        'Edit Column 5',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                    ].map((c) => DataCell(c)).toList(),
+                                    ),
                                   ),
-                                  paginated: true,
-                                  selectable: false,
-                                  hidePaginator: false,
-                                  showFirstLastButtons: false,
-                                  headingRowHeight: 56.0,
-                                  dataRowHeight: 48.0,
-                                  columnSpacing: 20.0,
-                                  headingRowColor:
-                                      FlutterFlowTheme.of(context).secondary,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  addHorizontalDivider: true,
-                                  addTopAndBottomDivider: false,
-                                  hideDefaultHorizontalDivider: true,
-                                  horizontalDividerColor:
-                                      FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                  horizontalDividerThickness: 1.0,
-                                  addVerticalDivider: false,
-                                );
-                              },
-                            ),
+                                  DataColumn2(
+                                    label: DefaultTextStyle.merge(
+                                      softWrap: true,
+                                      child: Text(
+                                        'Zone name',
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelLarge
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelLargeFamily,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn2(
+                                    label: DefaultTextStyle.merge(
+                                      softWrap: true,
+                                      child: Text(
+                                        'Aspect',
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelLarge
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelLargeFamily,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn2(
+                                    label: DefaultTextStyle.merge(
+                                      softWrap: true,
+                                      child: Text(
+                                        'Exposure to wind',
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelLarge
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelLargeFamily,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn2(
+                                    label: DefaultTextStyle.merge(
+                                      softWrap: true,
+                                      child: Text(
+                                        'Shade',
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelLarge
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelLargeFamily,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                dataRowBuilder: (zonesItem, zonesIndex,
+                                        selected, onSelectChanged) =>
+                                    DataRow(
+                                  color: WidgetStateProperty.all(
+                                    zonesIndex % 2 == 0
+                                        ? FlutterFlowTheme.of(context)
+                                            .secondaryBackground
+                                        : FlutterFlowTheme.of(context)
+                                            .primaryBackground,
+                                  ),
+                                  cells: [
+                                    Text(
+                                      'Edit Column 1',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    Text(
+                                      'Edit Column 2',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    Text(
+                                      'Edit Column 3',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    Text(
+                                      'Edit Column 4',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    Text(
+                                      'Edit Column 5',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ].map((c) => DataCell(c)).toList(),
+                                ),
+                                paginated: true,
+                                selectable: false,
+                                hidePaginator: false,
+                                showFirstLastButtons: false,
+                                headingRowHeight: 56.0,
+                                dataRowHeight: 48.0,
+                                columnSpacing: 20.0,
+                                headingRowColor:
+                                    FlutterFlowTheme.of(context).secondary,
+                                borderRadius: BorderRadius.circular(8.0),
+                                addHorizontalDivider: true,
+                                addTopAndBottomDivider: false,
+                                hideDefaultHorizontalDivider: true,
+                                horizontalDividerColor:
+                                    FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                horizontalDividerThickness: 1.0,
+                                addVerticalDivider: false,
+                              );
+                            },
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

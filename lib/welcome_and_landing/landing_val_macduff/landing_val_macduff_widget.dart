@@ -271,7 +271,7 @@ class _LandingValMacduffWidgetState extends State<LandingValMacduffWidget>
                                           child: FFButtonWidget(
                                             onPressed: () async {
                                               context.pushNamed(
-                                                  VUsersWidget.routeName);
+                                                  ViewUsersWidget.routeName);
                                             },
                                             text: 'View Table Listings',
                                             options: FFButtonOptions(
@@ -334,7 +334,7 @@ class _LandingValMacduffWidgetState extends State<LandingValMacduffWidget>
                                           child: FFButtonWidget(
                                             onPressed: () async {
                                               context.pushNamed(
-                                                  MConservationStatusWidget
+                                                  ManageConservationStatusWidget
                                                       .routeName);
                                             },
                                             text: 'Manage Lookup tables',
