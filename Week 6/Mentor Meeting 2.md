@@ -68,5 +68,5 @@
  - Maureen -> Team: Update subsequent Mentor Meeting to be on the 24th of Sep (Wednesday) 3-4PM (5-6 AEST)
 <br>
 
-## Meeting Closed:
-## Next Scheduled Meeting:
+## Meeting Closed: 1600
+## Next Scheduled Meeting: 24/09/25 3-4PM (5-6 AEST)
