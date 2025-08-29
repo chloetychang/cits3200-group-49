@@ -38,4 +38,5 @@
 <br>
 
 ## Meeting Closed:
+
 ## Next Scheduled Meeting:

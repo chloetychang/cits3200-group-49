@@ -82,4 +82,5 @@
 <br>
 
 ## Meeting Closed: 1700
+
 ## Next Scheduled Meeting: TBC

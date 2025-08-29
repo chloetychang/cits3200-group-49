@@ -39,4 +39,5 @@
 <br>
 
 ## Meeting Closed: 8:15PM
+
 ## Next Scheduled Meeting: Wednesday 3-4PM 27/08/25 Mentor Meeting 2
