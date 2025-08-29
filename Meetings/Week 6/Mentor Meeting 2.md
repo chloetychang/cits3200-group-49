@@ -9,7 +9,6 @@
 - Meeting Start: 1500
 
 ## Item 1 - Discussion on Sprint 1 Deliverables outcome with mentor
-> **<Description>**
 
 ### Discussion
  - Maureen: Discussion on Sprint 1 deliverables if they were presented to the client face to face.
@@ -27,7 +26,6 @@
 <br>
 
 ## Item 2 - Discussion on Sprint 2 Project Deliverables (Admin/Roles and Responsibilities) with mentor
-> **<Description>**
 
 ### Discussion
  - Maureen: Query on if regular meetings are scheduled with Client (Kevin)
@@ -45,7 +43,6 @@
 <br>
 
 ## Item 3 - Discussion on Sprint 2 Project Deliverables (Database Migration) with mentor
-> **<Description>**
 
 ### Discussion
  - Maureen: Clarification on Database end state after project finishes.
@@ -57,7 +54,6 @@
 <br>
 
 ## Item 4 - Further Questions to Mentor
-> **<Description>**
 
 ### Discussion
  - Chloe: What's a professional meeting setting like in the real world corporate environment? 
@@ -68,5 +64,5 @@
  - Maureen -> Team: Update subsequent Mentor Meeting to be on the 24th of Sep (Wednesday) 3-4PM (5-6 AEST)
 <br>
 
-## Meeting Closed:
-## Next Scheduled Meeting:
+## Meeting Closed: 4:00PM
+## Next Scheduled Meeting: Auditor meeting 4:00PM Same day
