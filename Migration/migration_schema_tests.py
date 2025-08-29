@@ -1,6 +1,13 @@
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.dialects import postgresql
 
+# Connect to your database
+# username: postgres username
+# password: postgres password
+# database: database name
+# localhost:5432: PostgreSQL server address
+engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
+
 # Define your expected schema
 expected_schema = {
     "aspect": {
@@ -162,12 +169,6 @@ expected_schema = {
     },
 }
 
-# Connect to your database
-# username: postgres username
-# password: postgres password
-# database: database name
-# localhost:5432: PostgreSQL server address
-engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
 inspector = inspect(engine)
 
 # Dictionary to count each type of mismatch
