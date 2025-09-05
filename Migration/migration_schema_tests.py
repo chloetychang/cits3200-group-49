@@ -190,7 +190,7 @@ expected_tables = set(expected_schema.keys())
 
 # --- View tests ---
 expected_views = {
-    "plantings_view": ["supplier_id", "supplier_name", "short_name", "web_site", "is_a_research_breeder"],
+    "plantings_view": ["planted_by", "zone_number", "aspect", "taxon", "genus_and_species", "number_planted", "removal_date", "removal_cause", "number_removed", "comments", "date_planted"],
     "taxon": ["variety_id", "taxon", "genus", "species", "variety", "genus_and_species"],
 }
 actual_views = set(inspector.get_view_names())
