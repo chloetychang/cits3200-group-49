@@ -61,8 +61,6 @@ Note: To test column types and constraints, may be only necessary to check one o
         - number_removed: integer
         - removal_cause_id: integer
         - comments: long_text
-    - Plantings_view
-        - 
     - Progeny
         - progeny_id: integer Unique
         - genetic_source_id: integer Primary
@@ -109,8 +107,6 @@ Note: To test column types and constraints, may be only necessary to check one o
         - short_name: string Required, Unique
         - web_site: string
         - is_a_research_breeder: boolean Required
-    - Taxon
-        - 
     - User
         - user_id: integer Primary
         - title: string
@@ -142,6 +138,20 @@ Note: To test column types and constraints, may be only necessary to check one o
         - aspect_id: integer
         - exposure_to_wind: string
         - shade: string
+* Views
+    - plantings_view
+        - supplier_id
+        - supplier_name
+        - short_name
+        - web_site
+        - is_a_research_breeder
+    - taxon
+        - variety_id
+        - taxon
+        - genus
+        - species
+        - variety
+        - genus_and_species
 * Data migrated tests
     - First 5 rows match
     - Number of rows match

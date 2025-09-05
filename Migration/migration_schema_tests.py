@@ -8,7 +8,7 @@ from sqlalchemy.dialects import postgresql
 # localhost:5432: PostgreSQL server address
 engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
 
-# Define your expected schema
+# Expected schema
 expected_schema = {
     "aspect": {
         "aspect_id": {"type": "INTEGER", "primary_key": True},
@@ -181,10 +181,19 @@ mismatch_counts = {
     'nullable_mismatches': 0,
     'unique_mismatches': 0,
     'primary_key_mismatches': 0,
+    'missing_views': 0,
+    'view_column_mismatches': 0,
 }
 
 actual_tables = set(inspector.get_table_names())
 expected_tables = set(expected_schema.keys())
+
+# --- View tests ---
+expected_views = {
+    "plantings_view": ["supplier_id", "supplier_name", "short_name", "web_site", "is_a_research_breeder"],
+    "taxon": ["variety_id", "taxon", "genus", "species", "variety", "genus_and_species"],
+}
+actual_views = set(inspector.get_view_names())
 
 # Check for missing and extra tables
 for table in expected_tables:
@@ -239,6 +248,25 @@ for table in expected_tables & actual_tables:
         if props.get("unique") and col_name in actual_columns and col_name not in unique_cols:
             print(f"    Unique constraint missing for {col_name}")
             mismatch_counts['unique_mismatches'] += 1
+
+# Check views
+for view_name, expected_columns in expected_views.items():
+    if view_name not in actual_views:
+        print(f"View missing: {view_name}")
+        mismatch_counts['missing_views'] += 1
+    else:
+        columns = inspector.get_columns(view_name)
+        actual_col_names = [col["name"] for col in columns]
+        # Check for missing columns
+        for col in expected_columns:
+            if col not in actual_col_names:
+                print(f"    Column missing in view {view_name}: {col}")
+                mismatch_counts['view_column_mismatches'] += 1
+        # Check for extra columns
+        for col in actual_col_names:
+            if col not in expected_columns:
+                print(f"    Extra column in view {view_name}: {col}")
+                mismatch_counts['view_column_mismatches'] += 1
 
 print("\nDatabase mismatch summary:")
 for k, v in mismatch_counts.items():
