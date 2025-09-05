@@ -65,14 +65,66 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          flex: 6,
+                          flex: 7,
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              context
+                                  .pushNamed(LandingASuperuserWidget.routeName);
+                            },
+                            text: 'Menu',
+                            options: FFButtonOptions(
+                              width: 100.0,
+                              height: 50.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: Color(0xF0B2DDB2),
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: FlutterFlowTheme.of(context)
+                                        .titleSmallFamily,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: () {
+                                      if (MediaQuery.sizeOf(context).width <
+                                          kBreakpointSmall) {
+                                        return 12.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointMedium) {
+                                        return 16.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointLarge) {
+                                        return 16.0;
+                                      } else {
+                                        return 16.0;
+                                      }
+                                    }(),
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts:
+                                        !FlutterFlowTheme.of(context)
+                                            .titleSmallIsCustom,
+                                  ),
+                              elevation: 0.0,
+                              borderSide: BorderSide(
+                                color: Colors.black,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(ViewUsersWidget.routeName);
                             },
                             text: 'Users',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -116,7 +168,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -132,7 +184,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Species',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -175,14 +227,14 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () {
                               print('Button pressed ...');
                             },
                             text: 'Suppliers',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -225,7 +277,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -241,7 +293,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Genetic source',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -285,7 +337,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -301,7 +353,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Plantings',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -344,7 +396,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -360,7 +412,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Progeny',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -403,7 +455,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -419,7 +471,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Provenances',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -462,7 +514,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -478,7 +530,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Zone',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -521,7 +573,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -537,7 +589,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                             },
                             text: 'Sub-Zones',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -581,7 +633,7 @@ class _ViewSuppliersWidgetState extends State<ViewSuppliersWidget> {
                         ),
                       ]
                           .addToStart(SizedBox(width: 16.0))
-                          .addToEnd(SizedBox(width: 17.0)),
+                          .addToEnd(SizedBox(width: 16.0)),
                     ),
                   ),
                   Expanded(

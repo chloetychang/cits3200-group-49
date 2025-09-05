@@ -78,48 +78,39 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FFButtonWidget(
-                            onPressed: () async {
-                              context
-                                  .pushNamed(LandingASuperuserWidget.routeName);
-                            },
-                            text: 'Menu',
-                            options: FFButtonOptions(
-                              width: 100.0,
-                              height: 50.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  16.0, 0.0, 16.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                  0.0, 0.0, 0.0, 0.0),
-                              color: Color(0xF0B2DDB2),
-                              textStyle: FlutterFlowTheme.of(context)
-                                  .titleSmall
-                                  .override(
-                                    fontFamily: FlutterFlowTheme.of(context)
-                                        .titleSmallFamily,
-                                    color: FlutterFlowTheme.of(context)
-                                        .primaryText,
-                                    letterSpacing: 0.0,
-                                    useGoogleFonts:
-                                        !FlutterFlowTheme.of(context)
-                                            .titleSmallIsCustom,
-                                  ),
-                              elevation: 0.0,
-                              borderSide: BorderSide(
-                                color: Colors.black,
+                      FFButtonWidget(
+                        onPressed: () async {
+                          context.pushNamed(LandingASuperuserWidget.routeName);
+                        },
+                        text: 'Menu',
+                        options: FFButtonOptions(
+                          width: 100.0,
+                          height: 50.0,
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              16.0, 0.0, 16.0, 0.0),
+                          iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              0.0, 0.0, 0.0, 0.0),
+                          color: Color(0xF0B2DDB2),
+                          textStyle: FlutterFlowTheme.of(context)
+                              .titleSmall
+                              .override(
+                                fontFamily: FlutterFlowTheme.of(context)
+                                    .titleSmallFamily,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                letterSpacing: 0.0,
+                                useGoogleFonts: !FlutterFlowTheme.of(context)
+                                    .titleSmallIsCustom,
                               ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                          elevation: 0.0,
+                          borderSide: BorderSide(
+                            color: Colors.black,
                           ),
-                        ],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
                       Padding(
                         padding:
-                            EdgeInsetsDirectional.fromSTEB(16.0, 8.0, 0.0, 8.0),
+                            EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 8.0),
                         child: FFButtonWidget(
                           onPressed: () async {
                             context
@@ -225,8 +216,9 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                         ),
                       ),
                     ]
+                        .divide(SizedBox(width: 16.0))
                         .addToStart(SizedBox(width: 16.0))
-                        .addToEnd(SizedBox(width: 19.0)),
+                        .addToEnd(SizedBox(width: 20.0)),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -921,98 +913,6 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                       .addToStart(SizedBox(width: 16.0))
                                       .addToEnd(SizedBox(width: 16.0)),
                                 ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
-                                      'Species + variety:',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
-                                            color: Color(0xFFFF0000),
-                                            fontSize: () {
-                                              if (MediaQuery.sizeOf(context)
-                                                      .width <
-                                                  kBreakpointSmall) {
-                                                return 16.0;
-                                              } else if (MediaQuery.sizeOf(
-                                                          context)
-                                                      .width <
-                                                  kBreakpointMedium) {
-                                                return 24.0;
-                                              } else if (MediaQuery.sizeOf(
-                                                          context)
-                                                      .width <
-                                                  kBreakpointLarge) {
-                                                return 24.0;
-                                              } else {
-                                                return 24.0;
-                                              }
-                                            }(),
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.bold,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
-                                          ),
-                                    ),
-                                    Flexible(
-                                      flex: 6,
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController2 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue2 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
-                                        ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
-                                      ),
-                                    ),
-                                  ]
-                                      .divide(SizedBox(width: 16.0))
-                                      .addToStart(SizedBox(width: 16.0))
-                                      .addToEnd(SizedBox(width: 16.0)),
-                                ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Row(
@@ -1060,7 +960,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                         flex: 6,
                                         child: FlutterFlowDropDown<String>(
                                           controller: _model
-                                                  .dropDownValueController3 ??=
+                                                  .dropDownValueController2 ??=
                                               FormFieldController<String>(null),
                                           options: [
                                             'Option 1',
@@ -1068,7 +968,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                             'Option 3'
                                           ],
                                           onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue3 = val),
+                                              _model.dropDownValue2 = val),
                                           width: 400.0,
                                           height: 50.0,
                                           textStyle: FlutterFlowTheme.of(
@@ -1673,7 +1573,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                       flex: 6,
                                       child: FlutterFlowDropDown<String>(
                                         controller: _model
-                                                .dropDownValueController4 ??=
+                                                .dropDownValueController3 ??=
                                             FormFieldController<String>(null),
                                         options: [
                                           'Option 1',
@@ -1681,7 +1581,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                           'Option 3'
                                         ],
                                         onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue4 = val),
+                                            () => _model.dropDownValue3 = val),
                                         width: 400.0,
                                         height: 50.0,
                                         textStyle: FlutterFlowTheme.of(context)
@@ -1847,7 +1747,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                     Expanded(
                                       child: FlutterFlowDropDown<String>(
                                         controller: _model
-                                                .dropDownValueController5 ??=
+                                                .dropDownValueController4 ??=
                                             FormFieldController<String>(null),
                                         options: [
                                           'Option 1',
@@ -1855,7 +1755,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                           'Option 3'
                                         ],
                                         onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue5 = val),
+                                            () => _model.dropDownValue4 = val),
                                         width: 400.0,
                                         height: 50.0,
                                         textStyle: FlutterFlowTheme.of(context)
@@ -1949,7 +1849,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                     ),
                                     FlutterFlowDropDown<String>(
                                       controller:
-                                          _model.dropDownValueController6 ??=
+                                          _model.dropDownValueController5 ??=
                                               FormFieldController<String>(null),
                                       options: [
                                         'Option 1',
@@ -1957,7 +1857,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                         'Option 3'
                                       ],
                                       onChanged: (val) => safeSetState(
-                                          () => _model.dropDownValue6 = val),
+                                          () => _model.dropDownValue5 = val),
                                       width: 150.0,
                                       height: 50.0,
                                       textStyle: FlutterFlowTheme.of(context)

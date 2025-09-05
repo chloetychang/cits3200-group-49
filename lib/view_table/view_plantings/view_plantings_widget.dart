@@ -65,14 +65,50 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          flex: 6,
+                          flex: 7,
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              context
+                                  .pushNamed(LandingASuperuserWidget.routeName);
+                            },
+                            text: 'Menu',
+                            options: FFButtonOptions(
+                              width: 100.0,
+                              height: 50.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: Color(0xF0B2DDB2),
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: FlutterFlowTheme.of(context)
+                                        .titleSmallFamily,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts:
+                                        !FlutterFlowTheme.of(context)
+                                            .titleSmallIsCustom,
+                                  ),
+                              elevation: 0.0,
+                              borderSide: BorderSide(
+                                color: Colors.black,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(ViewUsersWidget.routeName);
                             },
                             text: 'Users',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -116,7 +152,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -132,7 +168,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Species',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -175,7 +211,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -191,7 +227,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Suppliers',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -234,7 +270,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -250,7 +286,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Genetic source',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -294,14 +330,14 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () {
                               print('Button pressed ...');
                             },
                             text: 'Plantings',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -344,7 +380,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -360,7 +396,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Progeny',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -403,7 +439,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -419,7 +455,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Provenances',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -462,7 +498,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -478,7 +514,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Zone',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -521,7 +557,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -537,7 +573,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                             },
                             text: 'Sub-Zones',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -581,7 +617,7 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                         ),
                       ]
                           .addToStart(SizedBox(width: 16.0))
-                          .addToEnd(SizedBox(width: 17.0)),
+                          .addToEnd(SizedBox(width: 16.0)),
                     ),
                   ),
                   Expanded(

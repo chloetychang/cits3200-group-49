@@ -65,7 +65,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          flex: 10,
+                          flex: 7,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context
@@ -108,7 +108,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Users',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -167,7 +167,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Species',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -226,7 +226,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Suppliers',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -285,7 +285,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Genetic source',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -345,7 +345,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Plantings',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -404,7 +404,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Progeny',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -463,7 +463,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Provenances',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -522,7 +522,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Zone',
                             options: FFButtonOptions(
-                              width: 160.0,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -581,7 +581,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             },
                             text: 'Sub-Zones',
                             options: FFButtonOptions(
-                              width: 140.02,
+                              width: 150.0,
                               height: 50.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
@@ -623,7 +623,9 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                             ),
                           ),
                         ),
-                      ],
+                      ]
+                          .addToStart(SizedBox(width: 16.0))
+                          .addToEnd(SizedBox(width: 16.0)),
                     ),
                   ),
                   Flexible(

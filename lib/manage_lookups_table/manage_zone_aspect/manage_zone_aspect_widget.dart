@@ -65,7 +65,59 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          flex: 6,
+                          flex: 7,
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              context
+                                  .pushNamed(LandingASuperuserWidget.routeName);
+                            },
+                            text: 'Menu',
+                            options: FFButtonOptions(
+                              width: 100.0,
+                              height: 50.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  16.0, 0.0, 16.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: Color(0xF0B2DDB2),
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: FlutterFlowTheme.of(context)
+                                        .titleSmallFamily,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: () {
+                                      if (MediaQuery.sizeOf(context).width <
+                                          kBreakpointSmall) {
+                                        return 12.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointMedium) {
+                                        return 14.0;
+                                      } else if (MediaQuery.sizeOf(context)
+                                              .width <
+                                          kBreakpointLarge) {
+                                        return 14.0;
+                                      } else {
+                                        return 16.0;
+                                      }
+                                    }(),
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts:
+                                        !FlutterFlowTheme.of(context)
+                                            .titleSmallIsCustom,
+                                  ),
+                              elevation: 0.0,
+                              borderSide: BorderSide(
+                                color: Colors.black,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -124,7 +176,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -176,7 +228,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -235,7 +287,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -294,7 +346,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -353,7 +405,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -412,7 +464,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -471,7 +523,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () async {
                               context.pushNamed(
@@ -530,7 +582,7 @@ class _ManageZoneAspectWidgetState extends State<ManageZoneAspectWidget> {
                           ),
                         ),
                         Flexible(
-                          flex: 6,
+                          flex: 10,
                           child: FFButtonWidget(
                             onPressed: () {
                               print('Button pressed ...');
