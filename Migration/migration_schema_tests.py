@@ -251,6 +251,7 @@ for table in expected_tables & actual_tables:
 
 # Check views
 for view_name, expected_columns in expected_views.items():
+    print(f"\nChecking view: {view_name}")
     if view_name not in actual_views:
         print(f"View missing: {view_name}")
         mismatch_counts['missing_views'] += 1

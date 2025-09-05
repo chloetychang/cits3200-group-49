@@ -4,6 +4,7 @@ import pyodbc
 import psycopg2
 import psycopg2.extras
 import win32com.client
+import re
 
 # Database connection strings
 db_address = r'C:\path\to\your\database.accdb'  # Update with your Access DB path
@@ -45,6 +46,32 @@ ADOX_TYPE_TO_PG = {
 def get_access_tables(cursor):
 	# Get user tables only
 	return [row.table_name for row in cursor.tables(tableType='TABLE')]
+
+def drop_all_tables_and_views(pg_conn):
+    with pg_conn.cursor() as cur:
+        # Drop all tables
+        cur.execute("""
+            DO $$
+            DECLARE
+                r RECORD;
+            BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+            END $$;
+        """)
+        # Drop all views
+        cur.execute("""
+            DO $$
+            DECLARE
+                v RECORD;
+            BEGIN
+                FOR v IN (SELECT viewname FROM pg_views WHERE schemaname = 'public') LOOP
+                    EXECUTE 'DROP VIEW IF EXISTS public.' || quote_ident(v.viewname) || ' CASCADE';
+                END LOOP;
+            END $$;
+        """)
+    pg_conn.commit()
 
 # Get schema details from Access using win32
 def get_table_schema_win32(table, access_db):
@@ -122,41 +149,62 @@ def copy_table_data(access_cur, pg_cur, table, columns):
 	insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
 	psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
-def drop_all_tables(pg_conn):
-    with pg_conn.cursor() as cur:
-        cur.execute("""
-            DO $$
-            DECLARE
-                r RECORD;
-            BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
-                END LOOP;
-            END $$;
-        """)
-    pg_conn.commit()
+# Function to create views in PostgreSQL
+def create_views(pg_cur):
+    print('Creating views...')
+    pg_keywords = {'user', 'table', 'group', 'limit', 'primary', 'key', 'column', 'constraint', 'references', 'unique', 'index', 'view', 'sequence', 'trigger', 'procedure', 'function', 'database', 'schema', 'transaction', 'real', 'double', 'precision', 'numeric', 'decimal', 'money', 'char', 'varchar', 'text', 'bytea', 'timestamp', 'date', 'time', 'interval', 'boolean', 'enum', 'json', 'jsonb', 'xml', 'uuid', 'inet', 'cidr', 'macaddr', 'tsvector', 'tsquery', 'box', 'circle', 'line', 'lseg', 'path', 'point', 'polygon', 'bit', 'varbit', 'serial', 'bigserial', 'identity', 'pg_catalog', 'information_schema'}
+    cat = win32com.client.Dispatch('ADOX.Catalog')
+    cat.ActiveConnection = f'Provider=Microsoft.ACE.OLEDB.12.0;Data Source={db_address};'
+    views = [(view.Name, view.Command.CommandText) for view in cat.Views]
+    views.sort(key=lambda v: 0 if v[0].lower() == 'taxon' else 1)
+    for view_name, sql in views:
+        sql_pg = sql.replace('[', '"').replace(']', '"')
+        # Replace & with || for string concatenation
+        sql_pg = re.sub(r'\s*&\s*', ' || ', sql_pg)
+        # Replace double-quoted string literals with single-quoted ones
+        sql_pg = re.sub(r'"([^"]+)"', lambda m: f"'{m.group(1)}'" if m.group(1).strip() == '' or not m.group(1).isidentifier() else f'"{m.group(1)}"', sql_pg)
+        # Quote reserved words in table/column patterns (e.g., user.col)
+        def quote_table(match):
+            table = match.group(1)
+            col = match.group(2)
+            if table.lower() in pg_keywords and not (table.startswith('"') and table.endswith('"')):
+                return f'"{table}".{col}'
+            return match.group(0)
+        sql_pg = re.sub(r'\b([A-Za-z_][A-Za-z0-9_]*)\b\.([A-Za-z_][A-ZaZ0-9_]*)', quote_table, sql_pg)
+        # Quote reserved keywords if not already quoted (standalone)
+        def quote_reserved(match):
+            word = match.group(0)
+            if word.lower() in pg_keywords and not (word.startswith('"') and word.endswith('"')):
+                return f'"{word}"'
+            return word
+        sql_pg = re.sub(r'(?<!")\b([A-Za-z_][A-ZaZ0-9_]*)\b(?!")', quote_reserved, sql_pg)
+        pg_cur.execute(f'CREATE OR REPLACE VIEW "{view_name}" AS {sql_pg}')
+    pg_cur.connection.commit()
 
 # Main migration function
 def migrate():
-	access_conn = pyodbc.connect(ACCESS_CONN_STR)
-	access_cur = access_conn.cursor()
-	pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
-	pg_cur = pg_conn.cursor()
-	drop_all_tables(pg_conn)
+    access_conn = pyodbc.connect(ACCESS_CONN_STR)
+    access_cur = access_conn.cursor()
+    pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
+    pg_cur = pg_conn.cursor()
+    drop_all_tables_and_views(pg_conn)
 
-	tables = get_access_tables(access_cur)
-	for table in tables:
-		print(f'Migrating table: {table}')
-		columns, pk, uniques = get_table_schema_win32(table, db_address)
-		create_pg_table(pg_cur, table, columns, pk, uniques)
-		copy_table_data(access_cur, pg_cur, table, columns)
-		pg_conn.commit()
+    tables = get_access_tables(access_cur)
+    for table in tables:
+        print(f'Migrating table: {table}')
+        columns, pk, uniques = get_table_schema_win32(table, db_address)
+        create_pg_table(pg_cur, table, columns, pk, uniques)
+        copy_table_data(access_cur, pg_cur, table, columns)
+        pg_conn.commit()
 
-	access_cur.close()
-	access_conn.close()
-	pg_cur.close()
-	pg_conn.close()
-	print('Migration complete.')
+    # Migrate views after tables
+    create_views(pg_cur)
+
+    access_cur.close()
+    access_conn.close()
+    pg_cur.close()
+    pg_conn.close()
+    print('Migration complete.')
 
 if __name__ == '__main__':
 	migrate()
