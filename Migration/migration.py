@@ -61,10 +61,15 @@ def get_table_schema_win32(table, access_db):
     pk = set()
     uniques = set()
     for col in table_obj.Columns:
+        is_required = False
+        try:
+            is_required = col.Properties("Required").Value
+        except Exception:
+            pass
         columns.append({
             'name': col.Name,
             'type': col.Type,
-            'nullable': col.Attributes & 0x20 == 0x20,  # adColNullable
+            'nullable': not is_required,  # True if not required
             'column_size': getattr(col, 'DefinedSize', None)
         })
     for idx in table_obj.Keys:
