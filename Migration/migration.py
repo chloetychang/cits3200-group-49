@@ -5,10 +5,10 @@ import psycopg2
 import psycopg2.extras
 import win32com.client
 
-# Placeholders for connection strings
-db_address = "C:\Users\Tri\Desktop\Uni stuff\CITS3200\V02\Y-botanic.accdb"
+# Database connection strings
+db_address = "C:\\Users\\Tri\\Desktop\\Uni stuff\\CITS3200\\V02\\Y-botanic.accdb"
 ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + db_address + ';'
-POSTGRES_CONN_STR = "host='localhost' dbname='' user='' password=''"
+POSTGRES_CONN_STR = "host='localhost' dbname='postgres2' user='postgres' password='postgresql'"
 
 # Map Access types to PostgreSQL types
 ACCESS_TO_PG_TYPES = {
@@ -46,27 +46,7 @@ def get_access_tables(cursor):
 	# Get user tables only
 	return [row.table_name for row in cursor.tables(tableType='TABLE')]
 
-def get_table_schema(cursor, table):
-	# Get columns and constraints
-	columns = []
-	pk = set()
-	uniques = set()
-	for row in cursor.columns(table):
-		columns.append({
-			'name': row.column_name,
-			'type': row.type_name,
-			'nullable': row.nullable,
-			'column_size': row.column_size
-		})
-	# Primary keys
-	for row in cursor.primaryKeys(table):
-		pk.add(row.column_name)
-	# Unique constraints
-	for row in cursor.statistics(table, unique=True, best_row=False):
-		if row.index_name and not row.non_unique:
-			uniques.add(row.column_name)
-	return columns, pk, uniques
-
+# Get schema details from Access using win32
 def get_table_schema_win32(table, access_db):
     cat = win32com.client.Dispatch('ADOX.Catalog')
     cat.ActiveConnection = f'Provider=Microsoft.ACE.OLEDB.12.0;Data Source={access_db};'
@@ -97,6 +77,7 @@ def get_table_schema_win32(table, access_db):
                 uniques.add(c.Name)
     return columns, pk, uniques
 
+# Map Access data types to PostgreSQL data types
 def map_type(access_type, size):
     if isinstance(access_type, int):
         t = ADOX_TYPE_TO_PG.get(access_type, 'TEXT')
@@ -109,6 +90,7 @@ def map_type(access_type, size):
             return f"{pg_type}({size})"
         return pg_type
 
+# Create PostgreSQL table with constraints
 def create_pg_table(pg_cur, table, columns, pk, uniques):
 	col_defs = []
 	for col in columns:
@@ -125,6 +107,7 @@ def create_pg_table(pg_cur, table, columns, pk, uniques):
 	sql = f'CREATE TABLE IF NOT EXISTS "{table}" (\n  ' + ',\n  '.join(col_defs + constraints) + '\n);'
 	pg_cur.execute(sql)
 
+# Copy data from Access to PostgreSQL
 def copy_table_data(access_cur, pg_cur, table, columns):
 	col_names = [col['name'] for col in columns]
 	access_cur.execute(f'SELECT {", ".join([f"[{c}]" for c in col_names])} FROM [{table}]')
@@ -134,11 +117,27 @@ def copy_table_data(access_cur, pg_cur, table, columns):
 	insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
 	psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
+def drop_all_tables(pg_conn):
+    with pg_conn.cursor() as cur:
+        cur.execute("""
+            DO $$
+            DECLARE
+                r RECORD;
+            BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+            END $$;
+        """)
+    pg_conn.commit()
+
+# Main migration function
 def migrate():
 	access_conn = pyodbc.connect(ACCESS_CONN_STR)
 	access_cur = access_conn.cursor()
 	pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
 	pg_cur = pg_conn.cursor()
+	drop_all_tables(pg_conn)
 
 	tables = get_access_tables(access_cur)
 	for table in tables:
