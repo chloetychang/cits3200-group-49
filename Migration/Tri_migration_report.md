@@ -32,3 +32,5 @@ Database mismatch summary:
 - Nullable mismatches: 0
 - Unique mismatches: 0
 - Primary key mismatches: 0
+- Missing views: 0
+- View column mismatches: 0
