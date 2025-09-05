@@ -83,10 +83,11 @@ def get_table_schema_win32(table, access_db):
             table_obj = t
             break
     if not table_obj:
-        return [], set(), set()
+        return [], set(), set(), []
     columns = []
     pk = set()
     uniques = set()
+    foreign_keys = []
     for col in table_obj.Columns:
         is_nullable = False
         try:
@@ -100,14 +101,42 @@ def get_table_schema_win32(table, access_db):
             'column_size': getattr(col, 'DefinedSize', None)
         })
     for idx in table_obj.Keys:
+        print(idx.Name, idx.Type)
         if idx.Type == 1:  # adKeyPrimary
             for c in idx.Columns:
                 pk.add(c.Name)
+        elif idx.Type == 2:  # adKeyForeign
+            ref_table = idx.RelatedTable
+            for c in idx.Columns:
+                fk_col = c.Name
+                try:
+                    ref_col = c.RelatedColumn
+                except Exception:
+                    ref_col = None
+                # If RelatedColumn is not available, use common naming convention
+                if not ref_col:
+                    # Prefer <name>_id in referenced table, else <name>
+                    base_name = fk_col[:-3] if fk_col.endswith('_id') else fk_col
+                    candidate_id = base_name + '_id'
+                    # Check if referenced table has <name>_id column
+                    ref_col_names = [col.Name for col in cat.Tables[ref_table].Columns]
+                    if candidate_id in ref_col_names:
+                        ref_col = candidate_id
+                    elif base_name in ref_col_names:
+                        ref_col = base_name
+                    else:
+                        ref_col = fk_col
+                if ref_table and ref_table != table and ref_col:
+                    foreign_keys.append({
+                        'column': fk_col,
+                        'ref_table': ref_table,
+                        'ref_column': ref_col
+                    })
     for idx in table_obj.Indexes:
         if idx.Unique:
             for c in idx.Columns:
                 uniques.add(c.Name)
-    return columns, pk, uniques
+    return columns, pk, uniques, foreign_keys
 
 # Map Access data types to PostgreSQL data types
 def map_type(access_type, size):
@@ -123,21 +152,21 @@ def map_type(access_type, size):
         return pg_type
 
 # Create PostgreSQL table with constraints
-def create_pg_table(pg_cur, table, columns, pk, uniques):
-	col_defs = []
-	for col in columns:
-		col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
-		if not col['nullable']:
-			col_def += ' NOT NULL'
-		col_defs.append(col_def)
-	constraints = []
-	if pk:
-		constraints.append(f'PRIMARY KEY ({", ".join([f"\"{c}\"" for c in pk])})')
-	for uq in uniques:
-		if uq not in pk:
-			constraints.append(f'UNIQUE ("{uq}")')
-	sql = f'CREATE TABLE IF NOT EXISTS "{table}" (\n  ' + ',\n  '.join(col_defs + constraints) + '\n);'
-	pg_cur.execute(sql)
+def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
+    col_defs = []
+    for col in columns:
+        col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
+        if not col['nullable']:
+            col_def += ' NOT NULL'
+        col_defs.append(col_def)
+    constraints = []
+    if pk:
+        constraints.append(f'PRIMARY KEY ({", ".join([f"\"{c}\"" for c in pk])})')
+    for uq in uniques:
+        if uq not in pk:
+            constraints.append(f'UNIQUE ("{uq}")')
+    sql = f'CREATE TABLE IF NOT EXISTS "{table}" (\n  ' + ',\n  '.join(col_defs + constraints) + '\n);'
+    pg_cur.execute(sql)
 
 # Copy data from Access to PostgreSQL
 def copy_table_data(access_cur, pg_cur, table, columns):
@@ -181,6 +210,38 @@ def create_views(pg_cur):
         pg_cur.execute(f'CREATE OR REPLACE VIEW "{view_name}" AS {sql_pg}')
     pg_cur.connection.commit()
 
+def add_foreign_keys(pg_cur, table, foreign_keys):
+    # Only add foreign keys if referenced column is unique or primary key
+    ref_table_constraints = {}
+    def get_ref_constraints(ref_table):
+        if ref_table in ref_table_constraints:
+            return ref_table_constraints[ref_table]
+        pk_cols = set()
+        unique_cols = set()
+        pg_cur.execute(f"SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '{ref_table}'::regclass AND i.indisprimary;")
+        for row in pg_cur.fetchall():
+            pk_cols.add(row[0])
+        pg_cur.execute(f"SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '{ref_table}'::regclass AND i.indisunique AND NOT i.indisprimary;")
+        for row in pg_cur.fetchall():
+            unique_cols.add(row[0])
+        ref_table_constraints[ref_table] = (pk_cols, unique_cols)
+        return pk_cols, unique_cols
+    for fk in foreign_keys:
+        pk_cols, unique_cols = get_ref_constraints(fk["ref_table"])
+        if fk["ref_column"] in pk_cols or fk["ref_column"] in unique_cols:
+            alter_sql = f'ALTER TABLE "{table}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
+            try:
+                pg_cur.execute(alter_sql)
+            except Exception as e:
+                print(f"Failed to add foreign key for {table}.{fk['column']} referencing {fk['ref_table']}.{fk['ref_column']}: {e}")
+        else:
+            print(f"Skipping foreign key on {table}.{fk['column']} referencing {fk['ref_table']}.{fk['ref_column']} (not unique or primary key)")
+
+def add_all_foreign_keys(pg_cur, tables, table_schemas):
+    for table in tables:
+        columns, pk, uniques, foreign_keys = table_schemas[table]
+        add_foreign_keys(pg_cur, table, foreign_keys)
+
 # Main migration function
 def migrate():
     access_conn = pyodbc.connect(ACCESS_CONN_STR)
@@ -190,12 +251,17 @@ def migrate():
     drop_all_tables_and_views(pg_conn)
 
     tables = get_access_tables(access_cur)
+    table_schemas = {}
     for table in tables:
         print(f'Migrating table: {table}')
-        columns, pk, uniques = get_table_schema_win32(table, db_address)
-        create_pg_table(pg_cur, table, columns, pk, uniques)
+        columns, pk, uniques, foreign_keys = get_table_schema_win32(table, db_address)
+        table_schemas[table] = (columns, pk, uniques, foreign_keys)
+        create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys)
         copy_table_data(access_cur, pg_cur, table, columns)
         pg_conn.commit()
+    # Add all foreign keys after all tables are created
+    add_all_foreign_keys(pg_cur, tables, table_schemas)
+    pg_conn.commit()
 
     # Migrate views after tables
     create_views(pg_cur)
