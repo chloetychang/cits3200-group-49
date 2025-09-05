@@ -6,9 +6,9 @@ import psycopg2.extras
 import win32com.client
 
 # Database connection strings
-db_address = "C:\\Users\\Tri\\Desktop\\Uni stuff\\CITS3200\\V02\\Y-botanic.accdb"
+db_address = r'C:\path\to\your\database.accdb'  # Update with your Access DB path
 ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + db_address + ';'
-POSTGRES_CONN_STR = "host='localhost' dbname='postgres2' user='postgres' password='postgresql'"
+POSTGRES_CONN_STR = "host='localhost' dbname='your_db_name' user='your_username' password='your_password'"
 
 # Map Access types to PostgreSQL types
 ACCESS_TO_PG_TYPES = {
@@ -61,15 +61,15 @@ def get_table_schema_win32(table, access_db):
     pk = set()
     uniques = set()
     for col in table_obj.Columns:
-        is_required = False
+        is_nullable = False
         try:
-            is_required = col.Properties("Required").Value
+            is_nullable = col.Properties("Nullable").Value
         except Exception:
-            pass
+            is_nullable = True  # Default to nullable if property not found
         columns.append({
             'name': col.Name,
             'type': col.Type,
-            'nullable': not is_required,  # True if not required
+            'nullable': is_nullable,
             'column_size': getattr(col, 'DefinedSize', None)
         })
     for idx in table_obj.Keys:

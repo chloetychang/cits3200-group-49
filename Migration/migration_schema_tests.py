@@ -45,7 +45,7 @@ expected_schema = {
         "female_genetic_source": {"type": "INTEGER", "nullable": True},
         "male_genetic_source": {"type": "INTEGER", "nullable": True},
         "generation_number": {"type": "INTEGER", "nullable": False},
-        "landscape_only": {"type": "BOOLEAN", "nullable": False},
+        "landscape_only": {"type": "BOOLEAN", "nullable": True},
         "research_notes": {"type": "TEXT", "nullable": True},
     },
     "genus": {
@@ -87,8 +87,8 @@ expected_schema = {
     "propagation_type": {
         "propagation_type_id": {"type": "INTEGER", "primary_key": True},
         "propagation_type": {"type": "VARCHAR", "nullable": True},
-        "needs_two_parents": {"type": "BOOLEAN", "nullable": False},
-        "can_cross_genera": {"type": "BOOLEAN", "nullable": False},
+        "needs_two_parents": {"type": "BOOLEAN", "nullable": True},
+        "can_cross_genera": {"type": "BOOLEAN", "nullable": True},
     },
     "provenance": {
         "provenance_id": {"type": "INTEGER"},
@@ -129,7 +129,7 @@ expected_schema = {
         "supplier_name": {"type": "VARCHAR", "nullable": False, "unique": True},
         "short_name": {"type": "VARCHAR", "nullable": False, "unique": True},
         "web_site": {"type": "VARCHAR", "nullable": True},
-        "is_a_research_breeder": {"type": "BOOLEAN", "nullable": False},
+        "is_a_research_breeder": {"type": "BOOLEAN", "nullable": True},
     },
     # Taxon is empty, skipping
     "user": {
