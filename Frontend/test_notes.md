@@ -1,16 +1,33 @@
 # Testing Results
 ## Frontend Testing Results (2025-09-09)
 **Add_pages(Harper)**
-- AddAcquisitions: Pass.
-- AddNewFamily: Minor（Slight overflow on Mobile, fix scheduled today）
-- AddPlantings: Minor（Overflow on Mobile + iPad, already fixed
-- AddProgeny: Minor（Slight overflow on Mobile, fix scheduled today）
-- AddProvenances: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddAcquisitions: Pass. 
+- AddNewFamily: Minor（Slight overflow on Mobile, fix scheduled today）(Fixed Overflow on Mobile based on Harper's and Chloe's advice to wrap elements)
+- AddPlantings: Minor（Overflow on Mobile + iPad, already fixed) 
+- AddProgeny: Minor（Slight overflow on Mobile, fix scheduled today）(Fixed Overflow on Mobile based on Harper's and Chloe's advice to wrap elements)
+- AddProvenances: Minor（Slight overflow on Mobile, fix scheduled today）(Fixed Overflow on Mobile based on Harper's and Chloe's advice to wrap elements)
 - AddSubZones: Pass. 
-- AddSuppliers: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddSuppliers: Minor（Slight overflow on Mobile, fix scheduled today）(Fixed Overflow on Mobile based on Harper's and Chloe's advice to wrap elements)
 - AddUsers: Pass.
 - AddVarieties: Pass.
 - AddZone: Pass.
+
+**Update_pages(Dennis)**
+#### Comments for overall Update Page Screen Designs
+**Minor:** Slight overflow with "Choose Record here" Dropdown list on Mobile (P) for the following devices (iPhone14 Pro, iPhone 13, iPhone SE).
+Otherwise, Mobile (P & L), Tablet (P & L), Desktop (P & L) works well. (Tested using iPhone XR, iPad Air Pro, Desktop (1920 x 1080 Resolution))
+
+- UpdateAcquisitions
+- UpdateNewFamily 
+- UpdatePlantings
+- UpdateProgeny
+- UpdateProvenances
+- UpdateSubZone
+- UpdateSuppliers
+- UpdateUsers
+- UpdateVarieties
+- UpdateZone
+
 ## Untested
 **Manage_lookups_table**
 - ManageConservationStatus
@@ -33,18 +50,6 @@
 - ViewSuppliers
 - ViewUsers
 - ViewZone
-
-**Update_pages**
-- UpdateAcquisitions
-- UpdateNewFamily
-- UpdatePlantings
-- UpdateProgeny
-- UpdateProvenances
-- UpdateSubZone
-- UpdateSuppliers
-- UpdateUsers
-- UpdateVarieties
-- UpdateZone
 
 **WelcomeAndLanding**
 - Landing_ASuperuser
