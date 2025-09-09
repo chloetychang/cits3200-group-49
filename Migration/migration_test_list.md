@@ -158,7 +158,40 @@ Note: To test column types and constraints, may be only necessary to check one o
 * Foreign key tests
     - Refer to the relationships diagram
     ![alt text](https://github.com/chloetychang/cits3200-group-49/blob/main/Images/Yanchep_V2_ERD.jpg?raw=true)
-
+    - planting table
+        - zone_id to zone.zone_id
+        - container_type_id to container.container_type_id
+        - removal_cause_id to removal_cause.removal_cause_id
+        - planted_by to user.user_id
+        - variety_id to variety.variety_id
+        - genetic_source_id to genetic_source.genetic_source_id
+    - zone table
+        - aspect_id to aspect.aspect_id
+    - sub_zone table
+        - zone_id to zone.zone_id
+    - user_rule_link table
+        - user_id to user.user_id
+        - role_id to role.role_id
+    - variety table
+        - species_id to species.species_id
+    - species table
+        - genus_id to genus.genus_id
+        - conservation_status_id to conservation_status.conservation_status_id
+    - species_utility_link table
+        - species_id to species.species_id
+        - plant_utility_id to plant_utility.plant_utility_id
+    - genus table
+        - family_id to family.family_id
+    - progeny table
+        - genetic_source_id to genetic_source.genetic_source_id
+    - genetic_source table
+        - supplier_id to supplier.supplier_id
+        - variety_id to variety.variety_id
+        - provenance_id to provenance.provenance_id
+        - propogation_type to propogation_type.propogation_type_id
+    - provenance table
+        - bioregion_code to bioregion.bioregion_code
+        - location_type_id to location_type.location_type_id
 
 ## Migrating to existing postgres tests (sprint 3)
 * Additional data test
