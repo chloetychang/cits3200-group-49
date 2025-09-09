@@ -233,6 +233,7 @@ def test_table_columns_and_constraints(table, inspector):
         if props.get("unique") and col_name in actual_columns:
             assert col_name in unique_cols, f"Unique constraint missing for {col_name} in {table}"
 
+
 # --- View tests ---
 @pytest.mark.parametrize("view_name,expected_columns", list(expected_views.items()))
 def test_views(view_name, expected_columns, inspector):
@@ -244,6 +245,75 @@ def test_views(view_name, expected_columns, inspector):
         assert col in actual_col_names, f"Column missing in view {view_name}: {col}"
     for col in actual_col_names:
         assert col in expected_columns, f"Extra column in view {view_name}: {col}"
+
+# --- Foreign key tests ---
+expected_foreign_keys = {
+    "planting": [
+        ("zone_id", "zone", "zone_id"),
+        ("container_type_id", "container", "container_type_id"),
+        ("removal_cause_id", "removal_cause", "removal_cause_id"),
+        ("planted_by", "user", "user_id"),
+        ("variety_id", "variety", "variety_id"),
+        ("genetic_source_id", "genetic_source", "genetic_source_id"),
+    ],
+    "zone": [
+        ("aspect_id", "aspect", "aspect_id"),
+    ],
+    "sub_zone": [
+        ("zone_id", "zone", "zone_id"),
+    ],
+    "user_role_link": [
+        ("user_id", "user", "user_id"),
+        ("role_id", "role", "role_id"),
+    ],
+    "variety": [
+        ("species_id", "species", "species_id"),
+    ],
+    "species": [
+        ("genus_id", "genus", "genus_id"),
+        ("conservation_status_id", "conservation_status", "conservation_status_id"),
+    ],
+    "species_utility_link": [
+        ("species_id", "species", "species_id"),
+        ("plant_utility_id", "plant_utility", "plant_utility_id"),
+    ],
+    "genus": [
+        ("family_id", "family", "family_id"),
+    ],
+    "progeny": [
+        ("genetic_source_id", "genetic_source", "genetic_source_id"),
+    ],
+    "genetic_source": [
+        ("supplier_id", "supplier", "supplier_id"),
+        ("variety_id", "variety", "variety_id"),
+        ("provenance_id", "provenance", "provenance_id"),
+        ("propogation_type", "propogation_type", "propogation_type_id"),
+    ],
+    "provenance": [
+        ("bioregion_code", "bioregion", "bioregion_code"),
+        ("location_type_id", "location_type", "location_type_id"),
+    ],
+}
+
+@pytest.mark.parametrize("table,expected_fks", list(expected_foreign_keys.items()))
+def test_foreign_keys_present(table, expected_fks, inspector):
+    if table not in inspector.get_table_names():
+        pytest.skip(f"Table {table} missing")
+    fks = inspector.get_foreign_keys(table)
+    actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
+    expected_fks_set = set(expected_fks)
+    for fk in expected_fks_set:
+        assert fk in actual_fks, f"Missing foreign key in {table}: {fk}"
+
+@pytest.mark.parametrize("table,expected_fks", list(expected_foreign_keys.items()))
+def test_no_extra_foreign_keys(table, expected_fks, inspector):
+    if table not in inspector.get_table_names():
+        pytest.skip(f"Table {table} missing")
+    fks = inspector.get_foreign_keys(table)
+    actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
+    expected_fks_set = set(expected_fks)
+    for fk in actual_fks:
+        assert fk in expected_fks_set, f"Extra foreign key in {table}: {fk}"
 
 # --- Row count and data tests ---
 @pytest.mark.parametrize("table", list(expected_schema.keys()))
