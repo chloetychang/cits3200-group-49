@@ -104,33 +104,6 @@ def get_table_schema_win32(table, access_db):
         if idx.Type == 1:  # adKeyPrimary
             for c in idx.Columns:
                 pk.add(c.Name)
-        elif idx.Type == 2:  # adKeyForeign
-            ref_table = idx.RelatedTable
-            for c in idx.Columns:
-                fk_col = c.Name
-                try:
-                    ref_col = c.RelatedColumn
-                except Exception:
-                    ref_col = None
-                # If RelatedColumn is not available, use common naming convention
-                if not ref_col:
-                    # Prefer <name>_id in referenced table, else <name>
-                    base_name = fk_col[:-3] if fk_col.endswith('_id') else fk_col
-                    candidate_id = base_name + '_id'
-                    # Check if referenced table has <name>_id column
-                    ref_col_names = [col.Name for col in cat.Tables[ref_table].Columns]
-                    if candidate_id in ref_col_names:
-                        ref_col = candidate_id
-                    elif base_name in ref_col_names:
-                        ref_col = base_name
-                    else:
-                        ref_col = fk_col
-                if ref_table and ref_table != table and ref_col:
-                    foreign_keys.append({
-                        'column': fk_col,
-                        'ref_table': ref_table,
-                        'ref_column': ref_col
-                    })
     for idx in table_obj.Indexes:
         if idx.Unique:
             for c in idx.Columns:
@@ -257,6 +230,7 @@ def add_foreign_keys(pg_cur, table):
             ("location_type_id", "location_type", "location_type_id"),
         ],
     }
+    print('Creating Foreign Keys...')
     if table in fk_schema:
         for col, ref_table, ref_col in fk_schema[table]:
             alter_sql = f'ALTER TABLE "{table}" ADD FOREIGN KEY ("{col}") REFERENCES "{ref_table}"("{ref_col}")'
