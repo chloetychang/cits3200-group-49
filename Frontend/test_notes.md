@@ -1,17 +1,17 @@
 # Testing Results
+## Frontend Testing Results (2025-09-09)
+**Add_pages(Harper)**
+- AddAcquisitions: Pass.
+- AddNewFamily: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddPlantings: Minor（Overflow on Mobile + iPad, already fixed
+- AddProgeny: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddProvenances: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddSubZones: Pass. 
+- AddSuppliers: Minor（Slight overflow on Mobile, fix scheduled today）
+- AddUsers: Pass.
+- AddVarieties: Pass.
+- AddZone: Pass.
 ## Untested
-**Add_pages**
-- AddAcquisitions
-- AddNewFamily
-- AddPlantings
-- AddProgeny
-- AddProvenances
-- AddSubZones
-- AddSuppliers
-- AddUsers
-- AddVarieties
-- AddZone
-
 **Manage_lookups_table**
 - ManageConservationStatus
 - ManageContainerType
