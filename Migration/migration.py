@@ -101,7 +101,6 @@ def get_table_schema_win32(table, access_db):
             'column_size': getattr(col, 'DefinedSize', None)
         })
     for idx in table_obj.Keys:
-        print(idx.Name, idx.Type)
         if idx.Type == 1:  # adKeyPrimary
             for c in idx.Columns:
                 pk.add(c.Name)
@@ -210,37 +209,61 @@ def create_views(pg_cur):
         pg_cur.execute(f'CREATE OR REPLACE VIEW "{view_name}" AS {sql_pg}')
     pg_cur.connection.commit()
 
-def add_foreign_keys(pg_cur, table, foreign_keys):
-    # Only add foreign keys if referenced column is unique or primary key
-    ref_table_constraints = {}
-    def get_ref_constraints(ref_table):
-        if ref_table in ref_table_constraints:
-            return ref_table_constraints[ref_table]
-        pk_cols = set()
-        unique_cols = set()
-        pg_cur.execute(f"SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '{ref_table}'::regclass AND i.indisprimary;")
-        for row in pg_cur.fetchall():
-            pk_cols.add(row[0])
-        pg_cur.execute(f"SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = '{ref_table}'::regclass AND i.indisunique AND NOT i.indisprimary;")
-        for row in pg_cur.fetchall():
-            unique_cols.add(row[0])
-        ref_table_constraints[ref_table] = (pk_cols, unique_cols)
-        return pk_cols, unique_cols
-    for fk in foreign_keys:
-        pk_cols, unique_cols = get_ref_constraints(fk["ref_table"])
-        if fk["ref_column"] in pk_cols or fk["ref_column"] in unique_cols:
-            alter_sql = f'ALTER TABLE "{table}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
+def add_foreign_keys(pg_cur, table):
+    fk_schema = {
+        "planting": [
+            ("zone_id", "zone", "zone_id"),
+            ("container_type_id", "container", "container_type_id"),
+            ("removal_cause_id", "removal_cause", "removal_cause_id"),
+            ("planted_by", "user", "user_id"),
+            ("variety_id", "variety", "variety_id"),
+            ("genetic_source_id", "genetic_source", "genetic_source_id"),
+        ],
+        "zone": [
+            ("aspect_id", "aspect", "aspect_id"),
+        ],
+        "sub_zone": [
+            ("zone_id", "zone", "zone_id"),
+        ],
+        "user_role_link": [
+            ("user_id", "user", "user_id"),
+            ("role_id", "role", "role_id"),
+        ],
+        "variety": [
+            ("species_id", "species", "species_id"),
+        ],
+        "species": [
+            ("genus_id", "genus", "genus_id"),
+            ("conservation_status_id", "conservation_status", "conservation_status_id"),
+        ],
+        "species_utility_link": [
+            ("species_id", "species", "species_id"),
+            ("plant_utility_id", "plant_utility", "plant_utility_id"),
+        ],
+        "genus": [
+            ("family_id", "family", "family_id"),
+        ],
+        "progeny": [
+            ("genetic_source_id", "genetic_source", "genetic_source_id"),
+        ],
+        "genetic_source": [
+            ("supplier_id", "supplier", "supplier_id"),
+            ("variety_id", "variety", "variety_id"),
+            ("provenance_id", "provenance", "provenance_id"),
+            ("propagation_type", "propagation_type", "propagation_type_id"),
+        ],
+        "provenance": [
+            ("bioregion_code", "bioregion", "bioregion_code"),
+            ("location_type_id", "location_type", "location_type_id"),
+        ],
+    }
+    if table in fk_schema:
+        for col, ref_table, ref_col in fk_schema[table]:
+            alter_sql = f'ALTER TABLE "{table}" ADD FOREIGN KEY ("{col}") REFERENCES "{ref_table}"("{ref_col}")'
             try:
                 pg_cur.execute(alter_sql)
             except Exception as e:
-                print(f"Failed to add foreign key for {table}.{fk['column']} referencing {fk['ref_table']}.{fk['ref_column']}: {e}")
-        else:
-            print(f"Skipping foreign key on {table}.{fk['column']} referencing {fk['ref_table']}.{fk['ref_column']} (not unique or primary key)")
-
-def add_all_foreign_keys(pg_cur, tables, table_schemas):
-    for table in tables:
-        columns, pk, uniques, foreign_keys = table_schemas[table]
-        add_foreign_keys(pg_cur, table, foreign_keys)
+                print(f"Failed to add foreign key for {table}.{col} referencing {ref_table}.{ref_col}: {e}")
 
 # Main migration function
 def migrate():
@@ -260,7 +283,8 @@ def migrate():
         copy_table_data(access_cur, pg_cur, table, columns)
         pg_conn.commit()
     # Add all foreign keys after all tables are created
-    add_all_foreign_keys(pg_cur, tables, table_schemas)
+    for table in tables:
+        add_foreign_keys(pg_cur, table)
     pg_conn.commit()
 
     # Migrate views after tables

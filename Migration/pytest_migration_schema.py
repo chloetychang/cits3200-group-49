@@ -4,7 +4,7 @@ import pyodbc
 
 @pytest.fixture(scope="module")
 def engine():
-    eng = create_engine("postgresql+psycopg2://postgres:postgresql@localhost:5432/postgres2")
+    eng = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
     yield eng
     eng.dispose()
 
@@ -88,7 +88,6 @@ expected_schema = {
         "removal_cause_id": {"type": "INTEGER", "nullable": True},
         "comments": {"type": "TEXT", "nullable": True},
     },
-    # Plantings_view is a view, so we skip it for now
     "progeny": {
         "progeny_id": {"type": "INTEGER", "unique": True},
         "genetic_source_id": {"type": "INTEGER", "primary_key": True},
@@ -144,7 +143,6 @@ expected_schema = {
         "web_site": {"type": "VARCHAR", "nullable": True},
         "is_a_research_breeder": {"type": "BOOLEAN", "nullable": True},
     },
-    # Taxon is empty, skipping
     "user": {
         "user_id": {"type": "INTEGER", "primary_key": True},
         "title": {"type": "VARCHAR", "nullable": True},
@@ -287,7 +285,7 @@ expected_foreign_keys = {
         ("supplier_id", "supplier", "supplier_id"),
         ("variety_id", "variety", "variety_id"),
         ("provenance_id", "provenance", "provenance_id"),
-        ("propogation_type", "propogation_type", "propogation_type_id"),
+        ("propagation_type", "propagation_type", "propagation_type_id"),
     ],
     "provenance": [
         ("bioregion_code", "bioregion", "bioregion_code"),
