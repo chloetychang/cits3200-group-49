@@ -78,7 +78,20 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                         },
                         text: 'Menu',
                         options: FFButtonOptions(
-                          width: 100.0,
+                          width: () {
+                            if (MediaQuery.sizeOf(context).width <
+                                kBreakpointSmall) {
+                              return 75.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointMedium) {
+                              return 100.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointLarge) {
+                              return 100.0;
+                            } else {
+                              return 100.0;
+                            }
+                          }(),
                           height: 50.0,
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
@@ -91,6 +104,20 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .titleSmallFamily,
                                 color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: () {
+                                  if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointSmall) {
+                                    return 12.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointMedium) {
+                                    return 16.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointLarge) {
+                                    return 16.0;
+                                  } else {
+                                    return 16.0;
+                                  }
+                                }(),
                                 letterSpacing: 0.0,
                                 useGoogleFonts: !FlutterFlowTheme.of(context)
                                     .titleSmallIsCustom,
@@ -111,7 +138,20 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                           },
                           text: 'Add',
                           options: FFButtonOptions(
-                            width: 100.0,
+                            width: () {
+                              if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointSmall) {
+                                return 75.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointMedium) {
+                                return 100.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointLarge) {
+                                return 100.0;
+                              } else {
+                                return 100.0;
+                              }
+                            }(),
                             height: 50.0,
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
@@ -125,6 +165,22 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                       .titleSmallFamily,
                                   color:
                                       FlutterFlowTheme.of(context).primaryText,
+                                  fontSize: () {
+                                    if (MediaQuery.sizeOf(context).width <
+                                        kBreakpointSmall) {
+                                      return 12.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointMedium) {
+                                      return 16.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointLarge) {
+                                      return 16.0;
+                                    } else {
+                                      return 16.0;
+                                    }
+                                  }(),
                                   letterSpacing: 0.0,
                                   useGoogleFonts: !FlutterFlowTheme.of(context)
                                       .titleSmallIsCustom,
@@ -143,7 +199,7 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                               fontSize: () {
                                 if (MediaQuery.sizeOf(context).width <
                                     kBreakpointSmall) {
-                                  return 16.0;
+                                  return 12.0;
                                 } else if (MediaQuery.sizeOf(context).width <
                                     kBreakpointMedium) {
                                   return 24.0;
@@ -160,7 +216,6 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                             ),
                       ),
                       Expanded(
-                        flex: 6,
                         child: FlutterFlowDropDown<String>(
                           controller: _model.dropDownValueController1 ??=
                               FormFieldController<String>(null),
@@ -802,19 +857,38 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                   alignment: AlignmentDirectional(0.0, 0.0),
                                   child: Container(
                                     width: 1300.0,
-                                    height: 165.0,
+                                    height: 220.0,
                                     decoration: BoxDecoration(
                                       color: Color(0xFFEBEDEF),
                                     ),
                                     child: Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                      alignment:
+                                          AlignmentDirectional(-1.0, 0.0),
                                       child: Padding(
                                         padding: EdgeInsets.all(16.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
+                                        child: Wrap(
+                                          spacing: 16.0,
+                                          runSpacing: 16.0,
+                                          alignment: WrapAlignment.start,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          direction: Axis.horizontal,
+                                          runAlignment: WrapAlignment.start,
+                                          verticalDirection:
+                                              VerticalDirection.down,
+                                          clipBehavior: Clip.none,
                                           children: [
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
+                                            Wrap(
+                                              spacing: 16.0,
+                                              runSpacing: 16.0,
+                                              alignment: WrapAlignment.start,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              direction: Axis.horizontal,
+                                              runAlignment: WrapAlignment.start,
+                                              verticalDirection:
+                                                  VerticalDirection.down,
+                                              clipBehavior: Clip.none,
                                               children: [
                                                 Text(
                                                   'Select the genus here:',
@@ -859,80 +933,78 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                Flexible(
-                                                  flex: 6,
-                                                  child: FlutterFlowDropDown<
-                                                      String>(
-                                                    controller: _model
-                                                            .dropDownValueController2 ??=
-                                                        FormFieldController<
-                                                            String>(null),
-                                                    options: [
-                                                      'Option 1',
-                                                      'Option 2',
-                                                      'Option 3'
-                                                    ],
-                                                    onChanged: (val) =>
-                                                        safeSetState(() => _model
-                                                                .dropDownValue2 =
-                                                            val),
-                                                    width: 400.0,
-                                                    height: 50.0,
-                                                    textStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .override(
-                                                              fontFamily:
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              useGoogleFonts:
-                                                                  !FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumIsCustom,
-                                                            ),
-                                                    hintText: 'Select...',
-                                                    icon: Icon(
-                                                      Icons
-                                                          .keyboard_arrow_down_rounded,
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryText,
-                                                      size: 24.0,
-                                                    ),
-                                                    fillColor: FlutterFlowTheme
-                                                            .of(context)
-                                                        .secondaryBackground,
-                                                    elevation: 2.0,
-                                                    borderColor:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .primaryText,
-                                                    borderWidth: 0.0,
-                                                    borderRadius: 8.0,
-                                                    margin:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(12.0, 0.0,
-                                                                12.0, 0.0),
-                                                    hidesUnderline: true,
-                                                    isOverButton: false,
-                                                    isSearchable: false,
-                                                    isMultiSelect: false,
+                                                FlutterFlowDropDown<String>(
+                                                  controller: _model
+                                                          .dropDownValueController2 ??=
+                                                      FormFieldController<
+                                                          String>(null),
+                                                  options: [
+                                                    'Option 1',
+                                                    'Option 2',
+                                                    'Option 3'
+                                                  ],
+                                                  onChanged: (val) =>
+                                                      safeSetState(() => _model
+                                                              .dropDownValue2 =
+                                                          val),
+                                                  width: 400.0,
+                                                  height: 50.0,
+                                                  textStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
+                                                  hintText: 'Select...',
+                                                  icon: Icon(
+                                                    Icons
+                                                        .keyboard_arrow_down_rounded,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    size: 24.0,
                                                   ),
+                                                  fillColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .secondaryBackground,
+                                                  elevation: 2.0,
+                                                  borderColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .primaryText,
+                                                  borderWidth: 0.0,
+                                                  borderRadius: 8.0,
+                                                  margin: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          12.0, 0.0, 12.0, 0.0),
+                                                  hidesUnderline: true,
+                                                  isOverButton: false,
+                                                  isSearchable: false,
+                                                  isMultiSelect: false,
                                                 ),
-                                              ]
-                                                  .divide(SizedBox(width: 16.0))
-                                                  .addToStart(
-                                                      SizedBox(width: 16.0))
-                                                  .addToEnd(
-                                                      SizedBox(width: 16.0)),
+                                              ],
                                             ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
+                                            Wrap(
+                                              spacing: 16.0,
+                                              runSpacing: 6.0,
+                                              alignment: WrapAlignment.start,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              direction: Axis.horizontal,
+                                              runAlignment: WrapAlignment.start,
+                                              verticalDirection:
+                                                  VerticalDirection.down,
+                                              clipBehavior: Clip.none,
                                               children: [
                                                 Text(
                                                   'Select the species here:',
@@ -977,79 +1049,68 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                Expanded(
-                                                  flex: 6,
-                                                  child: FlutterFlowDropDown<
-                                                      String>(
-                                                    controller: _model
-                                                            .dropDownValueController3 ??=
-                                                        FormFieldController<
-                                                            String>(null),
-                                                    options: [
-                                                      'Option 1',
-                                                      'Option 2',
-                                                      'Option 3'
-                                                    ],
-                                                    onChanged: (val) =>
-                                                        safeSetState(() => _model
-                                                                .dropDownValue3 =
-                                                            val),
-                                                    width: 400.0,
-                                                    height: 50.0,
-                                                    textStyle:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .bodyMedium
-                                                            .override(
-                                                              fontFamily:
-                                                                  FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumFamily,
-                                                              letterSpacing:
-                                                                  0.0,
-                                                              useGoogleFonts:
-                                                                  !FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMediumIsCustom,
-                                                            ),
-                                                    hintText: 'Select...',
-                                                    icon: Icon(
-                                                      Icons
-                                                          .keyboard_arrow_down_rounded,
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryText,
-                                                      size: 24.0,
-                                                    ),
-                                                    fillColor: FlutterFlowTheme
-                                                            .of(context)
-                                                        .secondaryBackground,
-                                                    elevation: 2.0,
-                                                    borderColor:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .primaryText,
-                                                    borderWidth: 0.0,
-                                                    borderRadius: 8.0,
-                                                    margin:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(12.0, 0.0,
-                                                                12.0, 0.0),
-                                                    hidesUnderline: true,
-                                                    isOverButton: false,
-                                                    isSearchable: false,
-                                                    isMultiSelect: false,
+                                                FlutterFlowDropDown<String>(
+                                                  controller: _model
+                                                          .dropDownValueController3 ??=
+                                                      FormFieldController<
+                                                          String>(null),
+                                                  options: [
+                                                    'Option 1',
+                                                    'Option 2',
+                                                    'Option 3'
+                                                  ],
+                                                  onChanged: (val) =>
+                                                      safeSetState(() => _model
+                                                              .dropDownValue3 =
+                                                          val),
+                                                  width: 400.0,
+                                                  height: 50.0,
+                                                  textStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
+                                                  hintText: 'Select...',
+                                                  icon: Icon(
+                                                    Icons
+                                                        .keyboard_arrow_down_rounded,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    size: 24.0,
                                                   ),
+                                                  fillColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .secondaryBackground,
+                                                  elevation: 2.0,
+                                                  borderColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .primaryText,
+                                                  borderWidth: 0.0,
+                                                  borderRadius: 8.0,
+                                                  margin: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          12.0, 0.0, 12.0, 0.0),
+                                                  hidesUnderline: true,
+                                                  isOverButton: false,
+                                                  isSearchable: false,
+                                                  isMultiSelect: false,
                                                 ),
-                                              ]
-                                                  .divide(SizedBox(width: 16.0))
-                                                  .addToStart(
-                                                      SizedBox(width: 16.0))
-                                                  .addToEnd(
-                                                      SizedBox(width: 6.0)),
+                                              ],
                                             ),
-                                          ].divide(SizedBox(height: 16.0)),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -1101,7 +1162,6 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                             ),
                                       ),
                                       Expanded(
-                                        flex: 6,
                                         child: FlutterFlowDropDown<String>(
                                           controller: _model
                                                   .dropDownValueController4 ??=
@@ -1203,7 +1263,6 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                             ),
                                       ),
                                       Expanded(
-                                        flex: 2,
                                         child: Container(
                                           width: 150.0,
                                           child: TextFormField(
@@ -1342,7 +1401,6 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      flex: 6,
                                       child: FlutterFlowDropDown<String>(
                                         controller: _model
                                                 .dropDownValueController5 ??=
@@ -1433,7 +1491,6 @@ class _UpdateVarietiesWidgetState extends State<UpdateVarietiesWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      flex: 2,
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(

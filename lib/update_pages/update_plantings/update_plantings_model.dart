@@ -35,8 +35,6 @@ class UpdatePlantingsModel extends FlutterFlowModel<UpdatePlantingsWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue6;
   FormFieldController<String>? dropDownValueController6;
-  // State field(s) for Checkbox widget.
-  bool? checkboxValue4;
   // State field(s) for DropDown widget.
   String? dropDownValue7;
   FormFieldController<String>? dropDownValueController7;

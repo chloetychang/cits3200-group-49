@@ -74,7 +74,20 @@ class _AddSubZonesWidgetState extends State<AddSubZonesWidget> {
                         },
                         text: 'Menu',
                         options: FFButtonOptions(
-                          width: 100.0,
+                          width: () {
+                            if (MediaQuery.sizeOf(context).width <
+                                kBreakpointSmall) {
+                              return 75.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointMedium) {
+                              return 100.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointLarge) {
+                              return 100.0;
+                            } else {
+                              return 100.0;
+                            }
+                          }(),
                           height: 50.0,
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
@@ -87,6 +100,20 @@ class _AddSubZonesWidgetState extends State<AddSubZonesWidget> {
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .titleSmallFamily,
                                 color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: () {
+                                  if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointSmall) {
+                                    return 12.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointMedium) {
+                                    return 16.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointLarge) {
+                                    return 16.0;
+                                  } else {
+                                    return 16.0;
+                                  }
+                                }(),
                                 letterSpacing: 0.0,
                                 useGoogleFonts: !FlutterFlowTheme.of(context)
                                     .titleSmallIsCustom,
@@ -107,7 +134,20 @@ class _AddSubZonesWidgetState extends State<AddSubZonesWidget> {
                           },
                           text: 'Update',
                           options: FFButtonOptions(
-                            width: 100.0,
+                            width: () {
+                              if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointSmall) {
+                                return 75.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointMedium) {
+                                return 100.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointLarge) {
+                                return 100.0;
+                              } else {
+                                return 100.0;
+                              }
+                            }(),
                             height: 50.0,
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
@@ -121,6 +161,22 @@ class _AddSubZonesWidgetState extends State<AddSubZonesWidget> {
                                       .titleSmallFamily,
                                   color:
                                       FlutterFlowTheme.of(context).primaryText,
+                                  fontSize: () {
+                                    if (MediaQuery.sizeOf(context).width <
+                                        kBreakpointSmall) {
+                                      return 12.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointMedium) {
+                                      return 16.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointLarge) {
+                                      return 16.0;
+                                    } else {
+                                      return 16.0;
+                                    }
+                                  }(),
                                   letterSpacing: 0.0,
                                   useGoogleFonts: !FlutterFlowTheme.of(context)
                                       .titleSmallIsCustom,

@@ -105,7 +105,20 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                         },
                         text: 'Menu',
                         options: FFButtonOptions(
-                          width: 100.0,
+                          width: () {
+                            if (MediaQuery.sizeOf(context).width <
+                                kBreakpointSmall) {
+                              return 75.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointMedium) {
+                              return 100.0;
+                            } else if (MediaQuery.sizeOf(context).width <
+                                kBreakpointLarge) {
+                              return 100.0;
+                            } else {
+                              return 100.0;
+                            }
+                          }(),
                           height: 50.0,
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
@@ -118,6 +131,20 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .titleSmallFamily,
                                 color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: () {
+                                  if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointSmall) {
+                                    return 12.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointMedium) {
+                                    return 16.0;
+                                  } else if (MediaQuery.sizeOf(context).width <
+                                      kBreakpointLarge) {
+                                    return 16.0;
+                                  } else {
+                                    return 16.0;
+                                  }
+                                }(),
                                 letterSpacing: 0.0,
                                 useGoogleFonts: !FlutterFlowTheme.of(context)
                                     .titleSmallIsCustom,
@@ -138,7 +165,20 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                           },
                           text: 'Add',
                           options: FFButtonOptions(
-                            width: 100.0,
+                            width: () {
+                              if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointSmall) {
+                                return 75.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointMedium) {
+                                return 100.0;
+                              } else if (MediaQuery.sizeOf(context).width <
+                                  kBreakpointLarge) {
+                                return 100.0;
+                              } else {
+                                return 100.0;
+                              }
+                            }(),
                             height: 50.0,
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
@@ -152,6 +192,22 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                       .titleSmallFamily,
                                   color:
                                       FlutterFlowTheme.of(context).primaryText,
+                                  fontSize: () {
+                                    if (MediaQuery.sizeOf(context).width <
+                                        kBreakpointSmall) {
+                                      return 12.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointMedium) {
+                                      return 16.0;
+                                    } else if (MediaQuery.sizeOf(context)
+                                            .width <
+                                        kBreakpointLarge) {
+                                      return 16.0;
+                                    } else {
+                                      return 16.0;
+                                    }
+                                  }(),
                                   letterSpacing: 0.0,
                                   useGoogleFonts: !FlutterFlowTheme.of(context)
                                       .titleSmallIsCustom,
@@ -170,7 +226,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                               fontSize: () {
                                 if (MediaQuery.sizeOf(context).width <
                                     kBreakpointSmall) {
-                                  return 16.0;
+                                  return 12.0;
                                 } else if (MediaQuery.sizeOf(context).width <
                                     kBreakpointMedium) {
                                   return 24.0;
@@ -187,7 +243,6 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                             ),
                       ),
                       Expanded(
-                        flex: 6,
                         child: FlutterFlowDropDown<String>(
                           controller: _model.dropDownValueController ??=
                               FormFieldController<String>(null),
@@ -835,7 +890,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                     Flexible(
                                       flex: 7,
                                       child: Text(
-                                        'Title',
+                                        'Title:',
                                         style: FlutterFlowTheme.of(context)
                                             .titleMedium
                                             .override(
@@ -873,7 +928,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                       ),
                                     ),
                                     Flexible(
-                                      flex: 3,
+                                      flex: 6,
                                       child: Container(
                                         width: 200.0,
                                         child: TextFormField(
@@ -971,7 +1026,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 if (MediaQuery.sizeOf(context)
                                                         .width <
                                                     kBreakpointSmall) {
-                                                  return 16.0;
+                                                  return 14.0;
                                                 } else if (MediaQuery.sizeOf(
                                                             context)
                                                         .width <
@@ -1093,7 +1148,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 if (MediaQuery.sizeOf(context)
                                                         .width <
                                                     kBreakpointSmall) {
-                                                  return 16.0;
+                                                  return 14.0;
                                                 } else if (MediaQuery.sizeOf(
                                                             context)
                                                         .width <
@@ -1218,7 +1273,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Colors.black,
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1226,7 +1299,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Flexible(
+                                    Expanded(
                                       flex: 6,
                                       child: Container(
                                         width: 200.0,
@@ -1332,7 +1405,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
                                                 color: Colors.black,
-                                                fontSize: 24.0,
+                                                fontSize: () {
+                                                  if (MediaQuery.sizeOf(context)
+                                                          .width <
+                                                      kBreakpointSmall) {
+                                                    return 16.0;
+                                                  } else if (MediaQuery.sizeOf(
+                                                              context)
+                                                          .width <
+                                                      kBreakpointMedium) {
+                                                    return 24.0;
+                                                  } else if (MediaQuery.sizeOf(
+                                                              context)
+                                                          .width <
+                                                      kBreakpointLarge) {
+                                                    return 24.0;
+                                                  } else {
+                                                    return 24.0;
+                                                  }
+                                                }(),
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.bold,
                                                 useGoogleFonts:
@@ -1344,7 +1435,6 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                       ].divide(SizedBox(height: 8.0)),
                                     ),
                                     Expanded(
-                                      flex: 2,
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(
@@ -1444,7 +1534,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Colors.black,
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1453,7 +1561,6 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      flex: 2,
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(
@@ -1554,7 +1661,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryText,
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1563,7 +1688,6 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      flex: 2,
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(
@@ -1664,7 +1788,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryText,
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1672,8 +1814,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Flexible(
-                                      flex: 6,
+                                    Expanded(
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(
@@ -1774,7 +1915,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumFamily,
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryText,
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1782,7 +1941,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Flexible(
+                                    Expanded(
                                       flex: 6,
                                       child: Container(
                                         width: 150.0,
@@ -1883,7 +2042,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Color(0xFFFF0000),
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -1891,8 +2068,7 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Flexible(
-                                      flex: 6,
+                                    Expanded(
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(
@@ -1993,7 +2169,25 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Color(0xFFFF0000),
-                                            fontSize: 24.0,
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
                                             useGoogleFonts:
@@ -2002,7 +2196,6 @@ class _UpdateUsersWidgetState extends State<UpdateUsersWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      flex: 2,
                                       child: Container(
                                         width: 150.0,
                                         child: TextFormField(

@@ -17,9 +17,6 @@ class UpdateAcquisitionsModel
   // State field(s) for DropDown widget.
   String? dropDownValue3;
   FormFieldController<String>? dropDownValueController3;
-  // State field(s) for DropDown widget.
-  String? dropDownValue4;
-  FormFieldController<String>? dropDownValueController4;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
@@ -37,16 +34,16 @@ class UpdateAcquisitionsModel
   TextEditingController? textController4;
   String? Function(BuildContext, String?)? textController4Validator;
   // State field(s) for DropDown widget.
-  String? dropDownValue5;
-  FormFieldController<String>? dropDownValueController5;
+  String? dropDownValue4;
+  FormFieldController<String>? dropDownValueController4;
   // State field(s) for Checkbox widget.
   bool? checkboxValue;
   // State field(s) for DropDown widget.
+  String? dropDownValue5;
+  FormFieldController<String>? dropDownValueController5;
+  // State field(s) for DropDown widget.
   String? dropDownValue6;
   FormFieldController<String>? dropDownValueController6;
-  // State field(s) for DropDown widget.
-  String? dropDownValue7;
-  FormFieldController<String>? dropDownValueController7;
 
   @override
   void initState(BuildContext context) {}
