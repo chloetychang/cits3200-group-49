@@ -142,7 +142,7 @@ for fk in foreign_keys:
     try:
         pg_cursor.execute(alter_stmt)
         pg_conn.commit()
-        print(f"🔗 Foreign key added: {child_table}.{child_col} → {parent_table}.{parent_col}")
+        print(f"Foreign key added: {child_table}.{child_col} → {parent_table}.{parent_col}")
     except Exception as e:
         print(f"Failed to add foreign key {constraint_name}: {e}")
 
