@@ -222,7 +222,7 @@ class _LandingGuestWidgetState extends State<LandingGuestWidget>
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .primaryText,
-                                                  fontSize: 20.0,
+                                                  fontSize: 17.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
                                                   useGoogleFonts:
