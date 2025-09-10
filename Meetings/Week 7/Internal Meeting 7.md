@@ -39,7 +39,8 @@
 ### Actions
  - To merge the branch by Friday
  - Putting the database to Github (Somehow)
- - Additional test for DB migration 
+ - Additional test for DB migration
+ - Doccumenting DB migration 
 <br>
 
 ## Item 3 - Back End Discussion
