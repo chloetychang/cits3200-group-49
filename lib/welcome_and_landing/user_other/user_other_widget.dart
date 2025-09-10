@@ -155,7 +155,7 @@ class _UserOtherWidgetState extends State<UserOtherWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .displaySmallFamily,
-                                                fontSize: 32.0,
+                                                fontSize: 26.0,
                                                 letterSpacing: 0.0,
                                                 useGoogleFonts:
                                                     !FlutterFlowTheme.of(
