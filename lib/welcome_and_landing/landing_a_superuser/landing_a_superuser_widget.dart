@@ -157,7 +157,7 @@ class _LandingASuperuserWidgetState extends State<LandingASuperuserWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .displaySmallFamily,
-                                                fontSize: 36.0,
+                                                fontSize: 32.0,
                                                 letterSpacing: 0.0,
                                                 useGoogleFonts:
                                                     !FlutterFlowTheme.of(

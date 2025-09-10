@@ -155,6 +155,7 @@ class _LandingGuestWidgetState extends State<LandingGuestWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .displaySmallFamily,
+                                                fontSize: 32.0,
                                                 letterSpacing: 0.0,
                                                 useGoogleFonts:
                                                     !FlutterFlowTheme.of(
