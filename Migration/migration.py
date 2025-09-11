@@ -218,12 +218,6 @@ def migrate():
         # Store schema info for uniqueness checks
         table_schemas[table] = {'pk': pk, 'uniques': uniques}
         all_foreign_keys.extend(foreign_keys)
-    # Helper to check if a column is unique or primary key in a table
-    def is_unique_or_pk(ref_table, ref_column):
-        schema = table_schemas.get(ref_table)
-        if not schema:
-            return False
-        return ref_column in schema['pk'] or ref_column in schema['uniques']
     # Add all foreign keys after all tables are created
     for fk in all_foreign_keys:
         alter_sql = f'ALTER TABLE "{fk["table"]}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
