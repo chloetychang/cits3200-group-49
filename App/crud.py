@@ -20,15 +20,25 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
+        """Get multiple records with pagination"""
         return db.query(self.model).offset(skip).limit(limit).all()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+        """Create a new record"""
         obj_in_data = obj_in.dict() if hasattr(obj_in, 'dict') else obj_in.model_dump()
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    def count(self, db: Session) -> int:
+        """Count total records in the table"""
+        return db.query(self.model).count()
+
+    def get_all(self, db: Session) -> List[ModelType]:
+        """Get all records (use with caution on large tables)"""
+        return db.query(self.model).all()
         
 # Specific CRUD classes for each model
 class CRUDAspect(CRUDBase[models.Aspect, schemas.AspectCreate, schemas.AspectCreate]):

@@ -44,7 +44,7 @@ class Family(Base):
     __tablename__ = "family"
     
     family_id = Column(Integer, primary_key=True)
-    famiy_name = Column(String, nullable=False, unique=True)  # Note: typo preserved from schema
+    famiy_name = Column(String, nullable=False, unique=True)  # Note: typo preserved from V02 db schema
     
     # Relationships
     genera = relationship("Genus", back_populates="family")
