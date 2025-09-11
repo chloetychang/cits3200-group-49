@@ -286,6 +286,8 @@ expected_foreign_keys = {
         ("variety_id", "variety", "variety_id"),
         ("provenance_id", "provenance", "provenance_id"),
         ("propagation_type", "propagation_type", "propagation_type_id"),
+        #("female_genetic_source", "genetic_source", "genetic_source_id"),
+        #("male_genetic_source", "genetic_source", "genetic_source_id"),
     ],
     "provenance": [
         ("bioregion_code", "bioregion", "bioregion_code"),

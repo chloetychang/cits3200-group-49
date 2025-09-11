@@ -104,6 +104,22 @@ def get_table_schema_win32(table, access_db):
         if idx.Type == 1:  # adKeyPrimary
             for c in idx.Columns:
                 pk.add(c.Name)
+        elif idx.Type == 2:  # adKeyForeign
+            ref_table = idx.RelatedTable
+            for c in idx.Columns:
+                fk_col = c.Name
+                try:
+                    ref_col = c.RelatedColumn
+                except Exception:
+                    print(f"Could not find related column for foreign key {fk_col} in table {table}")
+                    ref_col = None
+                if ref_table and ref_table != table and ref_col:
+                    foreign_keys.append({
+                        'table': table,
+                        'column': fk_col,
+                        'ref_table': ref_table,
+                        'ref_column': ref_col
+                    })
     for idx in table_obj.Indexes:
         if idx.Unique:
             for c in idx.Columns:
@@ -182,63 +198,6 @@ def create_views(pg_cur):
         pg_cur.execute(f'CREATE OR REPLACE VIEW "{view_name}" AS {sql_pg}')
     pg_cur.connection.commit()
 
-def add_foreign_keys(pg_cur, table):
-    fk_schema = {
-        "planting": [
-            ("zone_id", "zone", "zone_id"),
-            ("container_type_id", "container", "container_type_id"),
-            ("removal_cause_id", "removal_cause", "removal_cause_id"),
-            ("planted_by", "user", "user_id"),
-            ("variety_id", "variety", "variety_id"),
-            ("genetic_source_id", "genetic_source", "genetic_source_id"),
-        ],
-        "zone": [
-            ("aspect_id", "aspect", "aspect_id"),
-        ],
-        "sub_zone": [
-            ("zone_id", "zone", "zone_id"),
-        ],
-        "user_role_link": [
-            ("user_id", "user", "user_id"),
-            ("role_id", "role", "role_id"),
-        ],
-        "variety": [
-            ("species_id", "species", "species_id"),
-        ],
-        "species": [
-            ("genus_id", "genus", "genus_id"),
-            ("conservation_status_id", "conservation_status", "conservation_status_id"),
-        ],
-        "species_utility_link": [
-            ("species_id", "species", "species_id"),
-            ("plant_utility_id", "plant_utility", "plant_utility_id"),
-        ],
-        "genus": [
-            ("family_id", "family", "family_id"),
-        ],
-        "progeny": [
-            ("genetic_source_id", "genetic_source", "genetic_source_id"),
-        ],
-        "genetic_source": [
-            ("supplier_id", "supplier", "supplier_id"),
-            ("variety_id", "variety", "variety_id"),
-            ("provenance_id", "provenance", "provenance_id"),
-            ("propagation_type", "propagation_type", "propagation_type_id"),
-        ],
-        "provenance": [
-            ("bioregion_code", "bioregion", "bioregion_code"),
-            ("location_type_id", "location_type", "location_type_id"),
-        ],
-    }
-    print('Creating Foreign Keys...')
-    if table in fk_schema:
-        for col, ref_table, ref_col in fk_schema[table]:
-            alter_sql = f'ALTER TABLE "{table}" ADD FOREIGN KEY ("{col}") REFERENCES "{ref_table}"("{ref_col}")'
-            try:
-                pg_cur.execute(alter_sql)
-            except Exception as e:
-                print(f"Failed to add foreign key for {table}.{col} referencing {ref_table}.{ref_col}: {e}")
-
 # Main migration function
 def migrate():
     access_conn = pyodbc.connect(ACCESS_CONN_STR)
@@ -248,17 +207,33 @@ def migrate():
     drop_all_tables_and_views(pg_conn)
 
     tables = get_access_tables(access_cur)
+    all_foreign_keys = []
     table_schemas = {}
     for table in tables:
         print(f'Migrating table: {table}')
         columns, pk, uniques, foreign_keys = get_table_schema_win32(table, db_address)
-        table_schemas[table] = (columns, pk, uniques, foreign_keys)
         create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys)
         copy_table_data(access_cur, pg_cur, table, columns)
         pg_conn.commit()
+        # Store schema info for uniqueness checks
+        table_schemas[table] = {'pk': pk, 'uniques': uniques}
+        all_foreign_keys.extend(foreign_keys)
+    # Helper to check if a column is unique or primary key in a table
+    def is_unique_or_pk(ref_table, ref_column):
+        schema = table_schemas.get(ref_table)
+        if not schema:
+            return False
+        return ref_column in schema['pk'] or ref_column in schema['uniques']
     # Add all foreign keys after all tables are created
-    for table in tables:
-        add_foreign_keys(pg_cur, table)
+    for fk in all_foreign_keys:
+        alter_sql = f'ALTER TABLE "{fk["table"]}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
+        try:
+            pg_cur.execute("SAVEPOINT fk_savepoint")
+            pg_cur.execute(alter_sql)
+            pg_cur.execute("RELEASE SAVEPOINT fk_savepoint")
+        except Exception as e:
+            print(f'Skipping foreign key for {fk["table"]}.{fk["column"]} referencing {fk["ref_table"]}.{fk["ref_column"]}: {e}')
+            pg_cur.execute("ROLLBACK TO SAVEPOINT fk_savepoint")
     pg_conn.commit()
 
     # Migrate views after tables

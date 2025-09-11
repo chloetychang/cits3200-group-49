@@ -189,6 +189,8 @@ Note: To test column types and constraints, may be only necessary to check one o
         - variety_id to variety.variety_id
         - provenance_id to provenance.provenance_id
         - propogation_type to propogation_type.propogation_type_id
+        - female_genetic_source to genetic_source.genetic_source_id?
+        - male_genetic_source to genetic_source.genetic_source_id?
     - provenance table
         - bioregion_code to bioregion.bioregion_code
         - location_type_id to location_type.location_type_id
