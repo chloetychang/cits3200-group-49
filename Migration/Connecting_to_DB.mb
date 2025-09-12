@@ -1,0 +1,38 @@
+# Connecting to Dockerized PostgreSQL
+
+---
+
+## **Database Details**
+
+| Field          | Value                |
+|----------------|--------------------|
+| Host           | `192.168.1.3`       |
+| Port           | `5432`              |
+| Database       | `mydb`              |
+| Username       | `postgres`          |
+| Password       | `postgres`          |
+| Server Name    | (Anything is fine) |
+
+> **Note:** The Server Name in pgAdmin is just a label — it can be anything.
+
+---
+
+## **Using pgAdmin**
+
+1. Open **pgAdmin**.  
+2. Right-click **Servers → Create → Server**.  
+3. **General tab:**  
+   - Name: `CITS3200` (or any name you like)  
+4. **Connection tab:**  
+   - Host name/address: `192.168.1.3`  
+   - Port: `5432`  
+   - Maintenance database: `postgres`  
+   - Username: `postgres`  
+   - Password: `postgres`  
+5. Click **Save**.  
+6. You should now see the databases
+7. Perform a right-click on "mydb" 
+8. Select Query Tool (To create SQL Queries)
+9. eg. SELECT * from location_type
+
+---
