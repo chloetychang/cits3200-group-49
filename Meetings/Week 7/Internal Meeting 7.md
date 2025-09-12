@@ -57,13 +57,11 @@
  - Chloe: Discussion with Ryan is required to fully understand the back end discussion 
  - Ryan: Ryan will be working on the database and following a guide regarding FastAPI and having the application hosting the DB. By the end of tommorow, Ryan should
  - CHLOE: Pool Req has been completed -> Frontend 
- - 
+
 ### Actions
  - Add pages (ALL of them to be done)
 Roles of the backend:
   - Ryan: API Set-up (By Friday)
-  - ---------
-  - ---------
 <br>
 
 ## Item 4 - Sprint 2 Submission Discussion
@@ -76,6 +74,7 @@ Roles of the backend:
  - Tri: Backend test is quite hard, given the time constraints
  - Tri: Project retrospective meeting is required  (Showing our current progress, TIME: TBA)
  - Tri: Recording how our expectations are fullfilled 
+
 ### Actions
  - Tri: Organised a meeting with the client. Scheduled meeting should be BEFORE Wednesday
  - Naren: After the meeting, having a post debrief with recording how our expectatiosn are fullfilled or not
@@ -86,5 +85,8 @@ Roles of the backend:
 
 ## Meeting Closed:
 17:00
+
 ## Next Scheduled Meeting:
-TBA
+- TBD pre-Client Presentation Internal Meeting. 
+- Wednesday 17th Sep. 2:00-3:00PM Client Retrospective. 
+- Wednesday 17th Sep. 3:00PM-5:00PM Team Retrospective + Sprint 2 Submission. 
