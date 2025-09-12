@@ -6,10 +6,11 @@ import psycopg2.extras
 import win32com.client
 import re
 
+import os
 # Database connection strings
-db_address = r'C:\path\to\your\database.accdb'  # Update with your Access DB path
+db_address = os.environ.get('ACCESS_DB_PATH', os.path.abspath("test_genetic_source.accdb"))
 ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + db_address + ';'
-POSTGRES_CONN_STR = "host='localhost' dbname='your_db_name' user='your_username' password='your_password'"
+POSTGRES_CONN_STR = "host='localhost' dbname='postgres1' user='postgres' password='postgresql'"
 
 # Map Access types to PostgreSQL types
 ACCESS_TO_PG_TYPES = {
@@ -158,13 +159,14 @@ def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
 
 # Copy data from Access to PostgreSQL
 def copy_table_data(access_cur, pg_cur, table, columns):
-	col_names = [col['name'] for col in columns]
-	access_cur.execute(f'SELECT {", ".join([f"[{c}]" for c in col_names])} FROM [{table}]')
-	rows = access_cur.fetchall()
-	if not rows:
-		return
-	insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
-	psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
+    col_names = [col['name'] for col in columns]
+    access_cur.execute(f'SELECT {", ".join([f"[{c}]" for c in col_names])} FROM [{table}]')
+    rows = access_cur.fetchall()
+    if not rows:
+        return
+    insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
+    print(f"[DEBUG] Insert SQL: {insert_sql}")
+    psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
 # Function to create views in PostgreSQL
 def create_views(pg_cur):
