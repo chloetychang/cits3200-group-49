@@ -2118,8 +2118,8 @@ Future<void> submitPlanting() async {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                            onPressed: () async {
+                              await submitPlanting();
                             },
                             text: 'Save',
                             options: FFButtonOptions(
