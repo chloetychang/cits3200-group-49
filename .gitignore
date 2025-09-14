@@ -16,3 +16,5 @@ ios/Flutter/ephemeral/flutter_lldbinit
 /.flutter-plugins-dependencies
 /pubspec.lock
 /.dart_tool/
+test/__pycache__/
+Migration/__pycache__/
