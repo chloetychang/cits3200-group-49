@@ -4,11 +4,12 @@ import pyodbc
 import psycopg2
 import psycopg2.extras
 import win32com.client
+import re
 
 # Database connection strings
-db_address = "C:\\Users\\Tri\\Desktop\\Uni stuff\\CITS3200\\V02\\Y-botanic.accdb"
+db_address = r'C:\path\to\your\database.accdb'  # Update with your Access DB path
 ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + db_address + ';'
-POSTGRES_CONN_STR = "host='localhost' dbname='postgres2' user='postgres' password='postgresql'"
+POSTGRES_CONN_STR = "host='localhost' dbname='your_db_name' user='your_username' password='your_password'"
 
 # Map Access types to PostgreSQL types
 ACCESS_TO_PG_TYPES = {
@@ -46,6 +47,32 @@ def get_access_tables(cursor):
 	# Get user tables only
 	return [row.table_name for row in cursor.tables(tableType='TABLE')]
 
+def drop_all_tables_and_views(pg_conn):
+    with pg_conn.cursor() as cur:
+        # Drop all tables
+        cur.execute("""
+            DO $$
+            DECLARE
+                r RECORD;
+            BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+            END $$;
+        """)
+        # Drop all views
+        cur.execute("""
+            DO $$
+            DECLARE
+                v RECORD;
+            BEGIN
+                FOR v IN (SELECT viewname FROM pg_views WHERE schemaname = 'public') LOOP
+                    EXECUTE 'DROP VIEW IF EXISTS public.' || quote_ident(v.viewname) || ' CASCADE';
+                END LOOP;
+            END $$;
+        """)
+    pg_conn.commit()
+
 # Get schema details from Access using win32
 def get_table_schema_win32(table, access_db):
     cat = win32com.client.Dispatch('ADOX.Catalog')
@@ -56,26 +83,48 @@ def get_table_schema_win32(table, access_db):
             table_obj = t
             break
     if not table_obj:
-        return [], set(), set()
+        return [], set(), set(), []
     columns = []
     pk = set()
     uniques = set()
+    foreign_keys = []
     for col in table_obj.Columns:
+        is_nullable = False
+        try:
+            is_nullable = col.Properties("Nullable").Value
+        except Exception:
+            is_nullable = True  # Default to nullable if property not found
         columns.append({
             'name': col.Name,
             'type': col.Type,
-            'nullable': col.Attributes & 0x20 == 0x20,  # adColNullable
+            'nullable': is_nullable,
             'column_size': getattr(col, 'DefinedSize', None)
         })
     for idx in table_obj.Keys:
         if idx.Type == 1:  # adKeyPrimary
             for c in idx.Columns:
                 pk.add(c.Name)
+        elif idx.Type == 2:  # adKeyForeign
+            ref_table = idx.RelatedTable
+            for c in idx.Columns:
+                fk_col = c.Name
+                try:
+                    ref_col = c.RelatedColumn
+                except Exception:
+                    print(f"Could not find related column for foreign key {fk_col} in table {table}")
+                    ref_col = None
+                if ref_table and ref_table != table and ref_col:
+                    foreign_keys.append({
+                        'table': table,
+                        'column': fk_col,
+                        'ref_table': ref_table,
+                        'ref_column': ref_col
+                    })
     for idx in table_obj.Indexes:
         if idx.Unique:
             for c in idx.Columns:
                 uniques.add(c.Name)
-    return columns, pk, uniques
+    return columns, pk, uniques, foreign_keys
 
 # Map Access data types to PostgreSQL data types
 def map_type(access_type, size):
@@ -91,21 +140,21 @@ def map_type(access_type, size):
         return pg_type
 
 # Create PostgreSQL table with constraints
-def create_pg_table(pg_cur, table, columns, pk, uniques):
-	col_defs = []
-	for col in columns:
-		col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
-		if not col['nullable']:
-			col_def += ' NOT NULL'
-		col_defs.append(col_def)
-	constraints = []
-	if pk:
-		constraints.append(f'PRIMARY KEY ({", ".join([f"\"{c}\"" for c in pk])})')
-	for uq in uniques:
-		if uq not in pk:
-			constraints.append(f'UNIQUE ("{uq}")')
-	sql = f'CREATE TABLE IF NOT EXISTS "{table}" (\n  ' + ',\n  '.join(col_defs + constraints) + '\n);'
-	pg_cur.execute(sql)
+def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
+    col_defs = []
+    for col in columns:
+        col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
+        if not col['nullable']:
+            col_def += ' NOT NULL'
+        col_defs.append(col_def)
+    constraints = []
+    if pk:
+        constraints.append(f'PRIMARY KEY ({", ".join([f"\"{c}\"" for c in pk])})')
+    for uq in uniques:
+        if uq not in pk:
+            constraints.append(f'UNIQUE ("{uq}")')
+    sql = f'CREATE TABLE IF NOT EXISTS "{table}" (\n  ' + ',\n  '.join(col_defs + constraints) + '\n);'
+    pg_cur.execute(sql)
 
 # Copy data from Access to PostgreSQL
 def copy_table_data(access_cur, pg_cur, table, columns):
@@ -117,41 +166,78 @@ def copy_table_data(access_cur, pg_cur, table, columns):
 	insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
 	psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
-def drop_all_tables(pg_conn):
-    with pg_conn.cursor() as cur:
-        cur.execute("""
-            DO $$
-            DECLARE
-                r RECORD;
-            BEGIN
-                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-                    EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
-                END LOOP;
-            END $$;
-        """)
-    pg_conn.commit()
+# Function to create views in PostgreSQL
+def create_views(pg_cur):
+    print('Creating views...')
+    pg_keywords = {'user', 'table', 'group', 'limit', 'primary', 'key', 'column', 'constraint', 'references', 'unique', 'index', 'view', 'sequence', 'trigger', 'procedure', 'function', 'database', 'schema', 'transaction', 'real', 'double', 'precision', 'numeric', 'decimal', 'money', 'char', 'varchar', 'text', 'bytea', 'timestamp', 'date', 'time', 'interval', 'boolean', 'enum', 'json', 'jsonb', 'xml', 'uuid', 'inet', 'cidr', 'macaddr', 'tsvector', 'tsquery', 'box', 'circle', 'line', 'lseg', 'path', 'point', 'polygon', 'bit', 'varbit', 'serial', 'bigserial', 'identity', 'pg_catalog', 'information_schema'}
+    cat = win32com.client.Dispatch('ADOX.Catalog')
+    cat.ActiveConnection = f'Provider=Microsoft.ACE.OLEDB.12.0;Data Source={db_address};'
+    views = [(view.Name, view.Command.CommandText) for view in cat.Views]
+    views.sort(key=lambda v: 0 if v[0].lower() == 'taxon' else 1)
+    for view_name, sql in views:
+        sql_pg = sql.replace('[', '"').replace(']', '"')
+        # Replace & with || for string concatenation
+        sql_pg = re.sub(r'\s*&\s*', ' || ', sql_pg)
+        # Replace double-quoted string literals with single-quoted ones
+        sql_pg = re.sub(r'"([^"]+)"', lambda m: f"'{m.group(1)}'" if m.group(1).strip() == '' or not m.group(1).isidentifier() else f'"{m.group(1)}"', sql_pg)
+        # Quote reserved words in table/column patterns (e.g., user.col)
+        def quote_table(match):
+            table = match.group(1)
+            col = match.group(2)
+            if table.lower() in pg_keywords and not (table.startswith('"') and table.endswith('"')):
+                return f'"{table}".{col}'
+            return match.group(0)
+        sql_pg = re.sub(r'\b([A-Za-z_][A-Za-z0-9_]*)\b\.([A-Za-z_][A-ZaZ0-9_]*)', quote_table, sql_pg)
+        # Quote reserved keywords if not already quoted (standalone)
+        def quote_reserved(match):
+            word = match.group(0)
+            if word.lower() in pg_keywords and not (word.startswith('"') and word.endswith('"')):
+                return f'"{word}"'
+            return word
+        sql_pg = re.sub(r'(?<!")\b([A-Za-z_][A-ZaZ0-9_]*)\b(?!")', quote_reserved, sql_pg)
+        pg_cur.execute(f'CREATE OR REPLACE VIEW "{view_name}" AS {sql_pg}')
+    pg_cur.connection.commit()
 
 # Main migration function
 def migrate():
-	access_conn = pyodbc.connect(ACCESS_CONN_STR)
-	access_cur = access_conn.cursor()
-	pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
-	pg_cur = pg_conn.cursor()
-	drop_all_tables(pg_conn)
+    access_conn = pyodbc.connect(ACCESS_CONN_STR)
+    access_cur = access_conn.cursor()
+    pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
+    pg_cur = pg_conn.cursor()
+    drop_all_tables_and_views(pg_conn)
 
-	tables = get_access_tables(access_cur)
-	for table in tables:
-		print(f'Migrating table: {table}')
-		columns, pk, uniques = get_table_schema_win32(table, db_address)
-		create_pg_table(pg_cur, table, columns, pk, uniques)
-		copy_table_data(access_cur, pg_cur, table, columns)
-		pg_conn.commit()
+    tables = get_access_tables(access_cur)
+    all_foreign_keys = []
+    table_schemas = {}
+    for table in tables:
+        print(f'Migrating table: {table}')
+        columns, pk, uniques, foreign_keys = get_table_schema_win32(table, db_address)
+        create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys)
+        copy_table_data(access_cur, pg_cur, table, columns)
+        pg_conn.commit()
+        # Store schema info for uniqueness checks
+        table_schemas[table] = {'pk': pk, 'uniques': uniques}
+        all_foreign_keys.extend(foreign_keys)
+    # Add all foreign keys after all tables are created
+    for fk in all_foreign_keys:
+        alter_sql = f'ALTER TABLE "{fk["table"]}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
+        try:
+            pg_cur.execute("SAVEPOINT fk_savepoint")
+            pg_cur.execute(alter_sql)
+            pg_cur.execute("RELEASE SAVEPOINT fk_savepoint")
+        except Exception as e:
+            print(f'Skipping foreign key for {fk["table"]}.{fk["column"]} referencing {fk["ref_table"]}.{fk["ref_column"]}: {e}')
+            pg_cur.execute("ROLLBACK TO SAVEPOINT fk_savepoint")
+    pg_conn.commit()
 
-	access_cur.close()
-	access_conn.close()
-	pg_cur.close()
-	pg_conn.close()
-	print('Migration complete.')
+    # Migrate views after tables
+    create_views(pg_cur)
+
+    access_cur.close()
+    access_conn.close()
+    pg_cur.close()
+    pg_conn.close()
+    print('Migration complete.')
 
 if __name__ == '__main__':
 	migrate()

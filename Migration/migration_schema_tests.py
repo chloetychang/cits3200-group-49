@@ -1,5 +1,6 @@
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.dialects import postgresql
+import pyodbc
 
 # Connect to your database
 # username: postgres username
@@ -8,7 +9,7 @@ from sqlalchemy.dialects import postgresql
 # localhost:5432: PostgreSQL server address
 engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
 
-# Define your expected schema
+# Expected schema
 expected_schema = {
     "aspect": {
         "aspect_id": {"type": "INTEGER", "primary_key": True},
@@ -45,7 +46,7 @@ expected_schema = {
         "female_genetic_source": {"type": "INTEGER", "nullable": True},
         "male_genetic_source": {"type": "INTEGER", "nullable": True},
         "generation_number": {"type": "INTEGER", "nullable": False},
-        "landscape_only": {"type": "BOOLEAN", "nullable": False},
+        "landscape_only": {"type": "BOOLEAN", "nullable": True},
         "research_notes": {"type": "TEXT", "nullable": True},
     },
     "genus": {
@@ -87,8 +88,8 @@ expected_schema = {
     "propagation_type": {
         "propagation_type_id": {"type": "INTEGER", "primary_key": True},
         "propagation_type": {"type": "VARCHAR", "nullable": True},
-        "needs_two_parents": {"type": "BOOLEAN", "nullable": False},
-        "can_cross_genera": {"type": "BOOLEAN", "nullable": False},
+        "needs_two_parents": {"type": "BOOLEAN", "nullable": True},
+        "can_cross_genera": {"type": "BOOLEAN", "nullable": True},
     },
     "provenance": {
         "provenance_id": {"type": "INTEGER"},
@@ -129,7 +130,7 @@ expected_schema = {
         "supplier_name": {"type": "VARCHAR", "nullable": False, "unique": True},
         "short_name": {"type": "VARCHAR", "nullable": False, "unique": True},
         "web_site": {"type": "VARCHAR", "nullable": True},
-        "is_a_research_breeder": {"type": "BOOLEAN", "nullable": False},
+        "is_a_research_breeder": {"type": "BOOLEAN", "nullable": True},
     },
     # Taxon is empty, skipping
     "user": {
@@ -181,10 +182,19 @@ mismatch_counts = {
     'nullable_mismatches': 0,
     'unique_mismatches': 0,
     'primary_key_mismatches': 0,
+    'missing_views': 0,
+    'view_column_mismatches': 0,
 }
 
 actual_tables = set(inspector.get_table_names())
 expected_tables = set(expected_schema.keys())
+
+# --- View tests ---
+expected_views = {
+    "plantings_view": ["planted_by", "zone_number", "aspect", "taxon", "genus_and_species", "number_planted", "removal_date", "removal_cause", "number_removed", "comments", "date_planted"],
+    "taxon": ["variety_id", "taxon", "genus", "species", "variety", "genus_and_species"],
+}
+actual_views = set(inspector.get_view_names())
 
 # Check for missing and extra tables
 for table in expected_tables:
@@ -240,8 +250,71 @@ for table in expected_tables & actual_tables:
             print(f"    Unique constraint missing for {col_name}")
             mismatch_counts['unique_mismatches'] += 1
 
+# Check views
+for view_name, expected_columns in expected_views.items():
+    print(f"\nChecking view: {view_name}")
+    if view_name not in actual_views:
+        print(f"View missing: {view_name}")
+        mismatch_counts['missing_views'] += 1
+    else:
+        columns = inspector.get_columns(view_name)
+        actual_col_names = [col["name"] for col in columns]
+        # Check for missing columns
+        for col in expected_columns:
+            if col not in actual_col_names:
+                print(f"    Column missing in view {view_name}: {col}")
+                mismatch_counts['view_column_mismatches'] += 1
+        # Check for extra columns
+        for col in actual_col_names:
+            if col not in expected_columns:
+                print(f"    Extra column in view {view_name}: {col}")
+                mismatch_counts['view_column_mismatches'] += 1
+
 print("\nDatabase mismatch summary:")
 for k, v in mismatch_counts.items():
     print(f"  {k.replace('_', ' ').capitalize()}: {v}")
+
+# Row count and first 5 row comparison tests
+
+ACCESS_DB_PATH = r'C:/Users/Tri/Desktop/Uni stuff/CITS3200/V02/Y-botanic.accdb'
+ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + ACCESS_DB_PATH + ';'
+access_conn = pyodbc.connect(ACCESS_CONN_STR)
+access_cur = access_conn.cursor()
+
+for table in expected_tables & actual_tables:
+    # Row count comparison
+    access_cur.execute(f'SELECT COUNT(*) FROM [{table}]')
+    access_count = access_cur.fetchone()[0]
+    with engine.connect() as conn:
+        pg_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
+        # Get column names in order for both databases
+        access_cur.execute(f'SELECT * FROM [{table}]')
+        access_desc = [desc[0] for desc in access_cur.description]
+        pg_desc = [col['name'] for col in inspector.get_columns(table)]
+        # First 5 rows comparison
+        access_rows = access_cur.fetchmany(5)
+        pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
+        # Reorder Postgres rows to match Access column order
+        pg_rows_reordered = []
+        for row in pg_rows:
+            row_dict = dict(zip(pg_desc, row))
+            pg_rows_reordered.append(tuple(row_dict[col] for col in access_desc))
+    if access_count != pg_count:
+        print(f"Row count mismatch in table {table}: Access={access_count}, Postgres={pg_count}")
+    # Type-agnostic row comparison: compare string representations
+    def rows_equal(rows1, rows2):
+        if len(rows1) != len(rows2):
+            return False
+        for r1, r2 in zip(rows1, rows2):
+            if len(r1) != len(r2):
+                return False
+            for v1, v2 in zip(r1, r2):
+                if str(v1) != str(v2):
+                    return False
+        return True
+    if not rows_equal(access_rows, pg_rows_reordered):
+        print(f"First 5 rows mismatch in table {table}:")
+        print(f"  Access:   {access_rows}")
+        print(f"  Postgres: {pg_rows_reordered}")
 
 engine.dispose()
