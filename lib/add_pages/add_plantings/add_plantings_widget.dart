@@ -7,6 +7,8 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'add_plantings_model.dart';
 export 'add_plantings_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AddPlantingsWidget extends StatefulWidget {
   const AddPlantingsWidget({
@@ -47,6 +49,47 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
 
     super.dispose();
   }
+
+Future<void> submitPlanting() async {
+  final url = Uri.parse('http://localhost:8000/plantings');
+
+  final body = {
+    'date_planted': _model.dropDownValue1,
+    'number_planted': _model.textController1.text,
+    'genetic_source': _model.dropDownValue2,
+    'species_variety': _model.dropDownValue3,
+    'planted_by': _model.dropDownValue4,
+    'zone': _model.dropDownValue5,
+    'container_type': _model.dropDownValue6,
+    'comments': _model.textController2.text,
+    'genetic_sources_checkbox': _model.checkboxValue1,
+    'existing_plantings_checkbox': _model.checkboxValue2,
+    'wa_species_checkbox': _model.checkboxValue3,
+  };
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Success: show a message or navigate
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Planting saved successfully!')),
+      );
+    } else {
+      // Error: show a message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save planting.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {

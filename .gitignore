@@ -2,3 +2,17 @@ App/__pycache__/
 venv/
 .pytest_cache/
 postgres-data/
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+/build
+ios/Flutter/ephemeral/flutter_lldb_helper.py
+ios/Flutter/ephemeral/flutter_lldbinit
+/.flutter-plugins
+/.flutter-plugins-dependencies
+/pubspec.lock
+/.dart_tool/
