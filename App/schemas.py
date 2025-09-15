@@ -1,11 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 # Base schemas for common patterns
 class BaseSchema(BaseModel):
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Aspect schemas
 class AspectBase(BaseSchema):
@@ -300,4 +299,5 @@ class ProgenyCreate(ProgenyBase):
     pass
 
 class ProgenyResponse(ProgenyBase):
+    progeny_id: Optional[int] = None
     progeny_id: Optional[int] = None

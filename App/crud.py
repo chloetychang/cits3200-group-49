@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Generic
 from sqlalchemy.ext.declarative import DeclarativeMeta
-import models
-import schemas
+import App.models as models
+import App.schemas as schemas
 
 # Generic type for CRUD operations
 ModelType = TypeVar("ModelType", bound=DeclarativeMeta)
@@ -25,7 +25,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         """Create a new record"""
-        obj_in_data = obj_in.dict() if hasattr(obj_in, 'dict') else obj_in.model_dump()
+        obj_in_data = obj_in.model_dump() if hasattr(obj_in, 'model_dump') else obj_in
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
         db.commit()

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, TIMESTAMP, ForeignKey, Float, UniqueConstraint
 from sqlalchemy.orm import relationship
-from database import Base
+from App.database import Base
 
 class Aspect(Base):
     __tablename__ = "aspect"
@@ -69,7 +69,7 @@ class GeneticSource(Base):
     research_notes = Column(Text, nullable=True)
     
     # Relationships
-    variety = relationship("Variety", back_populates="genetic_sources")
+    variety = relationship("Variety", back_populates="genetic_sources", foreign_keys=[variety_id])
     supplier = relationship("Supplier", back_populates="genetic_sources")
     provenance = relationship("Provenance", back_populates="genetic_sources")
     propagation_type_rel = relationship("PropagationType", back_populates="genetic_sources")
@@ -77,7 +77,7 @@ class GeneticSource(Base):
     male_parent = relationship("GeneticSource", remote_side="GeneticSource.genetic_source_id", foreign_keys=[male_genetic_source])
     plantings = relationship("Planting", back_populates="genetic_source")
     progeny = relationship("Progeny", back_populates="genetic_source")
-    varieties_as_source = relationship("Variety", back_populates="genetic_source_rel")
+    varieties_as_source = relationship("Variety", back_populates="genetic_source_rel", foreign_keys="[Variety.genetic_source_id]")
 
 class Genus(Base):
     __tablename__ = "genus"

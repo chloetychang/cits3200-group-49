@@ -5,10 +5,10 @@ import os
 class Settings:
     # Database settings - TODO: Replace with actual values
     DATABASE_HOST: str = os.getenv("DATABASE_HOST", "localhost")  # Placeholder
-    DATABASE_PORT: str = os.getenv("DATABASE_PORT", "5432")      # Placeholder
-    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "yanchep_db") # Placeholder
-    DATABASE_USER: str = os.getenv("DATABASE_USER", "username")   # Placeholder
-    DATABASE_PASSWORD: str = os.getenv("DATABASE_PASSWORD", "password")  # Placeholder
+    DATABASE_PORT: str = os.getenv("DATABASE_PORT", "5434")      # Placeholder
+    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "mydb") # Placeholder
+    DATABASE_USER: str = os.getenv("DATABASE_USER", "postgres")   # Placeholder
+    DATABASE_PASSWORD: str = os.getenv("DATABASE_PASSWORD", "postgres")  # Placeholder
     
     # API settings
     API_TITLE: str = "Yanchep Plant Database API"
