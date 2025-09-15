@@ -1,6 +1,7 @@
 App/__pycache__/
 venv/
 .pytest_cache/
+.env
 postgres-data/
 gradle-wrapper.jar
 /.gradle

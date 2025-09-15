@@ -1,14 +1,17 @@
 # Configuration settings for the FastAPI application
 
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings:
-    # Database settings - TODO: Replace with actual values
-    DATABASE_HOST: str = os.getenv("DATABASE_HOST", "localhost")  # Placeholder
-    DATABASE_PORT: str = os.getenv("DATABASE_PORT", "5434")      # Placeholder
-    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "mydb") # Placeholder
-    DATABASE_USER: str = os.getenv("DATABASE_USER", "postgres")   # Placeholder
-    DATABASE_PASSWORD: str = os.getenv("DATABASE_PASSWORD", "1234") # Placeholder
+    DATABASE_HOST: str = os.getenv("DATABASE_HOST") #type: ignore
+    DATABASE_PORT: str = os.getenv("DATABASE_PORT") #type: ignore
+    DATABASE_NAME: str = os.getenv("DATABASE_NAME") #type: ignore
+    DATABASE_USER: str = os.getenv("DATABASE_USER") #type: ignore
+    DATABASE_PASSWORD: str = os.getenv("DATABASE_PASSWORD") #type: ignore
     
     # API settings
     API_TITLE: str = "Yanchep Plant Database API"

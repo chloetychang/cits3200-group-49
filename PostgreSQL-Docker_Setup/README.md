@@ -17,12 +17,8 @@
 
 3. **Connect using PGAdmin4**
    - Open PGAdmin4
-   - Create a new server with:
-     - **Host:** localhost
-     - **Port:** 5434
-     - **Username:** postgres
-     - **Password:** 1234
-     - **Database:** mydb
+   - Create a new server with
+      database credentials as given by administrators
 
 4. **Verify your data**
    - Expand the database → Schemas → public → Tables

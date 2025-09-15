@@ -21,33 +21,51 @@ Backend/
 ### Prerequisites
 - Python 3.8+
 - PostgreSQL database
-- Virtual environment (already set up)
 
-### Database Configuration
+### 1. Python Virtual Environment Setup
 
-Before running the application, update the database connection settings in `config.py` or set environment variables:
+First, set up a Python virtual environment to isolate project dependencies:
 
 ```bash
-# Environment variables (recommended)
-export DATABASE_HOST="your_host"
-export DATABASE_PORT="5432"
-export DATABASE_NAME="your_database_name"
-export DATABASE_USER="your_username"
-export DATABASE_PASSWORD="your_password"
+# Navigate to your desired directory (can be outside project or inside with .gitignore)
+python -m venv venv
+
+# Activate the virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
 ```
 
-Or modify the placeholder values in `config.py`.
+You should see `(venv)` in your terminal prompt when the environment is active.
 
-### Installation
+### 2. Install Dependencies
 
-1. Install dependencies:
+With your virtual environment activated:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Ensure your PostgreSQL database is running and accessible.
+### 3. Environment Variables Configuration
 
-3. Run the application:
+Create a `.env` file in the `App` directory with your database credentials:
+
+```env
+# Database configuration
+DATABASE_HOST=localhost
+DATABASE_PORT=your_port
+DATABASE_NAME=your_database_name
+DATABASE_USER=your_username
+DATABASE_PASSWORD=your_password
+```
+
+### 4. Database Setup
+
+Ensure your PostgreSQL database is running and accessible with the credentials specified in your `.env` file.
+
+### 5. Run the Application
+
+With your virtual environment activated and environment variables configured:
 ```bash
 python main.py
 ```
