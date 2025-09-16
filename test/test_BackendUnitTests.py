@@ -1,8 +1,13 @@
 import os
+import sys
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+# Add the parent directory to Python path to allow imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import App.models as models
 from main import app
 from App.database import get_db

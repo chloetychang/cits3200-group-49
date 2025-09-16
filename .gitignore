@@ -19,3 +19,4 @@ ios/Flutter/ephemeral/flutter_lldbinit
 /.dart_tool/
 test/__pycache__/
 Migration/__pycache__/
+__pycache__/main.cpython-310.pyc
