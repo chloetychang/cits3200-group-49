@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import engine, get_db
-from config import settings
-import models
-import schemas
+from .database import engine, get_db
+from .config import settings
+from . import models
+from . import schemas
 import uvicorn
 from typing import List
-import crud
+from . import crud
 
 # Create all database tables
 # models.Base.metadata.create_all(bind=engine)

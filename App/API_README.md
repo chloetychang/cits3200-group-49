@@ -69,6 +69,10 @@ With your virtual environment activated and environment variables configured:
 ```bash
 python main.py
 ```
+or if in the root directory
+```bash
+python -m App.main
+```
 
 The API will be available at `http://localhost:8000`
 
