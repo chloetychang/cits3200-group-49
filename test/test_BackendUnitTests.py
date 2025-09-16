@@ -82,3 +82,17 @@ def test_create_planting_request_response(setup_db):
     assert data["zone_id"] == payload["zone_id"]
     assert data["container_type_id"] == payload["container_type_id"]
     assert data["comments"] == payload["comments"]
+
+    # Additional check: verify the planting exists in the database
+    db = TestingSessionLocal()
+    planting = db.query(models.Planting).filter_by(
+        number_planted=payload["number_planted"],
+        genetic_source_id=payload["genetic_source_id"],
+        variety_id=payload["variety_id"],
+        planted_by=payload["planted_by"],
+        zone_id=payload["zone_id"],
+        container_type_id=payload["container_type_id"],
+        comments=payload["comments"]
+    ).first()
+    db.close()
+    assert planting is not None, "Planting not found in database after creation"

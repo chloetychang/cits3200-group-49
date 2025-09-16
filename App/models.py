@@ -5,7 +5,7 @@ from .database import Base
 class Aspect(Base):
     __tablename__ = "aspect"
     
-    aspect_id = Column(Integer, primary_key=True)
+    aspect_id = Column(Integer, primary_key=True, autoincrement=True)
     aspect = Column(String, nullable=False, unique=True)
     
     # Relationships
@@ -24,7 +24,7 @@ class Bioregion(Base):
 class ConservationStatus(Base):
     __tablename__ = "conservation_status"
     
-    conservation_status_id = Column(Integer, primary_key=True)
+    conservation_status_id = Column(Integer, primary_key=True, autoincrement=True)
     status = Column(String, nullable=False, unique=True)
     status_short_name = Column(String, nullable=True)
     
@@ -34,7 +34,7 @@ class ConservationStatus(Base):
 class Container(Base):
     __tablename__ = "container"
     
-    container_type_id = Column(Integer, primary_key=True)
+    container_type_id = Column(Integer, primary_key=True, autoincrement=True)
     container_type = Column(String, nullable=False)
     
     # Relationships
@@ -43,7 +43,7 @@ class Container(Base):
 class Family(Base):
     __tablename__ = "family"
     
-    family_id = Column(Integer, primary_key=True)
+    family_id = Column(Integer, primary_key=True, autoincrement=True)
     famiy_name = Column(String, nullable=False, unique=True)  # Note: typo preserved from V02 db schema
     
     # Relationships
@@ -52,7 +52,7 @@ class Family(Base):
 class GeneticSource(Base):
     __tablename__ = "genetic_source"
     
-    genetic_source_id = Column(Integer, primary_key=True)
+    genetic_source_id = Column(Integer, primary_key=True, autoincrement=True)
     acquisition_date = Column(TIMESTAMP, nullable=False)
     variety_id = Column(Integer, ForeignKey("variety.variety_id"), nullable=False)
     supplier_id = Column(Integer, ForeignKey("supplier.supplier_id"), nullable=False)
@@ -82,7 +82,7 @@ class GeneticSource(Base):
 class Genus(Base):
     __tablename__ = "genus"
     
-    genus_id = Column(Integer, primary_key=True)
+    genus_id = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(Integer, ForeignKey("family.family_id"), nullable=False)
     genus = Column(String, nullable=False, unique=True)
     
@@ -93,7 +93,7 @@ class Genus(Base):
 class LocationType(Base):
     __tablename__ = "location_type"
     
-    location_type_id = Column(Integer, primary_key=True)
+    location_type_id = Column(Integer, primary_key=True, autoincrement=True)
     location_type = Column(String, nullable=True)
     
     # Relationships
@@ -102,7 +102,7 @@ class LocationType(Base):
 class PlantUtility(Base):
     __tablename__ = "plant_utility"
     
-    plant_utility_id = Column(Integer, primary_key=True)
+    plant_utility_id = Column(Integer, primary_key=True, autoincrement=True)
     utility = Column(String, nullable=False, unique=True)
     
     # Relationships
@@ -111,7 +111,7 @@ class PlantUtility(Base):
 class Planting(Base):
     __tablename__ = "planting"
     
-    planting_id = Column(Integer, primary_key=True)
+    planting_id = Column(Integer, primary_key=True, autoincrement=True)
     date_planted = Column(TIMESTAMP, nullable=False)
     planted_by = Column(Integer, ForeignKey("user.user_id"), nullable=True)
     zone_id = Column(Integer, ForeignKey("zone.zone_id"), nullable=False)
@@ -148,7 +148,7 @@ class Progeny(Base):
 class PropagationType(Base):
     __tablename__ = "propagation_type"
     
-    propagation_type_id = Column(Integer, primary_key=True)
+    propagation_type_id = Column(Integer, primary_key=True, autoincrement=True)
     propagation_type = Column(String, nullable=True)
     needs_two_parents = Column(Boolean, nullable=False)
     can_cross_genera = Column(Boolean, nullable=False)
@@ -159,7 +159,7 @@ class PropagationType(Base):
 class Provenance(Base):
     __tablename__ = "provenance"
     
-    provenance_id = Column(Integer, primary_key=True)
+    provenance_id = Column(Integer, primary_key=True, autoincrement=True)
     bioregion_code = Column(String, ForeignKey("bioregion.bioregion_code"), nullable=False)
     location = Column(String, nullable=True)
     location_type_id = Column(Integer, ForeignKey("location_type.location_type_id"), nullable=True)
@@ -173,7 +173,7 @@ class Provenance(Base):
 class RemovalCause(Base):
     __tablename__ = "removal_cause"
     
-    removal_cause_id = Column(Integer, primary_key=True)
+    removal_cause_id = Column(Integer, primary_key=True, autoincrement=True)
     cause = Column(String, nullable=False, unique=True)
     
     # Relationships
@@ -182,7 +182,7 @@ class RemovalCause(Base):
 class Role(Base):
     __tablename__ = "role"
     
-    role_id = Column(Integer, primary_key=True)
+    role_id = Column(Integer, primary_key=True, autoincrement=True)
     role = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=True)
     
@@ -192,7 +192,7 @@ class Role(Base):
 class Species(Base):
     __tablename__ = "species"
     
-    species_id = Column(Integer, primary_key=True)
+    species_id = Column(Integer, primary_key=True, autoincrement=True)
     genus_id = Column(Integer, ForeignKey("genus.genus_id"), nullable=False)
     species = Column(String, nullable=False)
     conservation_status_id = Column(Integer, ForeignKey("conservation_status.conservation_status_id"), nullable=True)
@@ -216,7 +216,7 @@ class SpeciesUtilityLink(Base):
 class SubZone(Base):
     __tablename__ = "sub_zone"
     
-    sub_zone_id = Column(Integer, primary_key=True)
+    sub_zone_id = Column(Integer, primary_key=True, autoincrement=True)
     zone_id = Column(Integer, ForeignKey("zone.zone_id"), nullable=True)
     sub_zone_code = Column(String, nullable=True)
     aspect_id = Column(Integer, ForeignKey("aspect.aspect_id"), nullable=True)
@@ -230,7 +230,7 @@ class SubZone(Base):
 class Supplier(Base):
     __tablename__ = "supplier"
     
-    supplier_id = Column(Integer, primary_key=True)
+    supplier_id = Column(Integer, primary_key=True, autoincrement=True)
     supplier_name = Column(String, nullable=False, unique=True)
     short_name = Column(String, nullable=False, unique=True)
     web_site = Column(String, nullable=True)
@@ -242,7 +242,7 @@ class Supplier(Base):
 class User(Base):
     __tablename__ = "user"
     
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=True)
     surname = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
@@ -274,7 +274,7 @@ class UserRoleLink(Base):
 class Variety(Base):
     __tablename__ = "variety"
     
-    variety_id = Column(Integer, primary_key=True)
+    variety_id = Column(Integer, primary_key=True, autoincrement=True)
     species_id = Column(Integer, ForeignKey("species.species_id"), nullable=True)
     common_name = Column(String, nullable=True)
     variety = Column(String, nullable=True)
@@ -289,7 +289,7 @@ class Variety(Base):
 class Zone(Base):
     __tablename__ = "zone"
     
-    zone_id = Column(Integer, primary_key=True)
+    zone_id = Column(Integer, primary_key=True, autoincrement=True)
     zone_number = Column(String, nullable=False, unique=True)
     zone_name = Column(String, nullable=True)
     aspect_id = Column(Integer, ForeignKey("aspect.aspect_id"), nullable=True)
