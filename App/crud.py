@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Generic
 from sqlalchemy.ext.declarative import DeclarativeMeta
-import models as models
-import schemas as schemas
+from . import models
+from . import schemas
 
 # Generic type for CRUD operations
 ModelType = TypeVar("ModelType", bound=DeclarativeMeta)

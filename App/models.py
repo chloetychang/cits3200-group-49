@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, TIMESTAMP, ForeignKey, Float, UniqueConstraint
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 
 class Aspect(Base):
     __tablename__ = "aspect"

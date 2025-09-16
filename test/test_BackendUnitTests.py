@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import App.models as models
-from App.main import app
+from main import app
 from App.database import get_db
 from datetime import datetime
 import warnings
