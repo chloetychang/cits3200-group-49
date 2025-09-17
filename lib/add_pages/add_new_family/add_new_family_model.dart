@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   ///  State fields for stateful widgets in this page.
 
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode1;
+  TextEditingController? textController1;
+  String? Function(BuildContext, String?)? textController1Validator;
   // State field(s) for DropDown widget.
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
@@ -28,13 +32,6 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue7;
   FormFieldController<String>? dropDownValueController7;
-  // State field(s) for DropDown widget.
-  String? dropDownValue8;
-  FormFieldController<String>? dropDownValueController8;
-  // State field(s) for TextField widget.
-  FocusNode? textFieldFocusNode1;
-  TextEditingController? textController1;
-  String? Function(BuildContext, String?)? textController1Validator;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
@@ -43,11 +40,15 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;
   String? Function(BuildContext, String?)? textController3Validator;
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode4;
+  TextEditingController? textController4;
+  String? Function(BuildContext, String?)? textController4Validator;
   // State field(s) for Checkbox widget.
   bool? checkboxValue1;
   // State field(s) for DropDown widget.
-  String? dropDownValue9;
-  FormFieldController<String>? dropDownValueController9;
+  String? dropDownValue8;
+  FormFieldController<String>? dropDownValueController8;
   // State field(s) for Checkbox widget.
   bool? checkboxValue2;
 
@@ -64,5 +65,8 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
 
     textFieldFocusNode3?.dispose();
     textController3?.dispose();
+
+    textFieldFocusNode4?.dispose();
+    textController4?.dispose();
   }
 }

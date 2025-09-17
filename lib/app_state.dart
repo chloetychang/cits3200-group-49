@@ -78,4 +78,10 @@ class FFAppState extends ChangeNotifier {
   void insertAtIndexInMockSubZones(int index, SubZonesStruct value) {
     mockSubZones.insert(index, value);
   }
+
+  DateTime? _selectedDate = DateTime.fromMillisecondsSinceEpoch(1758038400000);
+  DateTime? get selectedDate => _selectedDate;
+  set selectedDate(DateTime? value) {
+    _selectedDate = value;
+  }
 }
