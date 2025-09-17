@@ -36,6 +36,8 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue5;
   FormFieldController<String>? dropDownValueController5;
+   String? dropDownValue6;
+  FormFieldController<String>? dropDownValueController6;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode3;
   TextEditingController? textController3;
