@@ -143,7 +143,12 @@ def map_type(access_type, size):
 def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
     col_defs = []
     for col in columns:
-        col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
+        # Detect auto-increment PK: Access 'COUNTER' type or ADOX type code 3, and is PK
+        is_auto_inc = (col['name'] in pk) and (col['type'] == 'COUNTER' or col['type'] == 3)
+        if is_auto_inc:
+            col_def = f'"{col["name"]}" INTEGER GENERATED ALWAYS AS IDENTITY'
+        else:
+            col_def = f'"{col["name"]}" {map_type(col["type"], col["column_size"])}'
         if not col['nullable']:
             col_def += ' NOT NULL'
         col_defs.append(col_def)
@@ -158,13 +163,18 @@ def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
 
 # Copy data from Access to PostgreSQL
 def copy_table_data(access_cur, pg_cur, table, columns):
-	col_names = [col['name'] for col in columns]
-	access_cur.execute(f'SELECT {", ".join([f"[{c}]" for c in col_names])} FROM [{table}]')
-	rows = access_cur.fetchall()
-	if not rows:
-		return
-	insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
-	psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
+    col_names = [col['name'] for col in columns]
+    access_cur.execute(f'SELECT {", ".join([f"[{c}]" for c in col_names])} FROM [{table}]')
+    rows = access_cur.fetchall()
+    if not rows:
+        return
+    # Detect if any column is auto-increment PK (identity)
+    auto_inc_cols = [col['name'] for col in columns if (col['name'] in col_names) and (col['type'] == 'COUNTER' or col['type'] == 3)]
+    if auto_inc_cols:
+        insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) OVERRIDING SYSTEM VALUE VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
+    else:
+        insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
+    psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
 # Function to create views in PostgreSQL
 def create_views(pg_cur):

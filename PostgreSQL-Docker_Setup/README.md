@@ -8,11 +8,15 @@
      - `backup.sql`
 
 2. **Start the Docker containers**
-   - Open a terminal or PowerShell in the folder
+   - Open a terminal or PowerShell in the folder "PostgreSQL-Docker_Setup"
    - Run:
      ```
      docker-compose up -d
      ```
+   - Alternatively, in the root directory, run:
+      ```
+      docker-compose -f PostgreSQL-Docker_Setup/docker-compose.yml up -d
+      ```
    - This will start PostgreSQL on **port 5434** and PGAdmin4 on **http://localhost:8080**
 
 3. **Connect using PGAdmin4**
