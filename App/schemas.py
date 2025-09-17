@@ -216,6 +216,27 @@ class VarietyCreate(VarietyBase):
 class VarietyResponse(VarietyBase):
     variety_id: int
 
+# Nested schema for Variety (to embed inside Species)
+class VarietyNestedResponse(BaseSchema):
+    variety_id: int
+    variety: Optional[str] = None
+    common_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+# Species + Varieties schema
+from typing import List
+
+class SpeciesWithVarietyResponse(BaseSchema):
+    species_id: int
+    species: str
+    varieties: List[VarietyNestedResponse] = []
+
+    class Config:
+        from_attributes = True
+
+
 # Zone schemas
 class ZoneBase(BaseSchema):
     zone_number: str
