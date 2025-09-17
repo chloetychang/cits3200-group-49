@@ -86,6 +86,7 @@
 
 - Can implement all changes in backend.
 - Change log and role-based access out-of-scope. 
+- Ensure device compatibility. 
 
 **Modifications**
 - Marking key for Sprint 3 Goals
