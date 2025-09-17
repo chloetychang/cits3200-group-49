@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import engine, get_db
 from config import settings
@@ -16,6 +17,14 @@ app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")
@@ -54,6 +63,19 @@ def get_suppliers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
     db_planting = crud.planting.create(db, obj_in=planting_in)
     return db_planting
+
+@app.get("/users/", response_model=List[schemas.UserResponse])
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """Get all users with pagination"""
+    users = crud.user.get_multi(db=db, skip=skip, limit=limit)
+    return users
+
+@app.post("/users/", response_model=schemas.UserResponse)
+def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
+    """Create a new user"""
+    db_user = crud.user.create(db, obj_in=user_in)
+    return db_user
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
