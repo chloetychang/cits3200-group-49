@@ -19,4 +19,10 @@ ios/Flutter/ephemeral/flutter_lldbinit
 /.dart_tool/
 test/__pycache__/
 Migration/__pycache__/
-__pycache__/
+__pycache__
+alembic.ini
+alembic/__pycache__
+alembic/env.py
+alembic/README
+alembic/versions/__pycache__
+alembic/script.py.mako

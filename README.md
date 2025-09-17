@@ -54,6 +54,49 @@ This project consists of:
 
 For detailed backend setup instructions, see [App/API_README.md](App/API_README.md)
 
+## Database Migrations with Alembic
+
+Alembic is used for managing database schema migrations with SQLAlchemy and PostgreSQL.
+
+### Alembic Installation & Setup
+
+1. **Install Alembic**
+   (Already included in `requirements.txt`, otherwise if not, follow instructions below)
+   ```bash
+   pip install alembic
+   ```
+
+2. **Initialize Alembic**
+   In your **project root** (where your database code lives):
+   ```bash
+   alembic init alembic
+   ```
+   This creates an `alembic/` directory and an `alembic.ini` config file.
+
+3. **Configure Alembic**
+   - Open `alembic.ini` and set your database URL:
+     ```ini
+     sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
+     ```
+   - In `alembic/env.py`, import your SQLAlchemy models and set metadata:
+     ```python
+     from App.models import Base  
+     target_metadata = Base.metadata
+     ```
+
+4. **Use the latest Alembic Migration Version provided and apply**
+   ```bash
+   alembic upgrade head
+   ```
+
+5. **Test Your API Routes**
+   - Start your FastAPI server:
+     ```bash
+     python main.py
+     ```
+   - Use Interactive docs: `http://localhost:8000/docs` to test API Routes like POST/GET request with live sync changes to the PostgreSQL database. (Verify it via pgAdmin and find specific database table)
+
+
 ## Frontend (Flutter) Setup - "flutterflow" Branch
 To set up Flutter, refer to the official set-up guide:
 [Flutter Installation Guide](https://docs.flutter.dev/get-started/quick)
