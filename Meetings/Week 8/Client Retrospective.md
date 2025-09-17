@@ -29,7 +29,7 @@
 <br>
 
 ## Item 3 - Backend 
-> **Demonstration of tests passed and routes on fastAPI**
+> **Demonstration of tests passed and routes on fastAPI. Also demonstration of select pages on Flutter.**
 
 ### Discussion
  - 
