@@ -1,16 +1,32 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
+import '/backend/api_service.dart'; // use our API service
 import 'view_species_widget.dart' show ViewSpeciesWidget;
 import 'package:flutter/material.dart';
 
 class ViewSpeciesModel extends FlutterFlowModel<ViewSpeciesWidget> {
-  ///  State fields for stateful widgets in this page.
-
-  // State field(s) for PaginatedDataTable widget.
+  /// DataTable controller (rows are simple maps: {'species': ..., 'variety': ...})
   final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
+      FlutterFlowDataTableController<Map<String, dynamic>>();
+
+  /// Page data & state
+  List<Map<String, dynamic>> rows = [];
+  bool isLoading = false;
+  String? error;
+
+  /// Fetch species + varieties from FastAPI
+  Future<void> fetch() async {
+    isLoading = true;
+    error = null;
+    try {
+      rows = await ApiService.getSpeciesWithVarieties();
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
 
   @override
   void initState(BuildContext context) {}
