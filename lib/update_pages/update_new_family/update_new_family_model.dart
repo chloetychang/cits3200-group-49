@@ -10,6 +10,10 @@ class UpdateNewFamilyModel extends FlutterFlowModel<UpdateNewFamilyWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
+  // State field(s) for TextField widget.
+  FocusNode? textFieldFocusNode1;
+  TextEditingController? textController1;
+  String? Function(BuildContext, String?)? textController1Validator;
   // State field(s) for DropDown widget.
   String? dropDownValue2;
   FormFieldController<String>? dropDownValueController2;
@@ -31,13 +35,6 @@ class UpdateNewFamilyModel extends FlutterFlowModel<UpdateNewFamilyWidget> {
   // State field(s) for DropDown widget.
   String? dropDownValue8;
   FormFieldController<String>? dropDownValueController8;
-  // State field(s) for DropDown widget.
-  String? dropDownValue9;
-  FormFieldController<String>? dropDownValueController9;
-  // State field(s) for TextField widget.
-  FocusNode? textFieldFocusNode1;
-  TextEditingController? textController1;
-  String? Function(BuildContext, String?)? textController1Validator;
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
@@ -49,8 +46,8 @@ class UpdateNewFamilyModel extends FlutterFlowModel<UpdateNewFamilyWidget> {
   // State field(s) for Checkbox widget.
   bool? checkboxValue1;
   // State field(s) for DropDown widget.
-  String? dropDownValue10;
-  FormFieldController<String>? dropDownValueController10;
+  String? dropDownValue9;
+  FormFieldController<String>? dropDownValueController9;
   // State field(s) for Checkbox widget.
   bool? checkboxValue2;
 

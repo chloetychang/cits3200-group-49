@@ -34,11 +34,15 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
     super.initState();
     _model = createModel(context, () => UpdatePlantingsModel());
 
-    _model.textController1 ??= TextEditingController();
+    _model.textController1 ??= TextEditingController(
+        text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+
+    _model.textController3 ??= TextEditingController();
+    _model.textFieldFocusNode3 ??= FocusNode();
   }
 
   @override
@@ -1249,55 +1253,111 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                         ),
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController2 ??=
-                                              FormFieldController<String>(null),
-                                          options: [
-                                            'Option 1',
-                                            'Option 2',
-                                            'Option 3'
-                                          ],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue2 = val),
+                                        Container(
                                           width: 400.0,
-                                          height: 50.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                          child: TextFormField(
+                                            controller: _model.textController1,
+                                            focusNode:
+                                                _model.textFieldFocusNode1,
+                                            autofocus: false,
+                                            obscureText: false,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              labelStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMediumFamily,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts:
+                                                            !FlutterFlowTheme
+                                                                    .of(context)
+                                                                .labelMediumIsCustom,
+                                                      ),
+                                              hintText: 'TextField',
+                                              hintStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .labelMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .labelMediumFamily,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts:
+                                                            !FlutterFlowTheme
+                                                                    .of(context)
+                                                                .labelMediumIsCustom,
+                                                      ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
                                               ),
-                                          hintText: 'Select your date here',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0x00000000),
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              errorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              focusedErrorBorder:
+                                                  OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .error,
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                              filled: true,
+                                              fillColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                            cursorColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryText,
+                                            enableInteractiveSelection: true,
+                                            validator: _model
+                                                .textController1Validator
+                                                .asValidator(context),
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          elevation: 2.0,
-                                          borderColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
                                       ],
                                     ),
@@ -1351,9 +1411,9 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                         Container(
                                           width: 400.0,
                                           child: TextFormField(
-                                            controller: _model.textController1,
+                                            controller: _model.textController2,
                                             focusNode:
-                                                _model.textFieldFocusNode1,
+                                                _model.textFieldFocusNode2,
                                             autofocus: false,
                                             obscureText: false,
                                             decoration: InputDecoration(
@@ -1433,7 +1493,7 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .accent1,
                                             validator: _model
-                                                .textController1Validator
+                                                .textController2Validator
                                                 .asValidator(context),
                                           ),
                                         ),
@@ -1453,6 +1513,96 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Color(0xFFFF0000),
+                                            fontSize: () {
+                                              if (MediaQuery.sizeOf(context)
+                                                      .width <
+                                                  kBreakpointSmall) {
+                                                return 16.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointMedium) {
+                                                return 24.0;
+                                              } else if (MediaQuery.sizeOf(
+                                                          context)
+                                                      .width <
+                                                  kBreakpointLarge) {
+                                                return 24.0;
+                                              } else {
+                                                return 24.0;
+                                              }
+                                            }(),
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.bold,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    Expanded(
+                                      child: FlutterFlowDropDown<String>(
+                                        controller: _model
+                                                .dropDownValueController2 ??=
+                                            FormFieldController<String>(null),
+                                        options: [
+                                          'Option 1',
+                                          'Option 2',
+                                          'Option 3'
+                                        ],
+                                        onChanged: (val) => safeSetState(
+                                            () => _model.dropDownValue2 = val),
+                                        width: 400.0,
+                                        height: 50.0,
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMediumFamily,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .bodyMediumIsCustom,
+                                            ),
+                                        hintText: 'Select...',
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryText,
+                                          size: 24.0,
+                                        ),
+                                        fillColor: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        elevation: 2.0,
+                                        borderColor:
+                                            FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                        borderWidth: 0.0,
+                                        borderRadius: 8.0,
+                                        margin: EdgeInsetsDirectional.fromSTEB(
+                                            12.0, 0.0, 12.0, 0.0),
+                                        hidesUnderline: true,
+                                        isOverButton: false,
+                                        isSearchable: false,
+                                        isMultiSelect: false,
+                                      ),
+                                    ),
+                                  ]
+                                      .divide(SizedBox(width: 16.0))
+                                      .addToEnd(SizedBox(width: 16.0)),
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      'Species + variety:',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Colors.black,
                                             fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
@@ -1535,14 +1685,14 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(
-                                      'Species + variety:',
+                                      'Planted by:',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Colors.black,
+                                            color: Color(0xFFFF0000),
                                             fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
@@ -1625,7 +1775,7 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(
-                                      'Planted by:',
+                                      'Zone:',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -1659,7 +1809,8 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Expanded(
+                                    Flexible(
+                                      flex: 6,
                                       child: FlutterFlowDropDown<String>(
                                         controller: _model
                                                 .dropDownValueController5 ??=
@@ -1715,7 +1866,7 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(
-                                      'Zone:',
+                                      'Container type:',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -1806,97 +1957,6 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Text(
-                                      'Container type:',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
-                                            color: Color(0xFFFF0000),
-                                            fontSize: () {
-                                              if (MediaQuery.sizeOf(context)
-                                                      .width <
-                                                  kBreakpointSmall) {
-                                                return 16.0;
-                                              } else if (MediaQuery.sizeOf(
-                                                          context)
-                                                      .width <
-                                                  kBreakpointMedium) {
-                                                return 24.0;
-                                              } else if (MediaQuery.sizeOf(
-                                                          context)
-                                                      .width <
-                                                  kBreakpointLarge) {
-                                                return 24.0;
-                                              } else {
-                                                return 24.0;
-                                              }
-                                            }(),
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.bold,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
-                                          ),
-                                    ),
-                                    Flexible(
-                                      flex: 6,
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController7 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue7 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
-                                        ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
-                                      ),
-                                    ),
-                                  ]
-                                      .divide(SizedBox(width: 16.0))
-                                      .addToEnd(SizedBox(width: 16.0)),
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(
                                       'Comments:',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1936,8 +1996,8 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                       child: Container(
                                         width: double.infinity,
                                         child: TextFormField(
-                                          controller: _model.textController2,
-                                          focusNode: _model.textFieldFocusNode2,
+                                          controller: _model.textController3,
+                                          focusNode: _model.textFieldFocusNode3,
                                           autofocus: false,
                                           obscureText: false,
                                           decoration: InputDecoration(
@@ -2017,7 +2077,7 @@ class _UpdatePlantingsWidgetState extends State<UpdatePlantingsWidget> {
                                               FlutterFlowTheme.of(context)
                                                   .accent1,
                                           validator: _model
-                                              .textController2Validator
+                                              .textController3Validator
                                               .asValidator(context),
                                         ),
                                       ),
