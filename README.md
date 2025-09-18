@@ -30,7 +30,12 @@ This project consists of:
 2. **Install Dependencies**
    ```bash
    cd App
+   
+   # Windows:
    pip install -r requirements.txt
+
+   # macOS/Linux
+   pip install -r requirements_mac.txt
    ```
 
 3. **Configure Environment Variables**
