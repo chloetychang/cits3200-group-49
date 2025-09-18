@@ -1,4 +1,4 @@
-# Minutes Template
+# Minutes - Client Retrospective
 
 - Date: 18/09/2025
 - Present: Tri, Chloe, Kevin (Client)
@@ -18,10 +18,6 @@
  - list of planting sponsors - list of paginated type var - pass the data through that way. Don't break the response model.
  - passing it through arguments - that's clean (Kevin likes that)
  - Kevin's happy with the screens. Use Android Flutter Studio and that will download the code and run the app on your device. 
-
-### Actions
- - 
-<br>
 
 ## Item 2 - Database Migration
 > **Demonstration of tests passed and PGAdmin.**
@@ -48,9 +44,6 @@
 - Another release of the database? Raising queries, but uncertainty on Kevin's part. Three usernames have not been testing it out quick enough. Should probably not have an update. 
   - If anything's received by the 1st of October, forget it.
 
-### Actions
--
-
 <br>
 
 ## Item 3 - Backend 
@@ -74,8 +67,6 @@
    - select * for "user"
 - Kevin - happy to send over some sample files for Docker. All sorts of problems with three different devices. 
 
-### Actions
- - 
 <br>
 
 ## Item 4 - Confirmation of documents to be submitted for sprint 2
@@ -87,8 +78,6 @@
    - All add tables, one update table, one view table (ones with backend implemented), one manage lookup tables, others screens
  - User stories so Kevin know what we are and will be working on. Wants a simple set of user stories, do not have to be complicated. Don't have to add more according to Kevin. Trying to implement backend pages. 
   
-### Actions
- - 
 <br>
 
 ## Item 4 - (Optional) Review of revised set of user stories.
@@ -99,12 +88,10 @@
  - Don't need to do anything? commands?
  - Kevin: can turn it on in postgres, but no interest.
 
-### Actions
- - 
 <br>
 
-Overall feedback: It's pretty good, considering that the team hasn't gone down the path of backend. Understandable since we have changed our focus to go down the path of frontend. Authentication and separation concerns, but shouldn't take us long to fix.
+**Overall feedback from Kevin:** It's pretty good, considering that the team has only just started investigating backend. Understandable since we have changed our focus to go down the path of frontend. Authentication and separation concerns, but shouldn't take us long to fix.
 
-## Meeting Closed: 12:50PM 
+## Meeting Closed: 12:55PM 
 
 ## Next Scheduled Meeting:
