@@ -1,6 +1,7 @@
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
+import '/backend/api_service.dart'; // use our API service
 import 'add_acquisitions_widget.dart' show AddAcquisitionsWidget;
 import 'package:flutter/material.dart';
 
@@ -11,9 +12,19 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
   FocusNode? textFieldFocusNode1;
   TextEditingController? textController1;
   String? Function(BuildContext, String?)? textController1Validator;
+  
+  // List of strings for species + variety in database
+  List<String> speciesDropdown = [];
+
+  // Fetch Species Dropdown 
+  Future<void> loadSpeciesDropdown() async {
+    final rawList = await ApiService.getSpeciesDropdown();
+    speciesDropdown = rawList.toSet().toList()..sort();
+  }
   // State field(s) for DropDown widget.
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
+  
   // State field(s) for DropDown widget.
   String? dropDownValue2;
   FormFieldController<String>? dropDownValueController2;
@@ -45,6 +56,7 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
   String? dropDownValue5;
   FormFieldController<String>? dropDownValueController5;
 
+
   @override
   void initState(BuildContext context) {}
 
@@ -65,4 +77,7 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
     textFieldFocusNode5?.dispose();
     textController5?.dispose();
   }
+
+  
+
 }

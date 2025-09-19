@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_drop_down.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -29,13 +30,23 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+   Future<void> _loadDropdown() async {
+      print("Loading dropdown");
+      await _model.loadSpeciesDropdown();
+      print("Species dropdown loaded: ${_model.speciesDropdown}");
+      setState(() {});
+    }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AddAcquisitionsModel());
-
+  
     _model.textController1 ??= TextEditingController(
         text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
+
+    _loadDropdown();
+
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??= TextEditingController();
@@ -1070,47 +1081,44 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController1 ??=
-                                            FormFieldController<String>(null),
-                                        options: ['Option 1'],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue1 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                      child: DropdownSearch<String>(
+                                        items: _model.speciesDropdown,
+                                        selectedItem: _model.dropDownValue1,
+                                        onChanged: (val) => setState(() => _model.dropDownValue1 = val),
+                                        popupProps: PopupProps.menu(
+                                          showSearchBox: true,
+                                          searchFieldProps: TextFieldProps(
+                                            decoration: InputDecoration(
+                                              hintText: 'Search species + variety...',
                                             ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                          ),
+                                          menuProps: MenuProps(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            elevation: 2,
+                                          ),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        dropdownDecoratorProps: DropDownDecoratorProps(
+                                          dropdownSearchDecoration: InputDecoration(
+                                            hintText: "Select...",
+                                            filled: true,
+                                            fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              borderSide: BorderSide(
+                                                color: FlutterFlowTheme.of(context).primaryText,
+                                                width: 0.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        dropdownBuilder: (context, selectedItem) => Text(
+                                          selectedItem ?? '',
+                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ]

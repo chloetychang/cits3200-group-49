@@ -56,4 +56,15 @@ class ApiService {
     }
     return rows;
   }
+
+  // get species+variety for dropdown in Acquisitions Webpage
+  static Future<List<String>> getSpeciesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/species/dropdown'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['species'] as String).toList();
+    }
+    throw Exception('Failed to load species dropdown: ${res.statusCode}');
+  }
 }
+

@@ -322,3 +322,7 @@ class ProgenyCreate(ProgenyBase):
 class ProgenyResponse(ProgenyBase):
     progeny_id: Optional[int] = None
     progeny_id: Optional[int] = None
+
+# Add Acquistion for dropdown (Species + variety)
+class SpeciesDropdownResponse(BaseModel):
+    species: str

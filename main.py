@@ -122,5 +122,15 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
     return crud.planting.create(db, obj_in=planting_in)
 
+
+# -------------------- Add Screens --------------------------
+# -------------------- API for Acquistion Source Page --------------------------
+# For Species + Variety drop down 
+@app.get("/species/dropdown", response_model=List[schemas.SpeciesDropdownResponse])
+def get_species_dropdown(db: Session = Depends(get_db)):
+    """Get all species names for dropdown (A→Z)."""
+    q = db.query(models.Species.species).order_by(models.Species.species.asc())
+    return [{"species": s[0]} for s in q.all()]
+
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
