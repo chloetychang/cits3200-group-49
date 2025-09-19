@@ -1,4 +1,4 @@
-# Minutes Template
+# Minutes 
 
 - Date: 24/09/2025
 - Present: Dennis, Harper, Naren, Chloe, Tri, Ryan, Mahit (Auditor)
@@ -6,7 +6,7 @@
 - Apologies:
 - Venue: EZONE NTH 202B 
 - Minutes by: Harper
-- Meeting Start: 1745
+- Meeting Start: 
 
 ## Item 1 - 
 > **<Description>**

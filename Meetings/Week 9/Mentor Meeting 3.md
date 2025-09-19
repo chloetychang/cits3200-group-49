@@ -1,4 +1,4 @@
-# Minutes Template
+# Minutes 
 
 - Date: 24/09/2025
 - Present: Dennis, Harper, Naren, Chloe, Tri, Ryan, Maureen (Mentor)

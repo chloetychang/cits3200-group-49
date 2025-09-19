@@ -1,4 +1,4 @@
-# Minutes Template
+# Minutes 
 
 - Date: 24/09/2025
 - Present: Dennis, Harper, Naren, Chloe, Tri, Ryan 
@@ -6,7 +6,7 @@
 - Apologies:
 - Venue: EZONE NTH 202B 
 - Minutes by: Ryan
-- Meeting Start: 1600
+- Meeting Start: 
 
 ## Item 1 - Progress check in on Backend/FastAPI integrations 
 > **<Description>**

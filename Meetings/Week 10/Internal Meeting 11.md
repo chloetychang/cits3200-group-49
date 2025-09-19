@@ -1,4 +1,4 @@
-# Minutes Template
+# Minutes 
 
 - Date: 01/10/25
 - Present: Dennis, Harper, Naren, Chloe, Tri, Ryan 
