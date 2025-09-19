@@ -88,14 +88,14 @@ Sprint 2:
 
 - Pick a couple of pages from each type. Implement them based on user stories and acceptance tests.
 - Until Wednesday? One/Two of each Type. 
-    - Viewing Planting Records. [Optional] Filtering and sorting...? 
+    - Viewing Planting Records. (Optional) Filtering and sorting...? 
     - Everything related to planting. 
     - Chloe: One person per type of page...? For Sprint 2 that will be sufficient. 
-        - Add [Dennis], Update [Ryan]
+        - Add (Dennis), Update (Ryan)
             - Acquisitions, Plantings
-        - View Table [Harper]
+        - View Table (Harper)
             - Users, Species
-        - Manage Lookup tables [Chloe]
+        - Manage Lookup tables (Chloe)
             - Manage Conservation Status
             - Manage Container Types
     - Change history - not going to do. Out-of-scope. 
@@ -115,13 +115,13 @@ Sprint 3: Tri - Look more into making comprehensive tests.
         - View / Manage lookup tables - preexisting database. But add/update - use another database (separate mock database). 
 
 ### Actions
-- [Ryan]:
+- (Ryan):
     - Remove database credentials from GitHub. Config file, Naren's README.
     - Update Pages (Acquisitions, Plantings)
-- [Dennis]:
+- (Dennis):
     - Add Pages (Acquisitions, Plantings)
-- [Chloe]: Manage Lookup Tables (Manage Conservation Status, Manage Container Types)
-- [Harper]: View Tables (Users, Species)
+- (Chloe): Manage Lookup Tables (Manage Conservation Status, Manage Container Types)
+- (Harper): View Tables (Users, Species)
 
 <br>
 
@@ -148,17 +148,17 @@ Sprint 3: Tri - Look more into making comprehensive tests.
 
 ## Overall Actions
 - Everyone: Follow instructions on README - API Backend. `requirements.txt` - in App folder. Might be missing some requirements, need to double check. 
-- [Ryan]:
+- (Ryan):
     - Remove database credentials from GitHub. Config file, Naren's README.
     - Update Pages (Acquisitions, Plantings)
-- [Dennis]:
+- (Dennis):
     - Add Pages (Acquisitions, Plantings)
-- [Chloe]: Manage Lookup Tables (Manage Conservation Status, Manage Container Types)
-- [Harper]: View Tables (Users, Species)
-- [Naren]:
+- (Chloe): Manage Lookup Tables (Manage Conservation Status, Manage Container Types)
+- (Harper): View Tables (Users, Species)
+- (Naren):
     - To make sure database has utilised latest migration script and passed `test_migration_schema.py`. Wants to show client the latest version of the database migration.
     - Making intermediate acceptance tests for backend.  
-- [Tri]:
+- (Tri):
     - To organise Client Retrospective time with Kevin
     - Making intermediate acceptance tests for backend. 
 
