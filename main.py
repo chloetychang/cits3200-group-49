@@ -9,12 +9,15 @@ from App.config import settings
 from App import models
 from App import schemas
 from App import crud
+from App.routes import auth
 
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
 )
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
 app.add_middleware(
     CORSMiddleware,
