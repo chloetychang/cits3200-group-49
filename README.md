@@ -38,7 +38,11 @@ This project consists of:
    pip install -r requirements_mac.txt
    ```
 
-3. **Configure Environment Variables**
+3. **Set up Database**
+For detailed database setup instructions, see [Migration/Connecting_to_DB.md](Migration/Connecting_to_DB.md)
+
+
+4. **Configure Environment Variables**
    
    Create `App/.env` file:
    ```env
@@ -49,8 +53,9 @@ This project consists of:
    DATABASE_PASSWORD=your_password
    ```
 
-4. **Run the API**
+5. **Run the API**
    ```bash
+   cd ..
    python main.py
    ```
    

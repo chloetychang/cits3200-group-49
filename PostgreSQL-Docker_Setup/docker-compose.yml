@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+
   postgres:
     image: postgres:17
     container_name: mydb_verVB

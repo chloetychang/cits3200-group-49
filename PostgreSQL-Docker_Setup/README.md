@@ -21,8 +21,7 @@
 
 3. **Connect using PGAdmin4**
    - Open PGAdmin4
-   - Create a new server with
-   database credentials as given by administrators
+   - Create a new server with database credentials as given by administrators
 
 4. **Verify your data**
    - Expand the database → Schemas → public → Tables
