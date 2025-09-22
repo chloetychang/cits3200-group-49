@@ -89,7 +89,7 @@ docker-compose up -d
    - Name: `CITS3200` (or any name you like)  
 4. **Connection tab:**  
    - Host name/address: `postgres`  
-   - Port: `5432`  
+   - Port: `5432`  or `5434` (if pgAdmin was installed locally)
    - Maintenance database: `postgres`  
    - Username: `Refer to DATABASE_USER as provided`
    - Password: `Refer to DATABASE_PASSWORD as provided` 
@@ -99,7 +99,42 @@ docker-compose up -d
 8. Select Query Tool (To create SQL Queries)
 9. eg. SELECT * from location_type
 
-### 5. **Run the API**
+### 5. Database Migrations with Alembic
+
+Alembic is used for managing database schema migrations with SQLAlchemy and PostgreSQL.
+
+### a. **Initialize Alembic**
+   In your **project root** (where your database code lives): 
+   ```bash
+   # Make sure you are in the main directory, if not, run `cd` ... 
+   alembic init alembic
+   ```
+   This creates an `alembic/` directory and an `alembic.ini` config file.
+
+### b. **Configure Alembic**
+   - Open `alembic.ini` and set your database URL:
+     ```ini
+     # line 66 of file
+     sqlalchemy.url = postgresql://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}
+     ```
+   - In `alembic/env.py`, import your SQLAlchemy models and set metadata:
+     ```python
+     from App.models import Base  
+     target_metadata = Base.metadata                                    # ~ line 24 of .env file
+     ```
+
+### c. Use the latest Alembic Migration Version provided and apply**
+   Locally: 
+   ```bash
+   alembic upgrade head
+   ```
+
+   In Docker:
+   ```bash
+   docker compose exec fastapi alembic -c /app/alembic.ini upgrade head
+   ```
+
+### 6. **Run the API**
 Ensure your PostgreSQL database is running and accessible with the credentials specified in your `.env` file.
 
 API will be available at `http://localhost:8000`
@@ -108,48 +143,6 @@ API will be available at `http://localhost:8000`
 Once the application is running, you can access:
    - Interactive docs: `http://localhost:8000/docs`
    - Alternative API docs: `http://localhost:8000/redoc`
-
-## Database Migrations with Alembic
-
-Alembic is used for managing database schema migrations with SQLAlchemy and PostgreSQL.
-
-### Alembic Installation & Setup
-
-1. **Install Alembic**
-   (Already included in `requirements.txt`, otherwise if not, follow instructions below)
-   ```bash
-   pip install alembic
-   ```
-
-2. **Initialize Alembic**
-   In your **project root** (where your database code lives):
-   ```bash
-   alembic init alembic
-   ```
-   This creates an `alembic/` directory and an `alembic.ini` config file.
-
-3. **Configure Alembic**
-   - Open `alembic.ini` and set your database URL:
-     ```ini
-     sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
-     ```
-   - In `alembic/env.py`, import your SQLAlchemy models and set metadata:
-     ```python
-     from App.models import Base  
-     target_metadata = Base.metadata
-     ```
-
-4. **Use the latest Alembic Migration Version provided and apply**
-   ```bash
-   alembic upgrade head
-   ```
-
-5. **Test Your API Routes**
-   - Start your FastAPI server:
-     ```bash
-     python main.py
-     ```
-   - Use Interactive docs: `http://localhost:8000/docs` to test API Routes like POST/GET request with live sync changes to the PostgreSQL database. (Verify it via pgAdmin and find specific database table)
 
 
 ## Frontend (Flutter) Setup - "flutterflow" Branch
