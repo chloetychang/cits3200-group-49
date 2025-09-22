@@ -1,8 +1,8 @@
 services:
   fastapi:
-    build: ../App
+    build: ..
     container_name: fastapi_app
-    command: python -m uvicorn App.main:app --host 0.0.0.0 --port 8000
+    command: python -m uvicorn main:app --host 0.0.0.0 --port 8000
     restart: always
     ports:
       - "8000:8000"
