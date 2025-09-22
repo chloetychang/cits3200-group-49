@@ -18,18 +18,16 @@ This project consists of:
 A FastAPI application for managing plant genetic sources, plantings, and related botanical data.
 
 ```
-Backend/
-├── main.py              # FastAPI application entry point
-├── models.py            # SQLAlchemy database models
-├── schemas.py           # Pydantic schemas for request/response validation
-├── crud.py              # Database CRUD operations
-├── database.py          # Database connection and session management
-├── config.py            # Application configuration settings
-├── requirements.txt     # Python dependencies
-└── readme.txt           # This file
+# Add potential backend project structure, with routes defined
+
 ```
 
 ### Database Structure
+
+```
+# Add potential database structure, with directories
+
+```
 
 ### 1. **Create Python Virtual Environment**
 First, set up a Python virtual environment to isolate project dependencies:
