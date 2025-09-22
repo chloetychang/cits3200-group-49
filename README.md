@@ -102,11 +102,7 @@ docker-compose up -d
 ### 5. **Run the API**
 Ensure your PostgreSQL database is running and accessible with the credentials specified in your `.env` file.
 
-   ```bash
-   cd ..
-   python main.py
-   ```
-   API will be available at `http://localhost:8000`
+API will be available at `http://localhost:8000`
 
 #### API Documentation
 Once the application is running, you can access:
