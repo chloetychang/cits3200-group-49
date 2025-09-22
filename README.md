@@ -14,9 +14,26 @@ This project consists of:
 - Python 3.8+
 - PostgreSQL database
 
-### Quick Setup
+### Backend Project Structure
+A FastAPI application for managing plant genetic sources, plantings, and related botanical data.
 
-1. **Create Python Virtual Environment**
+```
+Backend/
+├── main.py              # FastAPI application entry point
+├── models.py            # SQLAlchemy database models
+├── schemas.py           # Pydantic schemas for request/response validation
+├── crud.py              # Database CRUD operations
+├── database.py          # Database connection and session management
+├── config.py            # Application configuration settings
+├── requirements.txt     # Python dependencies
+└── readme.txt           # This file
+```
+
+### Database Structure
+
+### 1. **Create Python Virtual Environment**
+First, set up a Python virtual environment to isolate project dependencies:
+
    ```bash
    python -m venv venv
    
@@ -26,36 +43,26 @@ This project consists of:
    # macOS/Linux:
    source venv/bin/activate
    ```
+   You should see `(venv)` in your terminal prompt when the environment is active.
 
-2. **Install Dependencies**
+### 2. **Install Dependencies**
+   With your virtual environment activated:
+
    ```bash
-   cd App
-   
-   # Windows:
    pip install -r requirements.txt
-
-   # macOS/Linux
-   pip install -r requirements_mac.txt
    ```
 
-3. **Configure Environment Variables**
+### 3. **Configure Environment Variables**
    
-   Create `.env` file:
+   Create a `.env` file based on the template in `.env.example`.
 
-   ```env
-   DATABASE_HOST=postgres
-   DATABASE_PORT=5432
-   DATABASE_NAME=your_database_name
-   DATABASE_USER=your_username
-   DATABASE_PASSWORD=your_password
-   ```
+   For security, actual credentials shall be sent separately. 
 
-4. **Set up Database**
-# Connecting to Dockerized PostgreSQL
+### 4. **Set up Database**
+   Connecting to Dockerized PostgreSQL
+   > Database Details: Available upon request.
 
-## **Database Details: Available upon request **
-
-## Initialise Database
+### a. Initialise Database
 To set up the PostgreSQL environment locally, run:
 
 ```bash
@@ -63,9 +70,8 @@ To set up the PostgreSQL environment locally, run:
 cd Infrastructure
 ```
 
-Then, start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
-
-### Use the appropriate command for your system:
+### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
+Use the appropriate command for your system:
 
 ```bash
 ## Mac / Windows (Docker Desktop)
@@ -75,7 +81,7 @@ docker compose up -d
 docker-compose up -d
 ```
 
-## **Using pgAdmin within Docker Container**
+### c. Using pgAdmin within Docker Container
 
 1. Open **pgAdmin**, either through Docker Desktop or.  
 2. Right-click **Servers → Create → Server**.  
@@ -93,18 +99,19 @@ docker-compose up -d
 8. Select Query Tool (To create SQL Queries)
 9. eg. SELECT * from location_type
 
----
+### 5. **Run the API**
+Ensure your PostgreSQL database is running and accessible with the credentials specified in your `.env` file.
 
-5. **Run the API**
    ```bash
    cd ..
    python main.py
    ```
-   
    API will be available at `http://localhost:8000`
-   - Interactive docs: `http://localhost:8000/docs`
 
-For detailed backend setup instructions, see [App/API_README.md](App/API_README.md)
+#### API Documentation
+Once the application is running, you can access:
+   - Interactive docs: `http://localhost:8000/docs`
+   - Alternative API docs: `http://localhost:8000/redoc`
 
 ## Database Migrations with Alembic
 
