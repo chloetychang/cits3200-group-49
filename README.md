@@ -60,7 +60,7 @@ First, set up a Python virtual environment to isolate project dependencies:
    Connecting to Dockerized PostgreSQL
    > Database Details: Available upon request.
 
-### a. Initialise Database
+#### a. Initialise Database
 To set up the PostgreSQL environment locally, run:
 
 ```bash
@@ -68,7 +68,7 @@ To set up the PostgreSQL environment locally, run:
 cd Infrastructure
 ```
 
-### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
+#### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
 Use the appropriate command for your system:
 
 ```bash
@@ -79,7 +79,7 @@ docker compose up -d
 docker-compose up -d
 ```
 
-### c. Using pgAdmin within Docker Container
+#### c. Using pgAdmin within Docker Container
 
 1. Open **pgAdmin**, either through Docker Desktop or.  
 2. Right-click **Servers → Create → Server**.  
@@ -101,7 +101,7 @@ docker-compose up -d
 
 Alembic is used for managing database schema migrations with SQLAlchemy and PostgreSQL.
 
-### a. **Initialize Alembic**
+#### a. **Initialize Alembic**
    In your **project root** (where your database code lives): 
    ```bash
    # Make sure you are in the main directory, if not, run `cd` ... 
@@ -109,7 +109,7 @@ Alembic is used for managing database schema migrations with SQLAlchemy and Post
    ```
    This creates an `alembic/` directory and an `alembic.ini` config file.
 
-### b. **Configure Alembic**
+#### b. **Configure Alembic**
    - Open `alembic.ini` and set your database URL:
      ```ini
      # line 66 of file
@@ -121,7 +121,7 @@ Alembic is used for managing database schema migrations with SQLAlchemy and Post
      target_metadata = Base.metadata                                    # ~ line 24 of .env file
      ```
 
-### c. Use the latest Alembic Migration Version provided and apply**
+#### c. Use the latest Alembic Migration Version provided and apply:
    Locally: 
    ```bash
    alembic upgrade head
@@ -143,7 +143,7 @@ Once the application is running, you can access:
    - Alternative API docs: `http://localhost:8000/redoc`
 
 
-## Frontend (Flutter) Setup - "flutterflow" Branch
+## Frontend (Flutter) Setup
 To set up Flutter, refer to the official set-up guide:
 [Flutter Installation Guide](https://docs.flutter.dev/get-started/quick)
 
