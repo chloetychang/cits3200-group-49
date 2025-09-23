@@ -117,6 +117,7 @@ This creates an `alembic/` directory and an `alembic.ini` config file.
 
 #### b. **Configure Alembic**
 - Open `alembic.ini` and set your database URL:
+
 ```ini
 # line 66 of file
 sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
@@ -129,14 +130,8 @@ target_metadata = Base.metadata   # ~ line 24 of env file
 ```
 
 #### c. Use the latest Alembic Migration Version provided and apply:
-Locally: 
 ```bash
 alembic upgrade head
-```
-
-In Docker:
-```bash
-docker compose exec fastapi alembic -c /app/alembic.ini upgrade head
 ```
 
 ### 6. **Run the API**
