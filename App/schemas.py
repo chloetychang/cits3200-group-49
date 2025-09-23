@@ -103,13 +103,16 @@ class PropagationTypeResponse(PropagationTypeBase):
 
 # Provenance schemas
 class ProvenanceBase(BaseSchema):
-    bioregion_code: str
-    location: Optional[str] = None
+    bioregion_code: Optional[str] = None
+    location: str
     location_type_id: Optional[int] = None
     extra_details: Optional[str] = None
 
 class ProvenanceCreate(ProvenanceBase):
-    pass
+    bioregion_code: Optional[str] = None
+    location: str
+    location_type_id: Optional[int] = None
+    extra_details: Optional[str] = None
 
 class ProvenanceResponse(ProvenanceBase):
     provenance_id: int
@@ -161,12 +164,15 @@ class SpeciesUtilityLinkResponse(SpeciesUtilityLinkBase):
 # Supplier schemas
 class SupplierBase(BaseSchema):
     supplier_name: str
-    short_name: str
+    short_name:  Optional[str] = None
     web_site: Optional[str] = None
-    is_a_research_breeder: bool
+    is_a_research_breeder: Optional[bool] = None
 
 class SupplierCreate(SupplierBase):
-    pass
+    supplier_name: str
+    short_name:  Optional[str] = None
+    web_site: Optional[str] = None
+    is_a_research_breeder: Optional[bool] = None
 
 class SupplierResponse(SupplierBase):
     supplier_id: int
@@ -268,7 +274,7 @@ class SubZoneResponse(SubZoneBase):
 # Genetic Source schemas
 class GeneticSourceBase(BaseSchema):
     acquisition_date: datetime
-    variety_id: int
+    variety_id: Optional[int] = None
     supplier_id: int
     supplier_lot_number: Optional[str] = None
     price: Optional[float] = None
@@ -283,7 +289,20 @@ class GeneticSourceBase(BaseSchema):
     research_notes: Optional[str] = None
 
 class GeneticSourceCreate(GeneticSourceBase):
-    pass
+    acquisition_date: datetime
+    variety_id: Optional[int] = None
+    supplier_id: Optional[int] = None
+    supplier_lot_number: Optional[str] = None
+    price: Optional[float] = None
+    gram_weight: Optional[int] = None
+    provenance_id: Optional[int] = None
+    viability: Optional[int] = None
+    propagation_type: Optional[int] = None
+    female_genetic_source: Optional[int] = None
+    male_genetic_source: Optional[int] = None
+    generation_number: Optional[int] = 0
+    landscape_only: bool
+    research_notes: Optional[str] = None
 
 class GeneticSourceResponse(GeneticSourceBase):
     genetic_source_id: int
@@ -323,6 +342,8 @@ class ProgenyResponse(ProgenyBase):
     progeny_id: Optional[int] = None
     progeny_id: Optional[int] = None
 
-# Add Acquistion for dropdown (Species + variety)
-class SpeciesDropdownResponse(BaseModel):
-    species: str
+# POST Acquistion Schema 
+class AcquisitionCreate(BaseModel):
+    genetic_source: GeneticSourceCreate
+    supplier: SupplierCreate
+    provenance: ProvenanceCreate

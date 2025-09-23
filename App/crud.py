@@ -75,7 +75,7 @@ class CRUDGeneticSource(CRUDBase[models.GeneticSource, schemas.GeneticSourceCrea
         return db.query(models.GeneticSource).filter(models.GeneticSource.supplier_id == supplier_id).all()
 
 class CRUDLocationType(CRUDBase[models.LocationType, schemas.LocationTypeCreate, schemas.LocationTypeCreate]):
-    pass
+    pass 
 
 class CRUDPlantUtility(CRUDBase[models.PlantUtility, schemas.PlantUtilityCreate, schemas.PlantUtilityCreate]):
     def get_by_utility(self, db: Session, *, utility: str) -> Optional[models.PlantUtility]:
@@ -98,6 +98,9 @@ class CRUDPropagationType(CRUDBase[models.PropagationType, schemas.PropagationTy
 class CRUDProvenance(CRUDBase[models.Provenance, schemas.ProvenanceCreate, schemas.ProvenanceCreate]):
     def get_by_bioregion(self, db: Session, *, bioregion_code: str) -> List[models.Provenance]:
         return db.query(models.Provenance).filter(models.Provenance.bioregion_code == bioregion_code).all()
+
+    def get_by_location(self, db, location: str):
+        return db.query(models.Provenance).filter(models.Provenance.location == location).first()
 
 class CRUDRemovalCause(CRUDBase[models.RemovalCause, schemas.RemovalCauseCreate, schemas.RemovalCauseCreate]):
     def get_by_cause(self, db: Session, *, cause: str) -> Optional[models.RemovalCause]:
