@@ -74,7 +74,9 @@ cd Infrastructure
 ```
 
 #### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
-Use the appropriate command for your system:
+> Refer to the link to download Docker Desktop: https://docs.docker.com/desktop/
+
+After downloading Docker Desktop, use the appropriate command for your system:
 
 ```bash
 ## Mac / Windows (Docker Desktop)
