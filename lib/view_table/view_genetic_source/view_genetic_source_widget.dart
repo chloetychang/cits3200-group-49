@@ -672,144 +672,129 @@ class _ViewGeneticSourceWidgetState extends State<ViewGeneticSourceWidget> {
                               data: rows,
                               columnsBuilder: (onSortChanged) => [
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Acquisition ID',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Acquisition Date',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label:  Text(
                                       'Species',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label:  Text(
                                       'Provenance',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Supplier\'s lot number',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Supplier',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Viability',
                                       maxLines: 4,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Genetic source F',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Genetic source M',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Propagation type',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Price',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Gram weight',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Landscape only',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                                 DataColumn2(
-                                  label: Flexible(
-                                    child: Text(
+                                  label: Text(
                                       'Gen.#',
                                       maxLines: 7,
                                       softWrap: true,
                                       overflow: TextOverflow.visible,
                                     ),
-                                  ),
+                                  
                                 ),
                               ],
                               dataRowBuilder: (item, index, selected, onSelectChanged) => DataRow(
@@ -858,9 +843,9 @@ class _ViewGeneticSourceWidgetState extends State<ViewGeneticSourceWidget> {
                               selectable: false,
                               hidePaginator: false,
                               showFirstLastButtons: false,
-                              headingRowHeight: 56.0,
-                              dataRowHeight: 48.0,
-                              columnSpacing: 20.0,
+                              headingRowHeight: 72.0,
+                              dataRowHeight: 80.0,
+                              columnSpacing: 25.0,
                               headingRowColor: FlutterFlowTheme.of(context).secondary,
                               borderRadius: BorderRadius.circular(8.0),
                               addHorizontalDivider: true,
