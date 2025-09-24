@@ -129,9 +129,10 @@ from App.models import Base
 target_metadata = Base.metadata   # ~ line 24 of env file
 ```
 
-#### c. Use the latest Alembic Migration Version provided and apply:
+#### c. **Create Initial Migration**
+Using existing database schema (backup.sql), create an initial alembic migration version:
 ```bash
-alembic upgrade head
+alembic revision -m "Initial migration"
 ```
 
 ### 6. **Run the API**
