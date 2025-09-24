@@ -55,6 +55,9 @@ pip install -r requirements.txt
 Return to main directory by running `cd ..`
 
 Create a `.env` file based on the template in `.env.example`.
+```bash
+cp .env.example .env
+```
 
 For security, actual credentials shall be sent separately. 
 
