@@ -4,16 +4,16 @@ import psycopg2.extras
 import win32com.client
 import sys
 
-# -----------------------
+
 # Config
-# -----------------------
+
 ACCESS_FILE = r"C:\UWA\PROFCOM\DB_Migration\Y-botanicVB.accdb"
 ACCESS_CONN_STR = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\UWA\PROFCOM\DB_Migration\Y-botanic.accdb;"
 POSTGRES_CONN_STR = "host='localhost' dbname='mydb_verVB' user='postgres' password='1234'"
 
-# -----------------------
+
 # Type mapping
-# -----------------------
+
 ACCESS_TO_PG = {
     'VARCHAR': 'VARCHAR',
     'CHAR': 'CHAR',
@@ -201,9 +201,7 @@ def migrate():
         all_fks.extend(fks)
 
     # Add foreign keys after data load
-    # Add foreign keys safely
     for fk in all_fks:
-        # Check if referenced column has a UNIQUE or PRIMARY KEY constraint
         pg_cur.execute("""
             SELECT COUNT(*) 
             FROM information_schema.table_constraints tc
@@ -220,7 +218,6 @@ def migrate():
             print(f"Cannot create FK {fk['table']}.{fk['column']} -> {fk['ref_table']}.{fk['ref_column']}: referenced column is not unique. Skipping.")
             continue
 
-        # Try to create FK safely
         try:
             pg_cur.execute("SAVEPOINT fk_savepoint")
             pg_cur.execute(
