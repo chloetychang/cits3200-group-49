@@ -5,32 +5,32 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseUrl = 'http://127.0.0.1:8000';
 
-  // getusers
+  // get users
   static Future<List<dynamic>> getUsers() async {
     final res = await http.get(Uri.parse('$baseUrl/users/'));
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load users: ${res.statusCode}');
   }
 
- 
+  // get species
   static Future<List<dynamic>> getSpecies() async {
     final res = await http.get(Uri.parse('$baseUrl/species/'));
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load species: ${res.statusCode}');
   }
 
-  // get variety
+  // get varieties
   static Future<List<dynamic>> getVarieties() async {
     final res = await http.get(Uri.parse('$baseUrl/varieties/'));
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load varieties: ${res.statusCode}');
   }
 
+  // species with varieties
   static Future<List<Map<String, dynamic>>> getSpeciesWithVarieties() async {
     final species = await getSpecies();
     final varieties = await getVarieties();
 
-    
     final Map<int, List<dynamic>> varietyBySpeciesId = {};
     for (final v in varieties) {
       final sid = v['species_id'];
@@ -56,4 +56,16 @@ class ApiService {
     }
     return rows;
   }
+
+  /// get genetic sources full
+static Future<List<Map<String, dynamic>>> getGeneticSourcesFull({int skip = 0, int? limit}) async {
+  final uri = Uri.parse('$baseUrl/genetic_sources_full/?skip=$skip${limit != null ? '&limit=$limit' : ''}');
+  final res = await http.get(uri);
+  if (res.statusCode == 200) {
+    // Cast the decoded body to the correct type
+    return List<Map<String, dynamic>>.from(jsonDecode(res.body));
+  }
+  throw Exception('Failed to load genetic sources full: ${res.statusCode}');
+}
+
 }

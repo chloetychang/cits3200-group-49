@@ -1,4 +1,3 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -10,10 +9,11 @@ class ViewGeneticSourceModel extends FlutterFlowModel<ViewGeneticSourceWidget> {
 
   // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
+      FlutterFlowDataTableController<Map<String, dynamic>>();
+
   // State field(s) for Checkbox widget.
-  Map<ZonesStruct, bool> checkboxValueMap = {};
-  List<ZonesStruct> get checkboxCheckedItems =>
+  Map<Map<String, dynamic>, bool> checkboxValueMap = {};
+  List<Map<String, dynamic>> get checkboxCheckedItems =>
       checkboxValueMap.entries.where((e) => e.value).map((e) => e.key).toList();
 
   @override

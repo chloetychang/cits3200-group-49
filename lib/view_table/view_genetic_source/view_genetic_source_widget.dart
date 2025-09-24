@@ -7,6 +7,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'view_genetic_source_model.dart';
+import '/backend/api_service.dart';
 export 'view_genetic_source_model.dart';
 
 class ViewGeneticSourceWidget extends StatefulWidget {
@@ -642,553 +643,239 @@ class _ViewGeneticSourceWidgetState extends State<ViewGeneticSourceWidget> {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         alignment: AlignmentDirectional(0.0, 0.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
+                        child: FutureBuilder<List<Map<String, dynamic>>>(
+                          future: ApiService.getGeneticSourcesFull(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text('Error: ${snapshot.error}'));
+                            }
 
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
-                                    columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Acquisition ID',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Acquisition Date',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Species',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Provenance',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Supplier\'s lot number',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Supplier',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Viability',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Genetic source F',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Genetic source M',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Propagation type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Price',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Gram weight',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Landscape only',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
-                                      color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
-                                      ),
-                                      cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 2',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 3',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 4',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 5',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 6',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 7',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 8',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 9',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 10',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 11',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 12',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Theme(
-                                          data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(4.0),
-                                              ),
-                                            ),
-                                            unselectedWidgetColor: Colors.black,
-                                          ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValueMap[
-                                                zonesItem] ??= true,
-                                            onChanged: (newValue) async {
-                                              safeSetState(() =>
-                                                  _model.checkboxValueMap[
-                                                      zonesItem] = newValue!);
-                                            },
-                                            side: (Colors.black != null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: Colors.black,
-                                                  )
-                                                : null,
-                                            activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
-                                          ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
+                            final rows = snapshot.data!;
+                            if (rows.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  'No genetic sources found.',
+                                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                ),
+                              );
+                            }
+                        
+                            return FlutterFlowDataTable<dynamic>(
+                              controller: _model.paginatedDataTableController,
+                              data: rows,
+                              columnsBuilder: (onSortChanged) => [
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Acquisition ID',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
                                     ),
-                                    paginated: true,
-                                    selectable: false,
-                                    hidePaginator: false,
-                                    showFirstLastButtons: false,
-                                    headingRowHeight: 56.0,
-                                    dataRowHeight: 48.0,
-                                    columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    addHorizontalDivider: true,
-                                    addTopAndBottomDivider: false,
-                                    hideDefaultHorizontalDivider: true,
-                                    horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                    horizontalDividerThickness: 1.0,
-                                    addVerticalDivider: false,
-                                  );
-                                },
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Acquisition Date',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Species',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Provenance',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Supplier\'s lot number',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Supplier',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Viability',
+                                      maxLines: 4,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Genetic source F',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Genetic source M',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Propagation type',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Price',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Gram weight',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Landscape only',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                                DataColumn2(
+                                  label: Flexible(
+                                    child: Text(
+                                      'Gen.#',
+                                      maxLines: 7,
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              dataRowBuilder: (item, index, selected, onSelectChanged) => DataRow(
+                              color: WidgetStateProperty.all(
+                                index.isEven
+                                    ? FlutterFlowTheme.of(context).secondaryBackground
+                                    : FlutterFlowTheme.of(context).primaryBackground,
                               ),
+                              cells: [
+                              DataCell(Text((item['genetic_source_id'] ?? '').toString())),
+                              DataCell(Text((item['acquisition_date'] ?? '').toString())),
+                              DataCell(Text(item['species']?['species']?.toString() ?? '-')),
+                              DataCell(
+                                Text(
+                                  [
+                                    item['provenance']?['bioregion_code'] ?? '',
+                                    item['provenance']?['location'] ?? '',
+                                    item['provenance']?['location_type']?['location_type'] ?? '',
+                                  ].where((e) => e.toString().trim().isNotEmpty).join(' - ')
+                                ),
+                              ),
+
+                              DataCell(Text((item['supplier_lot_number'] ?? '').toString())),
+                              DataCell(Text(item['supplier']?['supplier_name']?.toString() ?? '-')),
+                              DataCell(Text((item['viability'] ?? '').toString())),
+                              DataCell(Text((item['female_genetic_source'] ?? '').toString())),
+                              DataCell(Text((item['male_genetic_source'] ?? '').toString())),
+                              DataCell(Text(item['propagation_type']?['name']?.toString() ?? '-')),
+                              DataCell(Text((item['price'] ?? '').toString())),
+                              DataCell(Text((item['gram_weight'] ?? '').toString())),
+                              DataCell(
+                                Checkbox(
+                                  value: item['landscape_only'] ?? false,
+                                  onChanged: null, 
+                                  activeColor: Colors.blue, 
+                                  checkColor: Colors.white,
+                                ),
+                              ),
+
+                              DataCell(Text((item['generation_number'] ?? '').toString())),
+                            ],
+
                             ),
-                          ],
+
+                              paginated: true,
+                              selectable: false,
+                              hidePaginator: false,
+                              showFirstLastButtons: false,
+                              headingRowHeight: 56.0,
+                              dataRowHeight: 48.0,
+                              columnSpacing: 20.0,
+                              headingRowColor: FlutterFlowTheme.of(context).secondary,
+                              borderRadius: BorderRadius.circular(8.0),
+                              addHorizontalDivider: true,
+                              addTopAndBottomDivider: false,
+                              hideDefaultHorizontalDivider: true,
+                              horizontalDividerColor: FlutterFlowTheme.of(context).secondaryBackground,
+                              horizontalDividerThickness: 1.0,
+                              addVerticalDivider: false,
+                            );
+                          },
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
             ),

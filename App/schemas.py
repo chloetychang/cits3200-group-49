@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
 
 # Base schemas for common patterns
 class BaseSchema(BaseModel):
@@ -113,6 +113,7 @@ class ProvenanceCreate(ProvenanceBase):
 
 class ProvenanceResponse(ProvenanceBase):
     provenance_id: int
+    location_type: Optional["LocationTypeResponse"] = None
 
 # Removal Cause schemas
 class RemovalCauseBase(BaseSchema):
@@ -322,3 +323,38 @@ class ProgenyCreate(ProgenyBase):
 class ProgenyResponse(ProgenyBase):
     progeny_id: Optional[int] = None
     progeny_id: Optional[int] = None
+
+class SpeciesSimpleResponse(BaseModel):
+    species_id: int
+    species: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class LocationTypeResponse(BaseModel):
+    location_type_id: int
+    location_type: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+# 修改 GeneticSourceFullResponse
+class GeneticSourceFullResponse(BaseModel):
+    genetic_source_id: int
+    acquisition_date: Optional[date]
+    viability: Optional[int]
+    female_genetic_source: Optional[int]
+    male_genetic_source: Optional[int]
+    price: Optional[float]
+    gram_weight: Optional[float]
+    landscape_only: Optional[bool]
+    research_notes: Optional[str] = None
+    
+    species: Optional[SpeciesSimpleResponse] = None
+    provenance: Optional[ProvenanceResponse] = None
+    supplier: Optional[SupplierResponse] = None
+    propagation_type: Optional[PropagationTypeResponse] = None
+    supplier_lot_number: Optional[str] = None
+    generation_number: Optional[int] = None
+
+    model_config = ConfigDict(from_attributes=True)  # pydantic v2 写法
+
+
