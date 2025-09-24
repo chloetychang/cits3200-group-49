@@ -2,16 +2,18 @@ import pyodbc
 import psycopg2
 import psycopg2.extras
 import win32com.client
-import re
 import sys
 
+
 # Config
-ACCESS_FILE = r"C:\UWA\PROFCOM\DB_Migration\V2.accdb"
-ACCESS_CONN_STR = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\UWA\PROFCOM\DB_Migration\V2.accdb;"
-POSTGRES_CONN_STR = "host='localhost' dbname='mydb_ver2' user='postgres' password='1234'"
+
+ACCESS_FILE = r"C:\UWA\PROFCOM\DB_Migration\Y-botanicVB.accdb"
+ACCESS_CONN_STR = r"DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\UWA\PROFCOM\DB_Migration\Y-botanic.accdb;"
+POSTGRES_CONN_STR = "host='localhost' dbname='mydb_verVB' user='postgres' password='1234'"
 
 
 # Type mapping
+
 ACCESS_TO_PG = {
     'VARCHAR': 'VARCHAR',
     'CHAR': 'CHAR',
@@ -42,7 +44,6 @@ ADOX_TYPE_TO_PG = {
     131: 'NUMERIC',
 }
 
-# Mapping
 def quote_pg_ident(name):
     return f'"{name}"'
 
@@ -67,6 +68,8 @@ def get_table_schema_win32(table, access_db):
         return [], set(), set(), []
 
     columns, pk, uniques, foreign_keys = [], set(), set(), []
+
+    # Collect columns
     for col in table_obj.Columns:
         try:
             nullable = col.Properties("Nullable").Value
@@ -79,6 +82,7 @@ def get_table_schema_win32(table, access_db):
             'size': getattr(col, 'DefinedSize', None)
         })
 
+    # Collect keys
     for key in table_obj.Keys:
         if key.Type == 1:  # primary
             pk.update([c.Name for c in key.Columns])
@@ -89,13 +93,29 @@ def get_table_schema_win32(table, access_db):
                     ref_col = c.RelatedColumn
                 except:
                     ref_col = None
-                if ref_table and ref_table != table and ref_col:
-                    foreign_keys.append({'table': table, 'column': c.Name,
-                                         'ref_table': ref_table, 'ref_column': ref_col})
+                if ref_table and ref_col:
+                    # Flip FK if column is also PK
+                    if c.Name in pk:
+                        foreign_keys.append({
+                            'table': ref_table,
+                            'column': ref_col,
+                            'ref_table': table,
+                            'ref_column': c.Name
+                        })
+                    else:
+                        foreign_keys.append({
+                            'table': table,
+                            'column': c.Name,
+                            'ref_table': ref_table,
+                            'ref_column': ref_col
+                        })
+
+    # Collect unique indexes
     for idx in table_obj.Indexes:
         if getattr(idx, 'Unique', False):
             for c in idx.Columns:
                 uniques.add(c.Name)
+
     return columns, pk, uniques, foreign_keys
 
 def drop_all_tables_and_views(pg_conn):
@@ -113,6 +133,7 @@ def drop_all_tables_and_views(pg_conn):
         END $$;
         """)
     pg_conn.commit()
+    print("Dropped all existing tables and views.")
 
 def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
     col_defs = [
@@ -127,18 +148,38 @@ def create_pg_table(pg_cur, table, columns, pk, uniques, foreign_keys):
             constraints.append(f"UNIQUE ({quote_pg_ident(uq)})")
     sql = f"CREATE TABLE {quote_pg_ident(table)} (\n  " + ',\n  '.join(col_defs + constraints) + "\n);"
     pg_cur.execute(sql)
+    print(f"Created table {table} with columns {[c['name'] for c in columns]}")
 
 def copy_table_data(access_cur, pg_cur, table, columns):
     col_names = [c['name'] for c in columns]
-    access_cur.execute(f"SELECT {', '.join([f'[{c}]' for c in col_names])} FROM [{table}]")
-    rows = access_cur.fetchall()
+    if not col_names:
+        print(f"No columns found in table {table}, skipping data copy.")
+        return
+
+    access_cols_escaped = [f'[{c}]' for c in col_names]
+    select_sql = f"SELECT {', '.join(access_cols_escaped)} FROM [{table}]"
+
+    try:
+        access_cur.execute(select_sql)
+        rows = access_cur.fetchall()
+        print(f"Fetched {len(rows)} rows from {table}")
+    except Exception as e:
+        print(f"Failed to fetch data from Access table {table}: {e}")
+        return
+
     if not rows:
         return
-    insert_sql = f"INSERT INTO {quote_pg_ident(table)} ({', '.join([quote_pg_ident(c) for c in col_names])}) VALUES ({', '.join(['%s']*len(col_names))})"
-    psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
+    pg_cols_escaped = [quote_pg_ident(c) for c in col_names]
+    placeholders = ', '.join(['%s'] * len(col_names))
+    insert_sql = f"INSERT INTO {quote_pg_ident(table)} ({', '.join(pg_cols_escaped)}) VALUES ({placeholders})"
 
-# Step 1: Migrate Tables + Data + FKs
+    try:
+        psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
+        print(f"Inserted {len(rows)} rows into table {table}.")
+    except Exception as e:
+        print(f"Failed to insert data into PostgreSQL table {table}: {e}")
+
 def migrate():
     access_conn = pyodbc.connect(ACCESS_CONN_STR)
     access_cur = access_conn.cursor()
@@ -148,28 +189,47 @@ def migrate():
     drop_all_tables_and_views(pg_conn)
 
     tables = get_access_tables(access_cur)
+    print("Tables found in Access:", tables)
     all_fks = []
 
     for table in tables:
-        print(f"Processing table {table}...")
+        print(f"\nProcessing table {table}...")
         columns, pk, uniques, fks = get_table_schema_win32(table, ACCESS_FILE)
         create_pg_table(pg_cur, table, columns, pk, uniques, fks)
         copy_table_data(access_cur, pg_cur, table, columns)
         pg_conn.commit()
         all_fks.extend(fks)
 
-    # Add foreign keys
+    # Add foreign keys after data load
     for fk in all_fks:
+        pg_cur.execute("""
+            SELECT COUNT(*) 
+            FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_name = kcu.constraint_name
+            AND tc.table_name = kcu.table_name
+            WHERE tc.table_name = %s
+            AND kcu.column_name = %s
+            AND tc.constraint_type IN ('PRIMARY KEY', 'UNIQUE');
+        """, (fk['ref_table'], fk['ref_column']))
+        is_unique = pg_cur.fetchone()[0] > 0
+
+        if not is_unique:
+            print(f"Cannot create FK {fk['table']}.{fk['column']} -> {fk['ref_table']}.{fk['ref_column']}: referenced column is not unique. Skipping.")
+            continue
+
         try:
             pg_cur.execute("SAVEPOINT fk_savepoint")
             pg_cur.execute(
-                f'ALTER TABLE {quote_pg_ident(fk["table"])} ADD FOREIGN KEY ({quote_pg_ident(fk["column"])}) '
+                f'ALTER TABLE {quote_pg_ident(fk["table"])} '
+                f'ADD FOREIGN KEY ({quote_pg_ident(fk["column"])}) '
                 f'REFERENCES {quote_pg_ident(fk["ref_table"])}({quote_pg_ident(fk["ref_column"])})'
             )
             pg_cur.execute("RELEASE SAVEPOINT fk_savepoint")
         except Exception as e:
             print(f"Skipping FK {fk['table']}.{fk['column']} -> {fk['ref_table']}.{fk['ref_column']}: {e}")
             pg_cur.execute("ROLLBACK TO SAVEPOINT fk_savepoint")
+
     pg_conn.commit()
 
     access_cur.close()
@@ -178,13 +238,10 @@ def migrate():
     pg_conn.close()
     print("Tables migrated successfully.")
 
-
-# Step 2: Create Views 
 def create_views():
     pg_conn = psycopg2.connect(POSTGRES_CONN_STR)
     pg_cur = pg_conn.cursor()
 
-    # Taxon view
     taxon_sql = """
     CREATE OR REPLACE VIEW "taxon" AS
     SELECT
@@ -195,8 +252,8 @@ def create_views():
         v.variety,
         g.genus || ' ' || s.species AS genus_and_species
     FROM variety v
-    JOIN genus g ON g.genus_id = g.genus_id
-    JOIN species s ON v.species_id = s.species_id;
+    JOIN species s ON v.species_id = s.species_id
+    JOIN genus g ON s.genus_id = g.genus_id;
     """
     try:
         pg_cur.execute(taxon_sql)
@@ -204,7 +261,6 @@ def create_views():
     except Exception as e:
         print(f"Failed to create view Taxon: {e}")
 
-    # Plantings_view
     plantings_sql = """
     CREATE OR REPLACE VIEW "plantings_view" AS
     SELECT
@@ -226,8 +282,9 @@ def create_views():
     LEFT JOIN removal_cause rc ON p.removal_cause_id = rc.removal_cause_id
     LEFT JOIN "user" u ON p.planted_by = u.user_id
     LEFT JOIN zone z ON p.zone_id = z.zone_id
-    LEFT JOIN aspect a ON z.aspect_id = a.aspect_id;   
+    LEFT JOIN aspect a ON z.aspect_id = a.aspect_id;
     """
+
     try:
         pg_cur.execute(plantings_sql)
         print("Created view plantings_view")
