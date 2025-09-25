@@ -57,7 +57,8 @@ class ApiService {
     return rows;
   }
 
-// -------------------------- Acquisition ------------------------------
+  // -------------------------- Add Screen Designs ------------------------------
+  // ------------------------------- Acquisition --------------------------------
   // For the old Species + variety dropdown:
   // GET genus dropdown
   static Future<List<String>> getGenusDropdown() async {
@@ -108,7 +109,7 @@ class ApiService {
     throw Exception('Failed to load bioregion code dropdown: ${res.statusCode}');
   }
 
-  // POST Save button  
+  // POST Save button - (Pending Fix, still WIP)
   static Future<Map<String, dynamic>> createAcquisition({
     required Map<String, dynamic> geneticSource,
     required Map<String, dynamic> supplier,
@@ -133,6 +134,76 @@ class ApiService {
     }));
     throw Exception('Failed to create acquisition: ${res.statusCode}, error: ${res.body}');
   }
+
+  // ------------------------------- Planting  --------------------------------
+  // GET Genetic Source dropdown - missing data 25/09/25, to be implemented
+
+  // GET Planted by (full name) dropdown
+  static Future<List<String>> getPlantedByDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/plantings/planted_by'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['full_name'] as String).toList();
+    }
+    throw Exception('Failed to load planted by (full name) dropdown: ${res.statusCode}');
+  }
+    
+  // GET Zone Number dropdown
+  static Future<List<String>> getZoneNumberDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/plantings/zone_number'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['zone_number'] as String).toList();
+    }
+    throw Exception('Failed to load zone number dropdown: ${res.statusCode}');
+  }
+
+  // GET Container Type dropdown
+  static Future<List<String>> getContainerTypeDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/plantings/container_type'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['container_type'] as String).toList();
+    }
+    throw Exception('Failed to load container type dropdown: ${res.statusCode}');
+  }
+
+  // ------------------------------- New Family  --------------------------------
+
+  // GET propagation type dropdown  
+  static Future<List<String>> getPropagationTypeDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newfamily/propagation_type'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['propagation_type'] as String).toList();
+    }
+    throw Exception('Failed to load propagation type dropdown: ${res.statusCode}');
+  }
+
+  // GET breeding team dropdown - missing data 25/09/25, to be implemented
+
+  // GET provenance location dropdown
+  static Future<List<String>> getProvenanceLocationDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newfamily/provenance_locations'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['location'] as String).toList();
+    }
+    throw Exception('Failed to load provenance location dropdown: ${res.statusCode}');
+  }
+
+  // ------------------------------- Progeny --------------------------------
+
+  // GET Family name dropdown - there's an intentional miss spell of family to famiy. Due to current DB storing this column name
+  static Future<List<String>> getFamilyNameDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/progeny/family_name'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['famiy_name'] as String).toList();
+    }
+    throw Exception('Failed to load family name dropdown: ${res.statusCode}');
+  }
+
 }
 
 

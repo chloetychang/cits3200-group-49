@@ -62,7 +62,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
     _model = createModel(context, () => AddAcquisitionsModel());
 
     _model.textController1 ??= TextEditingController(
-        text: DateTime.now().toIso8601String());
+        text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
 
     _loadGenus();
     _loadSpecies();

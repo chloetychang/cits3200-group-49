@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
-  // Combo controllers for genus and species dropdowns
+  ///  Dropdown combo contoller state
   late final SingleValueDropDownController genusComboController;
   late final SingleValueDropDownController speciesComboController;
   late final SingleValueDropDownController supplierComboController;

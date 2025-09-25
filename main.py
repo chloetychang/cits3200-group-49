@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.exc import IntegrityError
 import uvicorn
 from typing import List, Optional
@@ -141,14 +141,14 @@ def get_species_dropdown(db: Session = Depends(get_db)):
     species = db.query(models.Species).order_by(models.Species.species.asc()).all()
     return [schemas.SpeciesResponse.model_validate(s).model_dump() for s in species]
 
-# For Supplier dropdown
+# Creation of a supplier dropdown
 @app.get("/acquisition/suppliers", response_model=List[schemas.SupplierResponse])
 def get_supplier_dropdown(db: Session = Depends(get_db)):
     """Get all supplier names for dropdown (A→Z)."""
     suppliers = db.query(models.Supplier).order_by(models.Supplier.supplier_name.asc()).all()
     return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
 
-# For Provenance dropdown
+# Creation of a provenance dropdown
 @app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
 def get_provenance_location_dropdown(db: Session = Depends(get_db)):
     """Get all provenance locations for dropdown (A→Z)."""
@@ -165,6 +165,7 @@ def get_bioregion_dropdown(db: Session = Depends(get_db)):
 
 # TODO: Generation number dropdown - Missing due to data model changes [left as placeholder]
 
+# TODO: Fix POST Request on Acquisition model
 @app.post("/acquisition/", response_model=List[schemas.GeneticSourceResponse])
 def create_acquisition(
     acquisition: schemas.AcquisitionCreate = Body(...),
@@ -232,6 +233,56 @@ def create_acquisition(
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Failed to create Acquisition")
     return gs_obj
+
+# -------------------- API for Planting Source Page --------------------------
+# TODO: Creation of Genetic Source dropdown (To be done - currently missing data 25/09/25)
+
+# Creation of Planted Full name by dropdown
+@app.get("/plantings/planted_by", response_model=List[schemas.UserResponse])
+def get_planted_by_dropdown(db: Session = Depends(get_db)):
+    """Get all planted by options for dropdown (A→Z), returning only full_name."""
+    users = db.query(models.User).order_by(models.User.full_name.asc()).all()
+    return [schemas.UserResponse.model_validate(user).model_dump() for user in users]
+
+# Creation of Zone Number dropdown
+@app.get("/plantings/zone_number", response_model=List[schemas.ZoneResponse])
+def get_zone_dropdown(db: Session = Depends(get_db)):
+    """Get all zones for dropdown (A→Z)."""
+    zone_list = db.query(models.Zone).order_by(models.Zone.zone_number.asc()).all()
+    return [schemas.ZoneResponse.model_validate(zone).model_dump() for zone in zone_list]
+
+# Creation of Container Type dropdown
+@app.get("/plantings/container_type", response_model=List[schemas.ContainerResponse])
+def get_container_type_dropdown(db: Session = Depends(get_db)):
+    """Get all container types for dropdown (A→Z)."""
+    container_type_list = db.query(models.Container).order_by(models.Container.container_type.asc()).all()
+    return [schemas.ContainerResponse.model_validate(ct).model_dump() for ct in container_type_list]
+
+# -------------------- API for New Family Source Page --------------------------
+# Creation of a Propagation Type dropdown
+@app.get("/newfamily/propagation_type", response_model=List[schemas.PropagationTypeResponse])
+def get_propagation_type_dropdown(db: Session = Depends(get_db)):
+    """Get all propagation types for dropdown (A→Z)."""
+    propagation_type_list = db.query(models.PropagationType).order_by(models.PropagationType.propagation_type.asc()).all()
+    return [schemas.PropagationTypeResponse.model_validate(pt).model_dump() for pt in propagation_type_list]
+
+# TODO: Creation of a Breeding Team dropdown (To be done - currently missing data 25/09/25)
+
+# Creation of a provenance dropdown
+@app.get("/newfamily/provenance_locations", response_model=List[schemas.ProvenanceResponse])
+def get_provenance_location_dropdown(db: Session = Depends(get_db)):
+    """Get all provenance locations for dropdown (A→Z)."""
+    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
+    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
+
+# -------------------- API for Progeny Source Page --------------------------
+# Creation of a Family name dropdown 
+@app.get("/progeny/family_name", response_model=List[schemas.FamilyResponse])
+def get_family_name_dropdown(db: Session = Depends(get_db)):
+    """Get all family names for dropdown (A→Z)."""
+    family_list = db.query(models.Family).order_by(models.Family.famiy_name.asc()).all()
+    return [schemas.FamilyResponse.model_validate(f).model_dump() for f in family_list]
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
