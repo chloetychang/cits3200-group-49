@@ -238,6 +238,34 @@ def migrate():
         except Exception as e:
             print(f'Skipping foreign key for {fk["table"]}.{fk["column"]} referencing {fk["ref_table"]}.{fk["ref_column"]}: {e}')
             pg_cur.execute("ROLLBACK TO SAVEPOINT fk_savepoint")
+
+    # Add foreign key constraints for male_genetic_source and female_genetic_source, and variety -> genetic_source
+    try:
+        pg_cur.execute("SAVEPOINT manual_fk_savepoint")
+        pg_cur.execute('ALTER TABLE "variety" ADD FOREIGN KEY ("genetic_source_id") REFERENCES "genetic_source"("genetic_source_id")')
+        print("Successfully added manual FK: variety.genetic_source_id -> genetic_source.genetic_source_id")
+        pg_cur.execute("RELEASE SAVEPOINT manual_fk_savepoint")
+    except Exception as e:
+        print(f'Could not add manual foreign key variety.genetic_source_id -> genetic_source.genetic_source_id: {e}')
+        pg_cur.execute("ROLLBACK TO SAVEPOINT manual_fk_savepoint")
+    try:
+        pg_cur.execute("SAVEPOINT explicit_fk_savepoint")
+        pg_cur.execute('ALTER TABLE "genetic_source" ADD FOREIGN KEY ("male_genetic_source") REFERENCES "genetic_source"("genetic_source_id")')
+        pg_cur.execute("RELEASE SAVEPOINT explicit_fk_savepoint")
+        print('Successfully added foreign key: genetic_source.male_genetic_source -> genetic_source.genetic_source_id')
+    except Exception as e:
+        print(f'Failed to add explicit foreign key for genetic_source.male_genetic_source: {e}')
+        pg_cur.execute("ROLLBACK TO SAVEPOINT explicit_fk_savepoint")
+    
+    try:
+        pg_cur.execute("SAVEPOINT explicit_fk_savepoint2")
+        pg_cur.execute('ALTER TABLE "genetic_source" ADD FOREIGN KEY ("female_genetic_source") REFERENCES "genetic_source"("genetic_source_id")')
+        pg_cur.execute("RELEASE SAVEPOINT explicit_fk_savepoint2")
+        print('Successfully added foreign key: genetic_source.female_genetic_source -> genetic_source.genetic_source_id')
+    except Exception as e:
+        print(f'Failed to add explicit foreign key for genetic_source.female_genetic_source: {e}')
+        pg_cur.execute("ROLLBACK TO SAVEPOINT explicit_fk_savepoint2")
+    
     pg_conn.commit()
 
     # Migrate views after tables
