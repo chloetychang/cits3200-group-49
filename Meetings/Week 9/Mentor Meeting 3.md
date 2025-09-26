@@ -32,10 +32,6 @@
     - Tri: View pages have simpler/less requests, e.g. some add pages require requests to match foreign key id's to names. Chloe also mentioned something about integration with Alembic
     - Chloe: Some pages do require use of Alembic, but team already has done some work on it. 
 
-### Actions
- - 
-<br>
-
 ## Item 2 -  Q&A with Maureen
 > **Questions from the team to the Mentor.**
 
