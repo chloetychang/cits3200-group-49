@@ -5,8 +5,8 @@
 - Absent:
 - Apologies:
 - Venue: EZONE NTH 202B 
-- Minutes by: 
-- Meeting Start: 
+- Minutes by: Tri
+- Meeting Start: 1700
 
 ## Item 1 - Client retrospective catch up
 > **Catch up of client retrospective and key takeaways from that meeting for members who weren't able to be present.**
