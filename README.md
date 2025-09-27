@@ -50,6 +50,11 @@ With your virtual environment activated:
 cd App
 pip install -r requirements.txt
 ```
+or alternatively, from the root directory:
+
+```bash
+pip install -r App/requirements.txt
+```
 
 ### 3. **Configure Environment Variables**
 Return to main directory by running `cd ..`
@@ -76,7 +81,8 @@ cd Infrastructure
 #### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
 > Refer to the link to download Docker Desktop: https://docs.docker.com/desktop/
 
-After downloading Docker Desktop, use the appropriate command for your system:
+After downloading Docker Desktop open Docker Desktop on your device. 
+Then, use the appropriate command for your system:
 
 ```bash
 ## Mac / Windows (Docker Desktop)
@@ -84,6 +90,15 @@ docker compose up -d
 
 ## Linux (some distributions still use the old binary)
 docker-compose up -d
+```
+or alternatively, you can run it from your root directory with
+
+```bash
+## Mac / Windows (Docker Desktop)
+docker compose -f Infrastructure/docker-compose.yml up -d
+
+## Linux (some distributions still use the old binary)
+docker-compose -f Infrastructure/docker-compose.yml up -d
 ```
 
 #### c. Using pgAdmin within Docker Container
@@ -96,7 +111,7 @@ docker-compose up -d
 3. **General tab:**  
    - Name: `CITS3200` (or any name you like)  
 4. **Connection tab:**  
-   - Host name/address: `postgres`  
+   - Host name/address: `postgres` if in Docker, `localhost` if on your local PGAdmin 
    - Port: `5432`  or `5434` (if pgAdmin was installed locally)
    - Maintenance database: `postgres`  
    - Username: `Refer to DATABASE_USER as provided`
@@ -124,7 +139,7 @@ This creates an `alembic/` directory and an `alembic.ini` config file.
 - Open `alembic.ini` and set your database URL:
 
 ```ini
-# line 66 of file
+# line 66 of file or ~line 88 of the file
 sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
 ```
 
