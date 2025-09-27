@@ -20,7 +20,7 @@ class ViewSpeciesModel extends FlutterFlowModel<ViewSpeciesWidget> {
     isLoading = true;
     error = null;
     try {
-      rows = await ApiService.getSpeciesWithVarieties();
+      rows = await ApiService.getView_Species();
     } catch (e) {
       error = e.toString();
     } finally {

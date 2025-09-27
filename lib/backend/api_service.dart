@@ -6,8 +6,8 @@ class ApiService {
   static const String baseUrl = 'http://127.0.0.1:8000';
 
   // get users
-  static Future<List<dynamic>> getUsers() async {
-    final res = await http.get(Uri.parse('$baseUrl/users/'));
+  static Future<List<dynamic>> getView_Users() async {
+    final res = await http.get(Uri.parse('$baseUrl/users/View_users'));
     if (res.statusCode == 200) return jsonDecode(res.body);
     throw Exception('Failed to load users: ${res.statusCode}');
   }
@@ -27,7 +27,7 @@ class ApiService {
   }
 
   // species with varieties
-  static Future<List<Map<String, dynamic>>> getSpeciesWithVarieties() async {
+  static Future<List<Map<String, dynamic>>> getView_Species() async {
     final species = await getSpecies();
     final varieties = await getVarieties();
 
@@ -58,7 +58,7 @@ class ApiService {
   }
 
   /// get genetic sources full
-static Future<List<Map<String, dynamic>>> getGeneticSourcesFull({int skip = 0, int? limit}) async {
+static Future<List<Map<String, dynamic>>> getView_GeneticSources({int skip = 0, int? limit}) async {
   final uri = Uri.parse('$baseUrl/genetic_sources_full/?skip=$skip${limit != null ? '&limit=$limit' : ''}');
   final res = await http.get(uri);
   if (res.statusCode == 200) {

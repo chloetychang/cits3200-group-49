@@ -11,6 +11,9 @@ from App import models
 from App import schemas
 from App import crud
 from App.routes import auth
+from App.routes.View_Routes import view_users
+from App.routes.View_Routes import view_species
+from App.routes.View_Routes import view_genetic_sources
 
 app = FastAPI(
     title=settings.API_TITLE,
@@ -19,6 +22,9 @@ app = FastAPI(
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(view_users.router)
+app.include_router(view_species.router)
+app.include_router(view_genetic_sources.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,25 +66,6 @@ def get_species(skip: int = 0, limit: int = None, db: Session = Depends(get_db))
     q = apply_pagination(q, skip=skip, limit=limit)
     return q.all()
 
-@app.get("/species_with_varieties/", response_model=List[schemas.SpeciesWithVarietyResponse])
-def get_species_with_varieties(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
-    q = (
-        db.query(models.Species)
-        .options(selectinload(models.Species.varieties))
-        .order_by(models.Species.species.asc())
-    )
-    species_list = apply_pagination(q, skip=skip, limit=limit).all()
-
-    result = []
-    for s in species_list:
-        sorted_vars = sorted(s.varieties or [], key=lambda v: (v.variety or "").lower())
-        result.append({
-            "species_id": s.species_id,
-            "species": s.species,
-            "varieties": sorted_vars,
-        })
-    return result
-
 # -------------------- Varieties --------------------
 @app.get("/varieties/", response_model=List[schemas.VarietyResponse])
 def get_varieties(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
@@ -87,25 +74,6 @@ def get_varieties(skip: int = 0, limit: int = None, db: Session = Depends(get_db
     q = apply_pagination(q, skip=skip, limit=limit)
     return q.all()
 
-@app.get("/varieties/{variety_id}", response_model=schemas.VarietyResponse)
-def get_variety(variety_id: int, db: Session = Depends(get_db)):
-    v = crud.variety.get(db=db, id=variety_id)
-    if not v:
-        raise HTTPException(status_code=404, detail="Variety not found")
-    return v
-
-@app.get("/varieties/by_species/{species_id}", response_model=List[schemas.VarietyResponse])
-def get_varieties_by_species(species_id: int, db: Session = Depends(get_db)):
-    """Get all varieties under a specific species (A→Z)."""
-    sp = crud.species.get(db=db, id=species_id)
-    if not sp:
-        raise HTTPException(status_code=404, detail="Species not found")
-    q = (
-        db.query(models.Variety)
-        .filter(models.Variety.species_id == species_id)
-        .order_by(models.Variety.variety.asc())
-    )
-    return q.all()
 
 # -------------------- Suppliers --------------------
 @app.get("/suppliers/", response_model=List[schemas.SupplierResponse])
@@ -113,10 +81,6 @@ def get_suppliers(skip: int = 0, limit: int = None, db: Session = Depends(get_db
     return crud.supplier.get_multi(db=db, skip=skip, limit=limit)
 
 # -------------------- Users --------------------
-@app.get("/users/", response_model=List[schemas.UserResponse])
-def get_users(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
-    return crud.user.get_multi(db=db, skip=skip, limit=limit)
-
 @app.post("/users/", response_model=schemas.UserResponse)
 def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.user.create(db, obj_in=user_in)
@@ -125,7 +89,7 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.post("/plantings/", response_model=schemas.PlantingResponse)
 def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
     return crud.planting.create(db, obj_in=planting_in)
-
+# -------------------- genetic_sources --------------------
 @app.get("/genetic_sources_full/", response_model=List[schemas.GeneticSourceFullResponse])
 def get_genetic_sources_full(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
     """

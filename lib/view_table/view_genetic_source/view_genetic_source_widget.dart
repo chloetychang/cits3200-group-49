@@ -648,7 +648,7 @@ class _ViewGeneticSourceWidgetState extends State<ViewGeneticSourceWidget> {
                         ),
                         alignment: AlignmentDirectional(0.0, 0.0),
                         child: FutureBuilder<List<Map<String, dynamic>>>(
-                          future: ApiService.getGeneticSourcesFull(),
+                          future: ApiService.getView_GeneticSources(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const Center(child: CircularProgressIndicator());
