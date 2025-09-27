@@ -24,5 +24,6 @@ alembic.ini
 alembic/__pycache__
 alembic/env.py
 alembic/README
+alembic/versions
 alembic/versions/__pycache__
 alembic/script.py.mako
