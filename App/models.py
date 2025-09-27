@@ -62,7 +62,6 @@ class GeneticSource(Base):
     provenance_id = Column(Integer, ForeignKey("provenance.provenance_id"), nullable=True)
     viability = Column(Integer, nullable=True)
 
-    # ⚠️ 这里和数据库保持一致：叫 propagation_type
     propagation_type = Column(Integer, ForeignKey("propagation_type.propagation_type_id"), nullable=True)
 
     female_genetic_source = Column(Integer, ForeignKey("genetic_source.genetic_source_id"), nullable=True)
