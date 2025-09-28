@@ -4,6 +4,7 @@ import pyodbc
 
 @pytest.fixture(scope="module")
 def engine():
+    # Update with actual connection details
     eng = create_engine("postgresql+psycopg2://username:password@localhost:5432/database")
     yield eng
     eng.dispose()
@@ -14,7 +15,7 @@ def inspector(engine):
 
 @pytest.fixture(scope="module")
 def access_cursor():
-    ACCESS_DB_PATH = r'C:/Users/Tri/Desktop/Uni stuff/CITS3200/V02/Y-botanic.accdb'
+    ACCESS_DB_PATH = r'path' # Update with actual path to Access DB
     ACCESS_CONN_STR = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + ACCESS_DB_PATH + ';'
     conn = pyodbc.connect(ACCESS_CONN_STR)
     cur = conn.cursor()
@@ -187,13 +188,23 @@ expected_views = {
 # --- Table existence tests ---
 def test_missing_tables(inspector):
     actual_tables = set(inspector.get_table_names())
+    missing_tables = []
     for table in expected_schema.keys():
-        assert table in actual_tables, f"Table missing: {table}"
+        if table not in actual_tables:
+            missing_tables.append(table)
+    
+    if missing_tables:
+        pytest.fail(f"Missing tables: {missing_tables}")
 
 def test_extra_tables(inspector):
     actual_tables = set(inspector.get_table_names())
+    extra_tables = []
     for table in actual_tables:
-        assert table in expected_schema, f"Extra table: {table}"
+        if table not in expected_schema:
+            extra_tables.append(table)
+    
+    if extra_tables:
+        pytest.fail(f"Extra tables: {extra_tables}")
 
 # --- Column and constraint tests ---
 @pytest.mark.parametrize("table", list(expected_schema.keys()))
@@ -202,34 +213,71 @@ def test_table_columns_and_constraints(table, inspector):
         pytest.skip(f"Table {table} missing")
     columns = expected_schema[table]
     actual_columns = {col["name"]: col for col in inspector.get_columns(table)}
+    
+    # Collect all issues instead of failing on the first one
+    issues = []
+    
     # Missing columns
+    missing_columns = []
     for col_name in columns:
-        assert col_name in actual_columns, f"Column missing: {col_name} in {table}"
+        if col_name not in actual_columns:
+            missing_columns.append(col_name)
+    if missing_columns:
+        issues.append(f"Missing columns: {missing_columns}")
+    
     # Extra columns
+    extra_columns = []
     for col_name in actual_columns:
-        assert col_name in columns, f"Extra column: {col_name} in {table}"
+        if col_name not in columns:
+            extra_columns.append(col_name)
+    if extra_columns:
+        issues.append(f"Extra columns: {extra_columns}")
+    
     # Datatype and nullable mismatches
+    datatype_mismatches = []
+    nullable_mismatches = []
     for col_name, props in columns.items():
         if col_name in actual_columns:
             actual_type = str(actual_columns[col_name]["type"]).upper()
             expected_type = props["type"].upper()
-            assert expected_type in actual_type, f"Datatype mismatch for {col_name} in {table}: found {actual_type}, expected {expected_type}"
+            if expected_type not in actual_type:
+                datatype_mismatches.append(f"{col_name}: found {actual_type}, expected {expected_type}")
             if "nullable" in props:
-                assert props["nullable"] == actual_columns[col_name]["nullable"], f"Nullable mismatch for {col_name} in {table}"
+                if props["nullable"] != actual_columns[col_name]["nullable"]:
+                    nullable_mismatches.append(f"{col_name}: found nullable={actual_columns[col_name]['nullable']}, expected nullable={props['nullable']}")
+    
+    if datatype_mismatches:
+        issues.append(f"Datatype mismatches: {datatype_mismatches}")
+    if nullable_mismatches:
+        issues.append(f"Nullable mismatches: {nullable_mismatches}")
+    
     # Primary key
     pk = inspector.get_pk_constraint(table)
     pk_cols = set(pk["constrained_columns"])
+    missing_primary_keys = []
     for col_name, props in columns.items():
         if props.get("primary_key") and col_name in actual_columns:
-            assert col_name in pk_cols, f"Primary key missing for {col_name} in {table}"
+            if col_name not in pk_cols:
+                missing_primary_keys.append(col_name)
+    if missing_primary_keys:
+        issues.append(f"Missing primary keys: {missing_primary_keys}")
+    
     # Unique
     uniques = inspector.get_unique_constraints(table)
     unique_cols = set()
     for uq in uniques:
         unique_cols.update(uq["column_names"])
+    missing_unique_constraints = []
     for col_name, props in columns.items():
         if props.get("unique") and col_name in actual_columns:
-            assert col_name in unique_cols, f"Unique constraint missing for {col_name} in {table}"
+            if col_name not in unique_cols:
+                missing_unique_constraints.append(col_name)
+    if missing_unique_constraints:
+        issues.append(f"Missing unique constraints: {missing_unique_constraints}")
+    
+    # Report all issues at once
+    if issues:
+        pytest.fail(f"Issues in table {table}: " + "; ".join(issues))
 
 
 # --- View tests ---
@@ -239,10 +287,27 @@ def test_views(view_name, expected_columns, inspector):
     assert view_name in actual_views, f"View missing: {view_name}"
     columns = inspector.get_columns(view_name)
     actual_col_names = [col["name"] for col in columns]
+    
+    issues = []
+    
+    # Missing columns
+    missing_columns = []
     for col in expected_columns:
-        assert col in actual_col_names, f"Column missing in view {view_name}: {col}"
+        if col not in actual_col_names:
+            missing_columns.append(col)
+    if missing_columns:
+        issues.append(f"Missing columns: {missing_columns}")
+    
+    # Extra columns
+    extra_columns = []
     for col in actual_col_names:
-        assert col in expected_columns, f"Extra column in view {view_name}: {col}"
+        if col not in expected_columns:
+            extra_columns.append(col)
+    if extra_columns:
+        issues.append(f"Extra columns: {extra_columns}")
+    
+    if issues:
+        pytest.fail(f"Issues in view {view_name}: " + "; ".join(issues))
 
 # --- Foreign key tests ---
 expected_foreign_keys = {
@@ -284,7 +349,7 @@ expected_foreign_keys = {
     ],
     "genetic_source": [
         ("supplier_id", "supplier", "supplier_id"),
-        ("variety_id", "variety", "variety_id"),
+        ("variety_id", "variety", "variety_id"), 
         ("provenance_id", "provenance", "provenance_id"),
         ("propagation_type", "propagation_type", "propagation_type_id"),
         ("female_genetic_source", "genetic_source", "genetic_source_id"),
@@ -303,8 +368,14 @@ def test_foreign_keys_present(table, expected_fks, inspector):
     fks = inspector.get_foreign_keys(table)
     actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
     expected_fks_set = set(expected_fks)
+    
+    missing_fks = []
     for fk in expected_fks_set:
-        assert fk in actual_fks, f"Missing foreign key in {table}: {fk}"
+        if fk not in actual_fks:
+            missing_fks.append(fk)
+    
+    if missing_fks:
+        pytest.fail(f"Missing foreign keys in {table}: {missing_fks}")
 
 @pytest.mark.parametrize("table,expected_fks", list(expected_foreign_keys.items()))
 def test_no_extra_foreign_keys(table, expected_fks, inspector):
@@ -313,38 +384,76 @@ def test_no_extra_foreign_keys(table, expected_fks, inspector):
     fks = inspector.get_foreign_keys(table)
     actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
     expected_fks_set = set(expected_fks)
+    
+    extra_fks = []
     for fk in actual_fks:
-        assert fk in expected_fks_set, f"Extra foreign key in {table}: {fk}"
+        if fk not in expected_fks_set:
+            extra_fks.append(fk)
+    
+    if extra_fks:
+        pytest.fail(f"Extra foreign keys in {table}: {extra_fks}")
 
 # --- Row count and data tests ---
 @pytest.mark.parametrize("table", list(expected_schema.keys()))
 def test_row_counts_and_data(table, inspector, access_cursor, engine):
     if table not in inspector.get_table_names():
         pytest.skip(f"Table {table} missing")
-    access_cursor.execute(f'SELECT COUNT(*) FROM [{table}]')
-    access_count = access_cursor.fetchone()[0]
-    with engine.connect() as conn:
-        pg_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
-        assert access_count == pg_count, f"Row count mismatch in table {table}: Access={access_count}, Postgres={pg_count}"
-        # Get column names in order for both databases
-        access_cursor.execute(f'SELECT * FROM [{table}]')
-        access_desc = [desc[0] for desc in access_cursor.description]
-        pg_desc = [col['name'] for col in inspector.get_columns(table)]
-        access_rows = access_cursor.fetchmany(5)
-        pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
-        # Reorder Postgres rows to match Access column order
-        pg_rows_reordered = []
-        for row in pg_rows:
-            row_dict = dict(zip(pg_desc, row))
-            pg_rows_reordered.append(tuple(row_dict[col] for col in access_desc))
-        def rows_equal(rows1, rows2):
-            if len(rows1) != len(rows2):
-                return False
-            for r1, r2 in zip(rows1, rows2):
-                if len(r1) != len(r2):
-                    return False
-                for v1, v2 in zip(r1, r2):
-                    if str(v1) != str(v2):
+    
+    issues = []
+    
+    try:
+        access_cursor.execute(f'SELECT COUNT(*) FROM [{table}]')
+        access_count = access_cursor.fetchone()[0]
+    except Exception as e:
+        issues.append(f"Failed to get Access row count: {e}")
+        access_count = None
+    
+    try:
+        with engine.connect() as conn:
+            pg_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
+    except Exception as e:
+        issues.append(f"Failed to get PostgreSQL row count: {e}")
+        pg_count = None
+    
+    # Row count comparison
+    if access_count is not None and pg_count is not None:
+        if access_count != pg_count:
+            issues.append(f"Row count mismatch: Access={access_count}, Postgres={pg_count}")
+    
+    # Data comparison for first 5 rows
+    if access_count is not None and pg_count is not None and access_count == pg_count:
+        try:
+            # Get column names in order for both databases
+            access_cursor.execute(f'SELECT * FROM [{table}]')
+            access_desc = [desc[0] for desc in access_cursor.description]
+            pg_desc = [col['name'] for col in inspector.get_columns(table)]
+            access_rows = access_cursor.fetchmany(5)
+            
+            with engine.connect() as conn:
+                pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
+                
+                # Reorder Postgres rows to match Access column order
+                pg_rows_reordered = []
+                for row in pg_rows:
+                    row_dict = dict(zip(pg_desc, row))
+                    pg_rows_reordered.append(tuple(row_dict[col] for col in access_desc))
+                
+                def rows_equal(rows1, rows2):
+                    if len(rows1) != len(rows2):
                         return False
-            return True
-        assert rows_equal(access_rows, pg_rows_reordered), f"First 5 rows mismatch in table {table}: Access={access_rows}, Postgres={pg_rows_reordered}"
+                    for r1, r2 in zip(rows1, rows2):
+                        if len(r1) != len(r2):
+                            return False
+                        for v1, v2 in zip(r1, r2):
+                            if str(v1) != str(v2):
+                                return False
+                    return True
+                
+                if not rows_equal(access_rows, pg_rows_reordered):
+                    issues.append(f"First 5 rows data mismatch: Access={access_rows}, Postgres={pg_rows_reordered}")
+                    
+        except Exception as e:
+            issues.append(f"Failed to compare row data: {e}")
+    
+    if issues:
+        pytest.fail(f"Issues in table {table}: " + "; ".join(issues))

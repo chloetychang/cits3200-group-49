@@ -238,8 +238,9 @@ def migrate():
         except Exception as e:
             print(f'Skipping foreign key for {fk["table"]}.{fk["column"]} referencing {fk["ref_table"]}.{fk["ref_column"]}: {e}')
             pg_cur.execute("ROLLBACK TO SAVEPOINT fk_savepoint")
-
-    # Add foreign key constraints for male_genetic_source and female_genetic_source, and variety -> genetic_source
+    
+    # Manually add the correct foreign key from variety to genetic_source
+    # (The Access DB has this backwards)
     try:
         pg_cur.execute("SAVEPOINT manual_fk_savepoint")
         pg_cur.execute('ALTER TABLE "variety" ADD FOREIGN KEY ("genetic_source_id") REFERENCES "genetic_source"("genetic_source_id")')
@@ -248,6 +249,8 @@ def migrate():
     except Exception as e:
         print(f'Could not add manual foreign key variety.genetic_source_id -> genetic_source.genetic_source_id: {e}')
         pg_cur.execute("ROLLBACK TO SAVEPOINT manual_fk_savepoint")
+    
+    # Add foreign key constraints for male_genetic_source and female_genetic_source
     try:
         pg_cur.execute("SAVEPOINT explicit_fk_savepoint")
         pg_cur.execute('ALTER TABLE "genetic_source" ADD FOREIGN KEY ("male_genetic_source") REFERENCES "genetic_source"("genetic_source_id")')
