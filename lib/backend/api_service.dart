@@ -59,13 +59,15 @@ class ApiService {
 
   /// get genetic sources full
 static Future<List<Map<String, dynamic>>> getView_GeneticSources({int skip = 0, int? limit}) async {
-  final uri = Uri.parse('$baseUrl/genetic_sources_full/?skip=$skip${limit != null ? '&limit=$limit' : ''}');
+  final uri = Uri.parse(
+    '$baseUrl/genetic_sources/View_GeneticSources?skip=$skip${limit != null ? '&limit=$limit' : ''}',
+  );
   final res = await http.get(uri);
   if (res.statusCode == 200) {
-    // Cast the decoded body to the correct type
     return List<Map<String, dynamic>>.from(jsonDecode(res.body));
   }
   throw Exception('Failed to load genetic sources full: ${res.statusCode}');
 }
+
 
 }

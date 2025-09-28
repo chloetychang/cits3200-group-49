@@ -232,7 +232,7 @@ from typing import List
 class SpeciesWithVarietyResponse(BaseSchema):
     species_id: int
     species: str
-    varieties: List[VarietyNestedResponse] = []
+    varieties: str
 
     class Config:
         from_attributes = True
@@ -336,7 +336,7 @@ class LocationTypeResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-# 修改 GeneticSourceFullResponse
+#GeneticSourceFullResponse
 class GeneticSourceFullResponse(BaseModel):
     genetic_source_id: int
     acquisition_date: Optional[date]

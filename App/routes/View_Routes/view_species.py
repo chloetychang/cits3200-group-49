@@ -30,9 +30,15 @@ def get_species_with_varieties(skip: int = 0, limit: int = None, db: Session = D
     result = []
     for s in species_list:
         sorted_vars = sorted(s.varieties or [], key=lambda v: (v.variety or "").lower())
+        varieties_text = ", ".join(
+            (v.variety or v.common_name or "").strip()
+            for v in sorted_vars if (v.variety or v.common_name)
+        )
+
         result.append({
             "species_id": s.species_id,
             "species": s.species,
-            "varieties": sorted_vars,
+            "varieties": varieties_text,
         })
     return result
+
