@@ -70,28 +70,11 @@ For security, actual credentials shall be sent separately.
 Connecting to Dockerized PostgreSQL
 > Database Details: Available upon request.
 
-#### a. Initialise Database
-To set up the PostgreSQL environment locally, run:
-
-```bash
-# Make sure you are in the main directory, if not, run `cd` ... 
-cd Infrastructure
-```
-
-#### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
+#### a. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
 > Refer to the link to download Docker Desktop: https://docs.docker.com/desktop/
 
-After downloading Docker Desktop open Docker Desktop on your device. 
+After downloading Docker Desktop, open Docker Desktop on your device. 
 Then, use the appropriate command for your system:
-
-```bash
-## Mac / Windows (Docker Desktop)
-docker compose up -d
-
-## Linux (some distributions still use the old binary)
-docker-compose up -d
-```
-or alternatively, you can run it from your root directory with
 
 ```bash
 ## Mac / Windows (Docker Desktop)
@@ -101,7 +84,24 @@ docker compose -f Infrastructure/docker-compose.yml up -d
 docker-compose -f Infrastructure/docker-compose.yml up -d
 ```
 
-#### c. Using pgAdmin within Docker Container
+or alternatively, you can first move into the Infrastructure directory:
+
+```bash
+# Make sure you are in the main directory, if not, run `cd` ... 
+cd Infrastructure
+```
+
+Then, use the appropriate command for your system:
+
+```bash
+## Mac / Windows (Docker Desktop)
+docker compose up -d
+
+## Linux (some distributions still use the old binary)
+docker-compose up -d
+```
+
+#### b. Using pgAdmin within Docker Container
 
 1. Open **pgAdmin** using either Docker Desktop or your local installation.  
 2. Login using the credentials as defined in `.env` file:
@@ -139,7 +139,7 @@ This creates an `alembic/` directory and an `alembic.ini` config file.
 - Open `alembic.ini` and set your database URL:
 
 ```ini
-# line 66 of file or ~line 88 of the file
+# line 66 of file or ~line 87 of the file
 sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
 ```
 
