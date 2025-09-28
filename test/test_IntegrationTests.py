@@ -60,3 +60,126 @@ def test_create_and_fetch_planting(client, db_engine):
 	with db_engine.connect() as conn:
 		conn.execute(text("DELETE FROM planting WHERE comments=:comments"), {"comments": payload["comments"]})
 		conn.commit()
+
+# --- Acquisitions: Add/Update ---
+def test_create_and_update_acquisition(client, db_engine):
+	# Create acquisition via API
+	payload = {
+		"acquisition_date": "2025-09-17T12:00:00",
+		"variety_id": 1,
+		"supplier_id": 1,
+		"generation_number": 1,
+		"landscape_only": True
+	}
+	start = time.time()
+	response = client.post("/acquisitions/", json=payload)
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code in (200, 201)
+	data = response.json()
+	for key in payload:
+		assert data[key] == payload[key]
+	acquisition_id = data.get("genetic_source_id")
+	# Check DB for inserted acquisition
+	with db_engine.connect() as conn:
+		result = conn.execute(text("SELECT * FROM genetic_source WHERE generation_number=:generation_number AND variety_id=:variety_id AND supplier_id=:supplier_id"), {
+			"generation_number": payload["generation_number"],
+			"variety_id": payload["variety_id"],
+			"supplier_id": payload["supplier_id"]
+		})
+		row = result.mappings().fetchone()
+		assert row is not None, "Acquisition not found in DB after API creation"
+		assert row["generation_number"] == payload["generation_number"]
+	# Update acquisition
+	update_payload = payload.copy()
+	update_payload["generation_number"] = 2
+	start = time.time()
+	response = client.put(f"/acquisitions/{acquisition_id}", json=update_payload)
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code in (200, 201)
+	updated = response.json()
+	assert updated["generation_number"] == 2
+	# Check DB for update
+	with db_engine.connect() as conn:
+		result = conn.execute(text("SELECT * FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
+		row = result.mappings().fetchone()
+		assert row is not None
+		assert row["generation_number"] == 2
+	# Teardown: remove the test acquisition
+	with db_engine.connect() as conn:
+		conn.execute(text("DELETE FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
+		conn.commit()
+		assert row["generation_number"] == 2
+
+# --- Conservation Status ---
+def test_create_conservation_status(client, db_engine):
+	payload = {"status": "Endangered"}
+	start = time.time()
+	response = client.post("/conservation-status/", json=payload)
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code in (200, 201)
+	data = response.json()
+	assert data["status"] == "Endangered"
+	# DB check
+	with db_engine.connect() as conn:
+		result = conn.execute(text("SELECT * FROM conservation_status WHERE status=:status"), {"status": payload["status"]})
+		row = result.mappings().fetchone()
+		assert row is not None, "ConservationStatus not found in DB after creation"
+	# Teardown: remove the test conservation status
+	with db_engine.connect() as conn:
+		conn.execute(text("DELETE FROM conservation_status WHERE status=:status"), {"status": payload["status"]})
+		conn.commit()
+
+# --- Container Type ---
+def test_create_container_type(client, db_engine):
+	payload = {"container_type": "Tray"}
+	start = time.time()
+	response = client.post("/container-types/", json=payload)
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code in (200, 201)
+	data = response.json()
+	assert data["container_type"] == "Tray"
+	# DB check
+	with db_engine.connect() as conn:
+		result = conn.execute(text("SELECT * FROM container WHERE container_type=:container_type"), {"container_type": payload["container_type"]})
+		row = result.mappings().fetchone()
+		assert row is not None, "ContainerType not found in DB after creation"
+	# Teardown: remove the test container type
+	with db_engine.connect() as conn:
+		conn.execute(text("DELETE FROM container WHERE container_type=:container_type"), {"container_type": payload["container_type"]})
+		conn.commit()
+
+# --- View Users ---
+def test_view_users(client, db_engine):
+	# Query via API only, do not insert test data
+	start = time.time()
+	response = client.get("/users/")
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code == 200
+	data = response.json()
+	assert isinstance(data, list)
+	# Check that user_id 1, 2, 3 exist anywhere in the response
+	expected_ids = {1, 3}
+	actual_ids = {user.get("user_id") for user in data}
+	missing = expected_ids - actual_ids
+	assert not missing, f"User IDs {missing} not found in response"
+
+# --- View Species ---
+def test_view_species(client, db_engine):
+	# Query via API only, do not insert test data
+	start = time.time()
+	response = client.get("/species/")
+	duration = time.time() - start
+	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert response.status_code == 200
+	data = response.json()
+	assert isinstance(data, list)
+	# Check that species_id 1, 2, 3, 4, 5 exist anywhere in the response
+	expected_ids = {1, 2, 3, 4, 5}
+	actual_ids = {species.get("species_id") for species in data}
+	missing = expected_ids - actual_ids
+	assert not missing, f"Species IDs {missing} not found in response"

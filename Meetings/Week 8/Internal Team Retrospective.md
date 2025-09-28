@@ -51,7 +51,7 @@
 - Tri: Finishing database migration earlier than expected, expecting completion by Week 9. Completed migration by late Week 7. Actual: ~40 hours, Expected: 60 hours.
     - Result: Having more hands to work on backend simultaneously. Original plan - 4 people to work on backend, 2 people to work on database. Current plan - 4 people to work on backend, 2 people to work on backend testing.
     - Naren: Acknowledge the capabilities of each teammate - strengths and weaknesses. Need to think of that to allocate manpower efficiently.
-        - Chloe: However, we need to account for technology restrictions, given that some components can only be completion on a Windows machine (database migration). 
+        - Chloe: However, we need to account for technology restrictions, given that some components can only be completed on a Windows machine (database migration). 
         - Ryan: Going forward, we should adapt a strategy (emphasis on availabilities and micro-meetings), which is similar to the proven method implemented by the frontend team. 
 
 - Tri: Merging the hours allocated to out-of-scope requirements into backend development, based on ongoing communication with Kevin.
