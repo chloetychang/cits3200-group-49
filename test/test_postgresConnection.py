@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 
 # Load environment variables from .env file
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../App/.env'))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 DB_HOST = os.getenv("DATABASE_HOST")
 DB_PORT = os.getenv("DATABASE_PORT")
 DB_NAME = os.getenv("DATABASE_NAME")
@@ -29,7 +29,7 @@ expected_tables = [
 @pytest.fixture(scope="module")
 def engine():
     if not POSTGRES_URL:
-        pytest.fail("DATABASE_URL environment variable not set.")
+        pytest.fail("Could not build database URL. Check that DATABASE_HOST, DATABASE_PORT, DATABASE_NAME, DATABASE_USER, and DATABASE_PASSWORD are set in .env file.")
     try:
         eng = create_engine(POSTGRES_URL)
         # Try connecting to the database
@@ -48,13 +48,23 @@ def inspector(engine):
 
 def test_postgres_tables_exist(inspector):
     actual_tables = set(inspector.get_table_names())
+    missing_tables = []
     for table in expected_tables:
-        assert table in actual_tables, f"Table missing: {table}"
+        if table not in actual_tables:
+            missing_tables.append(table)
+    
+    if missing_tables:
+        pytest.fail(f"Missing tables: {missing_tables}")
 
 def test_postgres_no_extra_tables(inspector):
     actual_tables = set(inspector.get_table_names())
+    extra_tables = []
     for table in actual_tables:
-        assert table in expected_tables, f"Extra table: {table}"
+        if table not in expected_tables:
+            extra_tables.append(table)
+    
+    if extra_tables:
+        pytest.fail(f"Extra tables: {extra_tables}")
 
 
 # --- Detailed schema checks ---
@@ -222,34 +232,71 @@ def test_table_columns_and_constraints(table, inspector):
         pytest.skip(f"Table {table} missing")
     columns = expected_schema[table]
     actual_columns = {col["name"]: col for col in inspector.get_columns(table)}
+    
+    # Collect all issues instead of failing on the first one
+    issues = []
+    
     # Missing columns
+    missing_columns = []
     for col_name in columns:
-        assert col_name in actual_columns, f"Column missing: {col_name} in {table}"
+        if col_name not in actual_columns:
+            missing_columns.append(col_name)
+    if missing_columns:
+        issues.append(f"Missing columns: {missing_columns}")
+    
     # Extra columns
+    extra_columns = []
     for col_name in actual_columns:
-        assert col_name in columns, f"Extra column: {col_name} in {table}"
+        if col_name not in columns:
+            extra_columns.append(col_name)
+    if extra_columns:
+        issues.append(f"Extra columns: {extra_columns}")
+    
     # Datatype and nullable mismatches
+    datatype_mismatches = []
+    nullable_mismatches = []
     for col_name, props in columns.items():
         if col_name in actual_columns:
             actual_type = str(actual_columns[col_name]["type"]).upper()
             expected_type = props["type"].upper()
-            assert expected_type in actual_type, f"Datatype mismatch for {col_name} in {table}: found {actual_type}, expected {expected_type}"
+            if expected_type not in actual_type:
+                datatype_mismatches.append(f"{col_name}: found {actual_type}, expected {expected_type}")
             if "nullable" in props:
-                assert props["nullable"] == actual_columns[col_name]["nullable"], f"Nullable mismatch for {col_name} in {table}"
+                if props["nullable"] != actual_columns[col_name]["nullable"]:
+                    nullable_mismatches.append(f"{col_name}: found nullable={actual_columns[col_name]['nullable']}, expected nullable={props['nullable']}")
+    
+    if datatype_mismatches:
+        issues.append(f"Datatype mismatches: {datatype_mismatches}")
+    if nullable_mismatches:
+        issues.append(f"Nullable mismatches: {nullable_mismatches}")
+    
     # Primary key
     pk = inspector.get_pk_constraint(table)
     pk_cols = set(pk["constrained_columns"])
+    missing_primary_keys = []
     for col_name, props in columns.items():
         if props.get("primary_key") and col_name in actual_columns:
-            assert col_name in pk_cols, f"Primary key missing for {col_name} in {table}"
+            if col_name not in pk_cols:
+                missing_primary_keys.append(col_name)
+    if missing_primary_keys:
+        issues.append(f"Missing primary keys: {missing_primary_keys}")
+    
     # Unique
     uniques = inspector.get_unique_constraints(table)
     unique_cols = set()
     for uq in uniques:
         unique_cols.update(uq["column_names"])
+    missing_unique_constraints = []
     for col_name, props in columns.items():
         if props.get("unique") and col_name in actual_columns:
-            assert col_name in unique_cols, f"Unique constraint missing for {col_name} in {table}"
+            if col_name not in unique_cols:
+                missing_unique_constraints.append(col_name)
+    if missing_unique_constraints:
+        issues.append(f"Missing unique constraints: {missing_unique_constraints}")
+    
+    # Report all issues at once
+    if issues:
+        pytest.fail(f"Issues in table {table}: " + "; ".join(issues))
 
 # --- Foreign key tests ---
 expected_foreign_keys = {
@@ -273,6 +320,7 @@ expected_foreign_keys = {
     ],
     "variety": [
         ("species_id", "species", "species_id"),
+        ("genetic_source_id", "genetic_source", "genetic_source_id"),
     ],
     "species": [
         ("genus_id", "genus", "genus_id"),
@@ -293,6 +341,8 @@ expected_foreign_keys = {
         ("variety_id", "variety", "variety_id"),
         ("provenance_id", "provenance", "provenance_id"),
         ("propagation_type", "propagation_type", "propagation_type_id"),
+        ("female_genetic_source", "genetic_source", "genetic_source_id"),
+        ("male_genetic_source", "genetic_source", "genetic_source_id"),
     ],
     "provenance": [
         ("bioregion_code", "bioregion", "bioregion_code"),
@@ -307,8 +357,14 @@ def test_foreign_keys_present(table, expected_fks, inspector):
     fks = inspector.get_foreign_keys(table)
     actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
     expected_fks_set = set(expected_fks)
+    
+    missing_fks = []
     for fk in expected_fks_set:
-        assert fk in actual_fks, f"Missing foreign key in {table}: {fk}"
+        if fk not in actual_fks:
+            missing_fks.append(fk)
+    
+    if missing_fks:
+        pytest.fail(f"Missing foreign keys in {table}: {missing_fks}")
 
 @pytest.mark.parametrize("table,expected_fks", list(expected_foreign_keys.items()))
 def test_no_extra_foreign_keys(table, expected_fks, inspector):
@@ -317,8 +373,14 @@ def test_no_extra_foreign_keys(table, expected_fks, inspector):
     fks = inspector.get_foreign_keys(table)
     actual_fks = set((fk['constrained_columns'][0], fk['referred_table'], fk['referred_columns'][0]) for fk in fks)
     expected_fks_set = set(expected_fks)
+    
+    extra_fks = []
     for fk in actual_fks:
-        assert fk in expected_fks_set, f"Extra foreign key in {table}: {fk}"
+        if fk not in expected_fks_set:
+            extra_fks.append(fk)
+    
+    if extra_fks:
+        pytest.fail(f"Extra foreign keys in {table}: {extra_fks}")
 
 # --- Row count and first 5 row tests ---
 @pytest.mark.parametrize("table", list(expected_schema.keys()))
