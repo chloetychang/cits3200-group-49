@@ -103,24 +103,31 @@ docker-compose up -d
 
 #### b. Using pgAdmin within Docker Container
 
-1. Open **pgAdmin** using either Docker Desktop or your local installation.  
+1. Open **pgAdmin** using either Docker Desktop or your local installation.
+   - If using Docker Desktop:
+     1. Make sure your pgAdmin container is running.
+     2. Open Docker Desktop → Click on the Containers tab.
+     3. Find the container named `pgadmin`.
+     4. Under Port(s), click the port number (usually 5050). This will open pgAdmin in your browser.
+   - If installed locally:
+     - Simply search for pgAdmin in your system applications and launch it, which will open in your default browser.
 2. Login using the credentials as defined in `.env` file:
    - Email Address / Username: `PGADMIN_DEFAULT_EMAIL`
    - Password: `PGADMIN_DEFAULT_PASSWORD`
-2. **Click on:** Quick Links - Add New Server.  
-3. **General tab:**  
+3. **Click on:** Quick Links - Add New Server.
+4. . **General tab:**  
    - Name: `CITS3200` (or any name you like)  
-4. **Connection tab:**  
+5. **Connection tab:**  
    - Host name/address: `postgres` if in Docker, `localhost` if on your local PGAdmin 
    - Port: `5432`  or `5434` (if pgAdmin was installed locally)
    - Maintenance database: `postgres`  
    - Username: `Refer to DATABASE_USER as provided`
    - Password: `Refer to DATABASE_PASSWORD as provided` 
-5. Click **Save**.  
-6. You should now see the databases
-7. Perform a right-click on "mydb_verVB" 
-8. Select Query Tool (To create SQL Queries)
-9. eg. SELECT * from location_type
+6. Click **Save**.  
+7. You should now see the databases
+8. Perform a right-click on "mydb_verVB" 
+9. Select Query Tool (To create SQL Queries)
+10. eg. SELECT * from location_type
 
 ### 5. Database Migrations with Alembic
 
