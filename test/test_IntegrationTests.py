@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # View table likely can be generalised, manage view tables and add/update will likely have subpatterns
 
 # Load test environment variables
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../App/.env'))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 DB_HOST = os.getenv("DATABASE_HOST")
 DB_PORT = os.getenv("DATABASE_PORT")
 DB_NAME = os.getenv("DATABASE_NAME")
