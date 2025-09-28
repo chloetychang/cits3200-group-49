@@ -50,6 +50,11 @@ With your virtual environment activated:
 cd App
 pip install -r requirements.txt
 ```
+or alternatively, from the root directory:
+
+```bash
+pip install -r App/requirements.txt
+```
 
 ### 3. **Configure Environment Variables**
 Return to main directory by running `cd ..`
@@ -65,18 +70,28 @@ For security, actual credentials shall be sent separately.
 Connecting to Dockerized PostgreSQL
 > Database Details: Available upon request.
 
-#### a. Initialise Database
-To set up the PostgreSQL environment locally, run:
+#### a. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
+> Refer to the link to download Docker Desktop: https://docs.docker.com/desktop/
+
+After downloading Docker Desktop, open Docker Desktop on your device. 
+Then, use the appropriate command for your system:
+
+```bash
+## Mac / Windows (Docker Desktop)
+docker compose -f Infrastructure/docker-compose.yml up -d
+
+## Linux (some distributions still use the old binary)
+docker-compose -f Infrastructure/docker-compose.yml up -d
+```
+
+or alternatively, you can first move into the Infrastructure directory:
 
 ```bash
 # Make sure you are in the main directory, if not, run `cd` ... 
 cd Infrastructure
 ```
 
-#### b. Start the Docker daemon (open Docker Desktop or run `dockerd` if needed)
-> Refer to the link to download Docker Desktop: https://docs.docker.com/desktop/
-
-After downloading Docker Desktop, use the appropriate command for your system:
+Then, use the appropriate command for your system:
 
 ```bash
 ## Mac / Windows (Docker Desktop)
@@ -86,26 +101,33 @@ docker compose up -d
 docker-compose up -d
 ```
 
-#### c. Using pgAdmin within Docker Container
+#### b. Using pgAdmin within Docker Container
 
-1. Open **pgAdmin** using either Docker Desktop or your local installation.  
+1. Open **pgAdmin** using either Docker Desktop or your local installation.
+   - If using Docker Desktop:
+     1. Make sure your pgAdmin container is running.
+     2. Open Docker Desktop → Click on the Containers tab.
+     3. Find the container named `pgadmin`.
+     4. Under Port(s), click the port number (usually 5050). This will open pgAdmin in your browser.
+   - If installed locally:
+     - Simply search for pgAdmin in your system applications and launch it, which will open in your default browser.
 2. Login using the credentials as defined in `.env` file:
    - Email Address / Username: `PGADMIN_DEFAULT_EMAIL`
    - Password: `PGADMIN_DEFAULT_PASSWORD`
-2. **Click on:** Quick Links - Add New Server.  
-3. **General tab:**  
+3. **Click on:** Quick Links - Add New Server.
+4. . **General tab:**  
    - Name: `CITS3200` (or any name you like)  
-4. **Connection tab:**  
-   - Host name/address: `postgres`  
+5. **Connection tab:**  
+   - Host name/address: `postgres` if in Docker, `localhost` if on your local PGAdmin 
    - Port: `5432`  or `5434` (if pgAdmin was installed locally)
    - Maintenance database: `postgres`  
    - Username: `Refer to DATABASE_USER as provided`
    - Password: `Refer to DATABASE_PASSWORD as provided` 
-5. Click **Save**.  
-6. You should now see the databases
-7. Perform a right-click on "mydb_verVB" 
-8. Select Query Tool (To create SQL Queries)
-9. eg. SELECT * from location_type
+6. Click **Save**.  
+7. You should now see the databases
+8. Perform a right-click on "mydb_verVB" 
+9. Select Query Tool (To create SQL Queries)
+10. eg. SELECT * from location_type
 
 ### 5. Database Migrations with Alembic
 
@@ -124,7 +146,7 @@ This creates an `alembic/` directory and an `alembic.ini` config file.
 - Open `alembic.ini` and set your database URL:
 
 ```ini
-# line 66 of file
+# line 66 of file or ~line 87 of the file
 sqlalchemy.url = postgresql+psycopg2://<user>:<password>@localhost:5434/<databasename>
 ```
 

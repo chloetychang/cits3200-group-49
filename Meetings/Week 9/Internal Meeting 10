@@ -46,12 +46,12 @@
 ## Item 2 - Addressing new challenges and brainstorm solutions
 
 ### Discussion
- - 1) Re-migration to occur due to minor script issues
+ -  1) Re-migration to occur due to minor script issues
     - Identity foreign key auto-increment issues, causing POST route issues. (E.g. Unable to "Save" users input from frontend and send data to database) 
     - Use of PyWin Migration script causes data to be missing. (E.g. Variety + Genetic source, Male and Female Source). Current workaround is to hardcode certain key values in order to work. 
  -  2) Missing data found Post Migration
     - Proposed solution: Leave database as it is. No changes to be made but put a comment/note to highlight during hand over on these missing data (I.e. Male and Female source, Variety and Genetic Source)
- - 3) Backend - Custom dropdown data to be crafted 
+ -  3) Backend - Custom dropdown data to be crafted 
     - Sample entries like "Genetic Source", "Species + Variety", "Choose a Record here" found on the prototype requires merger of multiple table and creation of a unique string + careful linkage to database table.
     - Proposed solution: Harper has provided a working solution (found in "View_Genetic_Source_widget.dart"). Team to work work referencing solution and tweak for their screen designs. 
 
