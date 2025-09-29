@@ -93,5 +93,15 @@ static Future<List<Map<String, dynamic>>> getView_Suppliers({int skip = 0, int? 
   throw Exception('Failed to load suppliers: ${res.statusCode}');
 }
 
+// get plantings
+static Future<List<Map<String, dynamic>>> getView_Plantings() async {
+  final res = await http.get(Uri.parse('$baseUrl/plantings/View_plantings'));
+  if (res.statusCode == 200) {
+    final List<dynamic> data = jsonDecode(res.body);
+    return data.map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+  throw Exception('Failed to load plantings: ${res.statusCode}');
+}
+
 
 }

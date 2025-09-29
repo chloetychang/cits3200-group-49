@@ -375,3 +375,18 @@ class SupplierResponse(BaseSchema):
 
     class Config:
         from_attributes = True
+
+class ViewPlantingResponse(BaseModel):
+    date_planted: Optional[datetime]
+    planted_by: Optional[str]               
+    zone_number: Optional[str]               
+    species: Optional[str]                   
+    acquisition_id: Optional[str] = None 
+    number_planted: Optional[int]
+    container_type: Optional[str]            
+    removal_date: Optional[datetime]
+    removal_cause: Optional[str]            
+    number_removed: Optional[int]
+    number_remaining: Optional[int]          
+
+    model_config = ConfigDict(from_attributes=True)
