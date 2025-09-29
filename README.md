@@ -78,10 +78,10 @@ Then, use the appropriate command for your system:
 
 ```bash
 ## Mac / Windows (Docker Desktop)
-docker compose -f Infrastructure/docker-compose.yml up -d
+docker compose -f Infrastructure/docker-compose.yml up -d --build
 
 ## Linux (some distributions still use the old binary)
-docker-compose -f Infrastructure/docker-compose.yml up -d
+docker-compose -f Infrastructure/docker-compose.yml up -d --build
 ```
 
 or alternatively, you can first move into the Infrastructure directory:

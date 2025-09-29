@@ -61,7 +61,9 @@ class GeneticSource(Base):
     gram_weight = Column(Integer, nullable=True)
     provenance_id = Column(Integer, ForeignKey("provenance.provenance_id"), nullable=True)
     viability = Column(Integer, nullable=True)
+
     propagation_type = Column(Integer, ForeignKey("propagation_type.propagation_type_id"), nullable=True)
+
     female_genetic_source = Column(Integer, ForeignKey("genetic_source.genetic_source_id"), nullable=True)
     male_genetic_source = Column(Integer, ForeignKey("genetic_source.genetic_source_id"), nullable=True)
     generation_number = Column(Integer, nullable=False)
@@ -73,11 +75,22 @@ class GeneticSource(Base):
     supplier = relationship("Supplier", back_populates="genetic_sources")
     provenance = relationship("Provenance", back_populates="genetic_sources")
     propagation_type_rel = relationship("PropagationType", back_populates="genetic_sources")
-    female_parent = relationship("GeneticSource", remote_side="GeneticSource.genetic_source_id", foreign_keys=[female_genetic_source])
-    male_parent = relationship("GeneticSource", remote_side="GeneticSource.genetic_source_id", foreign_keys=[male_genetic_source])
+
+    female_parent = relationship(
+        "GeneticSource",
+        remote_side=[genetic_source_id],
+        foreign_keys=[female_genetic_source],
+    )
+    male_parent = relationship(
+        "GeneticSource",
+        remote_side=[genetic_source_id],
+        foreign_keys=[male_genetic_source],
+    )
+    
     plantings = relationship("Planting", back_populates="genetic_source")
     progeny = relationship("Progeny", back_populates="genetic_source")
     varieties_as_source = relationship("Variety", back_populates="genetic_source_rel", foreign_keys="[Variety.genetic_source_id]")
+
 
 class Genus(Base):
     __tablename__ = "genus"
@@ -152,9 +165,8 @@ class PropagationType(Base):
     propagation_type = Column(String, nullable=True)
     needs_two_parents = Column(Boolean, nullable=False)
     can_cross_genera = Column(Boolean, nullable=False)
-    
-    # Relationships
     genetic_sources = relationship("GeneticSource", back_populates="propagation_type_rel")
+    
 
 class Provenance(Base):
     __tablename__ = "provenance"
@@ -164,6 +176,7 @@ class Provenance(Base):
     location = Column(String, nullable=True)
     location_type_id = Column(Integer, ForeignKey("location_type.location_type_id"), nullable=True)
     extra_details = Column(String, nullable=True)
+    location_type_rel = relationship("LocationType")
     
     # Relationships
     bioregion = relationship("Bioregion", back_populates="provenances")
@@ -283,7 +296,7 @@ class Variety(Base):
     # Relationships
     species = relationship("Species", back_populates="varieties")
     genetic_source_rel = relationship("GeneticSource", back_populates="varieties_as_source", foreign_keys=[genetic_source_id])
-    genetic_sources = relationship("GeneticSource", back_populates="variety", foreign_keys="GeneticSource.variety_id")
+    genetic_sources = relationship("GeneticSource", back_populates="variety", foreign_keys=[GeneticSource.variety_id])
     plantings = relationship("Planting", back_populates="variety")
 
 class Zone(Base):

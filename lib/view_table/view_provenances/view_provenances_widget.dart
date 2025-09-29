@@ -1,3 +1,5 @@
+import 'package:botanic_guide_a_tool_for_garden_planters/backend/api_service.dart';
+
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -635,32 +637,31 @@ class _ViewProvenancesWidgetState extends State<ViewProvenancesWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
+                              child: FutureBuilder<List<dynamic>>(
+                                future: ApiService.getView_Provenances(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text('Error: ${snapshot.error}'));
+                                  }
+                                  final rows = snapshot.data ?? [];
 
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
+                                  return FlutterFlowDataTable<dynamic>(
+                                    controller: _model.paginatedDataTableController,
+                                    data: rows,
                                     columnsBuilder: (onSortChanged) => [
                                       DataColumn2(
                                         label: DefaultTextStyle.merge(
                                           softWrap: true,
                                           child: Text(
                                             'Bioregion',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
+                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                  fontFamily: FlutterFlowTheme.of(context).labelLargeFamily,
                                                   letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
+                                                  useGoogleFonts: !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
                                                 ),
                                           ),
                                         ),
@@ -670,18 +671,11 @@ class _ViewProvenancesWidgetState extends State<ViewProvenancesWidget> {
                                           softWrap: true,
                                           child: Text(
                                             'Location',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
+                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                  fontFamily: FlutterFlowTheme.of(context).labelLargeFamily,
                                                   letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
+                                                  useGoogleFonts: !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
                                                 ),
                                           ),
                                         ),
@@ -691,18 +685,11 @@ class _ViewProvenancesWidgetState extends State<ViewProvenancesWidget> {
                                           softWrap: true,
                                           child: Text(
                                             'Location Type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
+                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                  fontFamily: FlutterFlowTheme.of(context).labelLargeFamily,
                                                   letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
+                                                  useGoogleFonts: !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
                                                 ),
                                           ),
                                         ),
@@ -711,119 +698,51 @@ class _ViewProvenancesWidgetState extends State<ViewProvenancesWidget> {
                                         label: DefaultTextStyle.merge(
                                           softWrap: true,
                                           child: Text(
-                                            'Addtional details',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
+                                            'Additional details',
+                                            style: FlutterFlowTheme.of(context).labelLarge.override(
+                                                  fontFamily: FlutterFlowTheme.of(context).labelLargeFamily,
                                                   letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
+                                                  useGoogleFonts: !FlutterFlowTheme.of(context)
+                                                      .labelLargeIsCustom,
                                                 ),
                                           ),
                                         ),
                                       ),
                                     ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
+                                    dataRowBuilder: (row, index, selected, onSelectChanged) => DataRow(
                                       color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                        index.isEven
+                                            ? FlutterFlowTheme.of(context).secondaryBackground
+                                            : FlutterFlowTheme.of(context).primaryBackground,
                                       ),
                                       cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 2',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 3',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 4',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
+                                        DataCell(Text('${row['bioregion'] ?? ''}')),
+                                        DataCell(Text('${row['location'] ?? ''}')),
+                                        DataCell(Text('${row['location_type'] ?? ''}')),
+                                        DataCell(Text('${row['extra_details'] ?? ''}')),
+                                      ],
                                     ),
                                     paginated: true,
                                     selectable: false,
                                     hidePaginator: false,
                                     showFirstLastButtons: false,
-                                    headingRowHeight: 56.0,
-                                    dataRowHeight: 48.0,
-                                    columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
+                                    headingRowHeight: 70.0,
+                                    dataRowHeight: 60.0,
+                                    columnSpacing: 25.0,
+                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
                                     borderRadius: BorderRadius.circular(8.0),
                                     addHorizontalDivider: true,
                                     addTopAndBottomDivider: false,
                                     hideDefaultHorizontalDivider: true,
                                     horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
+                                        FlutterFlowTheme.of(context).secondaryBackground,
                                     horizontalDividerThickness: 1.0,
                                     addVerticalDivider: false,
                                   );
                                 },
                               ),
                             ),
+
                           ],
                         ),
                       ),

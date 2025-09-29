@@ -647,7 +647,7 @@ class _ViewUsersWidgetState extends State<ViewUsersWidget> {
                           children: [
                             Expanded(
                               child: FutureBuilder<List<dynamic>>(
-                                future: ApiService.getUsers(), 
+                                future: ApiService.getView_Users(),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return const Center(child: CircularProgressIndicator());
