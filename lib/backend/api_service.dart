@@ -131,11 +131,6 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   throw Exception('Failed to load subzones: ${res.statusCode}');
 }
 
-
-
-
-}
-
   // -------------------------- Add Screen Designs ------------------------------
   // ------------------------------- Acquisition --------------------------------
   // For the old Species + variety dropdown:
@@ -284,6 +279,3 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
 }
-
-
-
