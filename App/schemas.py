@@ -357,4 +357,12 @@ class GeneticSourceFullResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)  # pydantic v2 写法
 
+# Progeny with Family schema
+class ProgenyWithFamilyResponse(BaseSchema):
+    progeny_id: int
+    child_name: str
+    comments: Optional[str] = None
+    family_name: Optional[str] = None
 
+    class Config:
+        from_attributes = True

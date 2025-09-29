@@ -14,6 +14,8 @@ from App.routes import auth
 from App.routes.View_Routes import view_users
 from App.routes.View_Routes import view_species
 from App.routes.View_Routes import view_genetic_sources
+from App.routes.View_Routes import view_progeny
+
 
 app = FastAPI(
     title=settings.API_TITLE,
@@ -25,6 +27,8 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(view_users.router)
 app.include_router(view_species.router)
 app.include_router(view_genetic_sources.router)
+app.include_router(view_progeny.router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -87,6 +91,15 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # -------------------- Plantings Create --------------------
 @app.post("/plantings/", response_model=schemas.PlantingResponse)
+def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
+    return crud.planting.create(db, obj_in=planting_in)
+# -------------------- Plantings Create --------------------
+@app.post("/tests/", response_model=schemas.PlantingResponse)
+def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
+    return crud.planting.create(db, obj_in=planting_in)
+
+# -------------------- Plantings Create --------------------
+@app.post("/tests2/", response_model=schemas.PlantingResponse)
 def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
     return crud.planting.create(db, obj_in=planting_in)
 

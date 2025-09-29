@@ -69,5 +69,17 @@ static Future<List<Map<String, dynamic>>> getView_GeneticSources({int skip = 0, 
   throw Exception('Failed to load genetic sources full: ${res.statusCode}');
 }
 
+// get progeny with family
+static Future<List<Map<String, dynamic>>> getView_Progeny({int skip = 0, int? limit}) async {
+  final uri = Uri.parse(
+    '$baseUrl/progeny/View_Progeny?skip=$skip${limit != null ? '&limit=$limit' : ''}',
+  );
+  final res = await http.get(uri);
+  if (res.statusCode == 200) {
+    return List<Map<String, dynamic>>.from(jsonDecode(res.body));
+  }
+  throw Exception('Failed to load progeny with family: ${res.statusCode}');
+}
+
 
 }
