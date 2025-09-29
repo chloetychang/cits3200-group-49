@@ -5,8 +5,12 @@ import time
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 
+# Integration/backend patterns notes
+# add pages, update pages, manage view tables, view table
+# View table likely can be generalised, manage view tables and add/update will likely have subpatterns
+
 # Load test environment variables
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../App/.env'))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 DB_HOST = os.getenv("DATABASE_HOST")
 DB_PORT = os.getenv("DATABASE_PORT")
 DB_NAME = os.getenv("DATABASE_NAME")
@@ -16,13 +20,13 @@ DB_PASSWORD = os.getenv("DATABASE_PASSWORD")
 POSTGRES_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 API_URL = "http://localhost:8000"
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def db_engine():
 	engine = create_engine(POSTGRES_URL)
 	yield engine
 	engine.dispose()
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def client():
 	with httpx.Client(base_url=API_URL) as c:
 		yield c
