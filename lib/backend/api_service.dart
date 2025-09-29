@@ -112,4 +112,14 @@ static Future<List<Map<String, dynamic>>> getView_Provenances() async {
   throw Exception('Failed to load provenances: ${res.statusCode}');
 }
 
+// get zones
+static Future<List<Map<String, dynamic>>> getView_Zones() async {
+  final res = await http.get(Uri.parse('$baseUrl/zones/View_zones'));
+  if (res.statusCode == 200) {
+    final List<dynamic> decoded = jsonDecode(res.body);
+    return decoded.cast<Map<String, dynamic>>();
+  }
+  throw Exception('Failed to load zones: ${res.statusCode}');
+}
+
 }
