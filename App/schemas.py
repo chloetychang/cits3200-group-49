@@ -390,3 +390,12 @@ class ViewPlantingResponse(BaseModel):
     number_remaining: Optional[int]          
 
     model_config = ConfigDict(from_attributes=True)
+
+class ViewProvenanceResponse(BaseModel):
+    provenance_id: int
+    bioregion: Optional[str] = None
+    location: Optional[str] = None
+    location_type: Optional[str] = None
+    extra_details: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)

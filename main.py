@@ -17,7 +17,7 @@ from App.routes.View_Routes import view_genetic_sources
 from App.routes.View_Routes import view_progeny
 from App.routes.View_Routes import view_suppliers
 from App.routes.View_Routes import view_plantings
-
+from App.routes.View_Routes import view_provenances
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -31,6 +31,7 @@ app.include_router(view_genetic_sources.router)
 app.include_router(view_progeny.router)
 app.include_router(view_suppliers.router)
 app.include_router(view_plantings.router)
+app.include_router(view_provenances.router)
 
 app.add_middleware(
     CORSMiddleware,
