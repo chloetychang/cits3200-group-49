@@ -1,4 +1,6 @@
 import '/flutter_flow/flutter_flow_drop_down.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -29,6 +31,31 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _loadGenus() async {
+    await _model.loadGenusDropdown();
+    setState(() {});
+  } 
+
+  Future<void> _loadSpecies() async {
+    await _model.loadSpeciesDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadSuppliers() async {
+    await _model.loadSuppliersDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadLocations() async {
+    await _model.loadLocationDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadBioregions() async {
+    await _model.loadBioregionDropdown();
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +63,13 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
 
     _model.textController1 ??= TextEditingController(
         text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
+
+    _loadGenus();
+    _loadSpecies();
+    _loadSuppliers();
+    _loadLocations();
+    _loadBioregions();
+
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??= TextEditingController();
@@ -1070,53 +1104,80 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                           ),
                                     ),
                                     Expanded(
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController1 ??=
-                                            FormFieldController<String>(null),
-                                        options: ['Option 1'],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue1 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // Genus Dropdown
+                                            DropDownTextField(
+                                              controller: _model.genusComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Genus',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              ),
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.genusDropdown
+                                                  .map((g) => DropDownValueModel(name: g, value: g))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.selectedGenus = val.value;
+                                                  } else if (val is String) {
+                                                    _model.selectedGenus = val;
+                                                    if (!_model.genusDropdown.contains(val)) {
+                                                      _model.genusDropdown.add(val);
+                                                    }
+                                                    _model.genusComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                  // Optionally, trigger species dropdown update here
+                                                });
+                                              },
                                             ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                            SizedBox(height: 8.0),
+                                            // Species Dropdown
+                                            DropDownTextField(
+                                              controller: _model.speciesComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Species',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              ),
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.speciesDropdown
+                                                  .map((s) => DropDownValueModel(name: s, value: s))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.selectedSpecies = val.value;
+                                                  } else if (val is String) {
+                                                    _model.selectedSpecies = val;
+                                                    if (!_model.speciesDropdown.contains(val)) {
+                                                      _model.speciesDropdown.add(val);
+                                                    }
+                                                    _model.speciesComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ],
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
                                       ),
                                     ),
-                                  ]
-                                      .divide(SizedBox(width: 16.0))
-                                      .addToStart(SizedBox(width: 16.0))
-                                      .addToEnd(SizedBox(width: 16.0)),
+                                  ],
                                 ),
                                 Align(
                                   alignment: AlignmentDirectional(-1.0, 0.0),
@@ -1170,51 +1231,40 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController2 ??=
-                                              FormFieldController<String>(null),
-                                          options: ['Option 1'],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue2 = val),
-                                          width: 400.0,
-                                          height: 50.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                        Flexible(
+                                          child: Container(
+                                            constraints: BoxConstraints(maxWidth: 400),
+                                            child: DropDownTextField(
+                                              controller: _model.supplierComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Supplier',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
                                               ),
-                                          hintText: 'Select...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.suppliersDropdown
+                                                  .map((s) => DropDownValueModel(name: s, value: s))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.dropDownSupplier = val.value;
+                                                  } else if (val is String) {
+                                                    _model.dropDownSupplier = val;
+                                                 
+                                                    if (!_model.suppliersDropdown.contains(val)) {
+                                                      _model.suppliersDropdown.add(val);
+                                                    }
+  
+                                                    _model.supplierComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                });
+                                              },
+                                            ),
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          elevation: 2.0,
-                                          borderColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
                                         Text(
                                           'Lot No.',
@@ -1772,6 +1822,79 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                       clipBehavior: Clip.none,
                                       children: [
                                         Text(
+                                          'Bioregion:',
+                                          style: FlutterFlowTheme.of(context)
+                                              .titleMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                                fontSize: () {
+                                                  if (MediaQuery.sizeOf(context)
+                                                          .width <
+                                                      kBreakpointSmall) {
+                                                    return 16.0;
+                                                  } else if (MediaQuery.sizeOf(
+                                                              context)
+                                                          .width <
+                                                      kBreakpointMedium) {
+                                                    return 24.0;
+                                                  } else if (MediaQuery.sizeOf(
+                                                              context)
+                                                          .width <
+                                                      kBreakpointLarge) {
+                                                    return 24.0;
+                                                  } else {
+                                                    return 24.0;
+                                                  }
+                                                }(),
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.bold,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .titleMediumIsCustom,
+                                              ),
+                                        ),
+                                        Flexible(
+                                          child: Container(
+                                            constraints: BoxConstraints(maxWidth: 400),
+                                            child: DropDownTextField(
+                                              controller: _model.bioregionComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Bioregion',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              ),
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.bioregionDropdown
+                                                  .map((b) => DropDownValueModel(name: b, value: b))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.selectedBioregionCode = val.value;
+                                                  } else if (val is String) {
+                                                    _model.selectedBioregionCode = val;
+                                                    if (!_model.bioregionDropdown.contains(val)) {
+                                                      _model.bioregionDropdown.add(val);
+                                                    }
+                                                    _model.bioregionComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
                                           'Provenances:',
                                           style: FlutterFlowTheme.of(context)
                                               .titleMedium
@@ -1809,51 +1932,40 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController3 ??=
-                                              FormFieldController<String>(null),
-                                          options: ['Option 1'],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue3 = val),
-                                          width: 400.0,
-                                          height: 50.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                        Flexible(
+                                          child: Container(
+                                            constraints: BoxConstraints(maxWidth: 400),
+                                            child: DropDownTextField(
+                                              controller: _model.locationComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Provenance',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                                               ),
-                                          hintText: 'Select...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.locationDropdown
+                                                  .map((l) => DropDownValueModel(name: l, value: l))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.dropDownLocation = val.value;
+                                                  } else if (val is String) {
+                                                    _model.dropDownLocation = val;
+                                                    if (!_model.locationDropdown.contains(val)) {
+                                                      _model.locationDropdown.add(val);
+                                                    }
+                                                    _model.locationComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                });
+                                              },
+                                            ),
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          elevation: 2.0,
-                                          borderColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
                                         Text(
                                           'Landscape only?',
@@ -2171,8 +2283,23 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                             onPressed: () async {
+                              try {
+                                await _model.saveAcquisition();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Acquisition record saved successfully!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to save acquisition record: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                             text: 'Save',
                             options: FFButtonOptions(

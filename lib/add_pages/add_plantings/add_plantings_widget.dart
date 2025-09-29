@@ -3,6 +3,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'add_plantings_model.dart';
@@ -31,6 +32,21 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _loadPlantedByDropdown() async {
+    await _model.loadPlantedByDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadZoneNumberDropdown() async {
+    await _model.loadZoneNumberDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadContainerTypeDropdown() async {
+    await _model.loadContainerTypeDropdown();
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +54,11 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
 
     _model.textController1 ??= TextEditingController(
         text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
+
+    _loadPlantedByDropdown();
+    _loadZoneNumberDropdown();
+    _loadContainerTypeDropdown();
+
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??= TextEditingController();
@@ -58,14 +79,14 @@ Future<void> submitPlanting() async {
   final url = Uri.parse('http://localhost:8000/plantings');
 
   final body = {
-    'date_planted': _model.dropDownValue1,
-    'number_planted': _model.textController1.text,
-    'genetic_source': _model.dropDownValue2,
-    'species_variety': _model.dropDownValue3,
-    'planted_by': _model.dropDownValue4,
-    'zone': _model.dropDownValue5,
-    'container_type': _model.dropDownValue6,
-    'comments': _model.textController2.text,
+    'date_planted': _model.textController1.text,
+    'number_planted': _model.textController2.text,
+    'genetic_source': _model.dropDownValue1,
+    'species_variety': _model.dropDownValue2,
+    'planted_by': _model.selectedPlantedBy,
+    'zone': _model.selectedZone,
+    'container_type': _model.selectedContainerType,
+    'comments': _model.textController3.text,
     'genetic_sources_checkbox': _model.checkboxValue1,
     'existing_plantings_checkbox': _model.checkboxValue2,
     'wa_species_checkbox': _model.checkboxValue3,
@@ -1761,58 +1782,43 @@ Future<void> submitPlanting() async {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Expanded(
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController3 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue3 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                    Flexible(
+                                      child: Container(
+                                      constraints: BoxConstraints(maxWidth: 400),
+                                      child: DropDownTextField(
+                                        controller: _model.PlantedByComboController,
+                                        clearOption: true,
+                                        enableSearch: true,
+                                        textFieldDecoration: InputDecoration(
+                                        labelText: 'Planted By',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        ),
+                                        dropDownItemCount: 6,
+                                        dropDownList: _model.PlantedByDropdown
+                                          .map((s) => DropDownValueModel(name: s, value: s))
+                                          .toList(),
+                                        onChanged: (val) {
+                                        setState(() {
+                                          if (val is DropDownValueModel) {
+                                          _model.selectedPlantedBy = val.value;
+                                          } else if (val is String) {
+                                          _model.selectedPlantedBy = val;
+                                          if (!_model.PlantedByDropdown.contains(val)) {
+                                            _model.PlantedByDropdown.add(val);
+                                          }
+                                          _model.PlantedByComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                          }
+                                        });
+                                        },
+                                      ),
                                       ),
                                     ),
-                                  ]
+                                    ]
                                       .divide(SizedBox(width: 16.0))
                                       .addToEnd(SizedBox(width: 16.0)),
-                                ),
+                                  ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
@@ -1852,58 +1858,42 @@ Future<void> submitPlanting() async {
                                           ),
                                     ),
                                     Flexible(
-                                      flex: 6,
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController4 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue4 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                      child: Container(
+                                      constraints: BoxConstraints(maxWidth: 400),
+                                      child: DropDownTextField(
+                                        controller: _model.ZoneComboController,
+                                        clearOption: true,
+                                        enableSearch: true,
+                                        textFieldDecoration: InputDecoration(
+                                        labelText: 'Zone',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        ),
+                                        dropDownItemCount: 6,
+                                        dropDownList: _model.ZoneDropdown
+                                          .map((s) => DropDownValueModel(name: s, value: s))
+                                          .toList(),
+                                        onChanged: (val) {
+                                        setState(() {
+                                          if (val is DropDownValueModel) {
+                                          _model.selectedZone = val.value;
+                                          } else if (val is String) {
+                                          _model.selectedZone = val;
+                                          if (!_model.ZoneDropdown.contains(val)) {
+                                            _model.ZoneDropdown.add(val);
+                                          }
+                                          _model.ZoneComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                          }
+                                        });
+                                        },
+                                      ),
                                       ),
                                     ),
-                                  ]
+                                    ]
                                       .divide(SizedBox(width: 16.0))
                                       .addToEnd(SizedBox(width: 16.0)),
-                                ),
+                                  ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
@@ -1943,58 +1933,42 @@ Future<void> submitPlanting() async {
                                           ),
                                     ),
                                     Flexible(
-                                      flex: 6,
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController5 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue5 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                      child: Container(
+                                      constraints: BoxConstraints(maxWidth: 400),
+                                      child: DropDownTextField(
+                                        controller: _model.ContainerTypeComboController,
+                                        clearOption: true,
+                                        enableSearch: true,
+                                        textFieldDecoration: InputDecoration(
+                                        labelText: 'Container Type',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        ),
+                                        dropDownItemCount: 6,
+                                        dropDownList: _model.ContainerTypeDropdown
+                                          .map((s) => DropDownValueModel(name: s, value: s))
+                                          .toList(),
+                                        onChanged: (val) {
+                                        setState(() {
+                                          if (val is DropDownValueModel) {
+                                          _model.selectedContainerType = val.value;
+                                          } else if (val is String) {
+                                          _model.selectedContainerType = val;
+                                          if (!_model.ContainerTypeDropdown.contains(val)) {
+                                            _model.ContainerTypeDropdown.add(val);
+                                          }
+                                          _model.ContainerTypeComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                          }
+                                        });
+                                        },
+                                      ),
                                       ),
                                     ),
-                                  ]
+                                    ]
                                       .divide(SizedBox(width: 16.0))
                                       .addToEnd(SizedBox(width: 16.0)),
-                                ),
+                                  ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
