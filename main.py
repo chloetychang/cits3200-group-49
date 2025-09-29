@@ -100,15 +100,6 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.post("/plantings/", response_model=schemas.PlantingResponse)
 def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
     return crud.planting.create(db, obj_in=planting_in)
-# -------------------- Plantings Create --------------------
-@app.post("/tests/", response_model=schemas.PlantingResponse)
-def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
-    return crud.planting.create(db, obj_in=planting_in)
-
-# -------------------- Plantings Create --------------------
-@app.post("/tests2/", response_model=schemas.PlantingResponse)
-def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(get_db)):
-    return crud.planting.create(db, obj_in=planting_in)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
