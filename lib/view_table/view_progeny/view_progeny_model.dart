@@ -1,4 +1,3 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
@@ -6,11 +5,10 @@ import 'view_progeny_widget.dart' show ViewProgenyWidget;
 import 'package:flutter/material.dart';
 
 class ViewProgenyModel extends FlutterFlowModel<ViewProgenyWidget> {
-  ///  State fields for stateful widgets in this page.
+  /// State fields for stateful widgets in this page.
 
-  // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
+      FlutterFlowDataTableController<dynamic>();
 
   @override
   void initState(BuildContext context) {}

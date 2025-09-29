@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
 
 # Base schemas for common patterns
 class BaseSchema(BaseModel):
@@ -116,6 +116,7 @@ class ProvenanceCreate(ProvenanceBase):
 
 class ProvenanceResponse(ProvenanceBase):
     provenance_id: int
+    location_type: Optional["LocationTypeResponse"] = None
 
 # Removal Cause schemas
 class RemovalCauseBase(BaseSchema):
@@ -237,7 +238,7 @@ from typing import List
 class SpeciesWithVarietyResponse(BaseSchema):
     species_id: int
     species: str
-    varieties: List[VarietyNestedResponse] = []
+    varieties: str
 
     class Config:
         from_attributes = True
@@ -341,6 +342,82 @@ class ProgenyCreate(ProgenyBase):
 class ProgenyResponse(ProgenyBase):
     progeny_id: Optional[int] = None
     progeny_id: Optional[int] = None
+
+class SpeciesSimpleResponse(BaseModel):
+    species_id: int
+    species: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class LocationTypeResponse(BaseModel):
+    location_type_id: int
+    location_type: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+#GeneticSourceFullResponse
+class GeneticSourceFullResponse(BaseModel):
+    genetic_source_id: int
+    acquisition_date: Optional[date]
+    viability: Optional[int]
+    female_genetic_source: Optional[int]
+    male_genetic_source: Optional[int]
+    price: Optional[float]
+    gram_weight: Optional[float]
+    landscape_only: Optional[bool]
+    research_notes: Optional[str] = None
+    
+    species: Optional[SpeciesSimpleResponse] = None
+    provenance: Optional[ProvenanceResponse] = None
+    supplier: Optional[SupplierResponse] = None
+    propagation_type: Optional[PropagationTypeResponse] = None
+    supplier_lot_number: Optional[str] = None
+    generation_number: Optional[int] = None
+
+    model_config = ConfigDict(from_attributes=True)  # pydantic v2 写法
+
+# Progeny with Family schema
+class ProgenyWithFamilyResponse(BaseSchema):
+    progeny_id: int
+    child_name: str
+    comments: Optional[str] = None
+    family_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+class SupplierResponse(BaseSchema):
+    supplier_id: int
+    short_name: Optional[str] = None
+    supplier_name: str
+    is_a_research_breeder: Optional[bool] = None
+    web_site: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class ViewPlantingResponse(BaseModel):
+    date_planted: Optional[datetime]
+    planted_by: Optional[str]               
+    zone_number: Optional[str]               
+    species: Optional[str]                   
+    acquisition_id: Optional[str] = None 
+    number_planted: Optional[int]
+    container_type: Optional[str]            
+    removal_date: Optional[datetime]
+    removal_cause: Optional[str]            
+    number_removed: Optional[int]
+    number_remaining: Optional[int]          
+
+    model_config = ConfigDict(from_attributes=True)
+
+class ViewProvenanceResponse(BaseModel):
+    provenance_id: int
+    bioregion: Optional[str] = None
+    location: Optional[str] = None
+    location_type: Optional[str] = None
+    extra_details: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 # POST Acquistion Schema 
 class AcquisitionCreate(BaseModel):

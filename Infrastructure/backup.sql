@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict kn5DuOqmHfq2wQSg22Fky4BLm2Q3IwLeEoqR2mTAQye5leT4DUS7x7UFr3CHDOW
+\restrict haQkgbYHHjrxIWeRi7gSqRQQ06BcV5jHI7kbm5lRECalgg6otgPpBukY86W1Jcg
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
 
--- Started on 2025-09-16 19:23:35
+-- Started on 2025-09-29 10:53:24
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 217 (class 1259 OID 36263)
+-- TOC entry 218 (class 1259 OID 37405)
 -- Name: aspect; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -39,7 +39,22 @@ CREATE TABLE public.aspect (
 ALTER TABLE public.aspect OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 36270)
+-- TOC entry 217 (class 1259 OID 37404)
+-- Name: aspect_aspect_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.aspect ALTER COLUMN aspect_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.aspect_aspect_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 219 (class 1259 OID 37412)
 -- Name: bioregion; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -52,7 +67,7 @@ CREATE TABLE public.bioregion (
 ALTER TABLE public.bioregion OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 36277)
+-- TOC entry 221 (class 1259 OID 37420)
 -- Name: conservation_status; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -66,7 +81,22 @@ CREATE TABLE public.conservation_status (
 ALTER TABLE public.conservation_status OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 36286)
+-- TOC entry 220 (class 1259 OID 37419)
+-- Name: conservation_status_conservation_status_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.conservation_status ALTER COLUMN conservation_status_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.conservation_status_conservation_status_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 223 (class 1259 OID 37430)
 -- Name: container; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -79,7 +109,22 @@ CREATE TABLE public.container (
 ALTER TABLE public.container OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 36291)
+-- TOC entry 222 (class 1259 OID 37429)
+-- Name: container_container_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.container ALTER COLUMN container_type_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.container_container_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 225 (class 1259 OID 37436)
 -- Name: family; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -92,7 +137,22 @@ CREATE TABLE public.family (
 ALTER TABLE public.family OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 36298)
+-- TOC entry 224 (class 1259 OID 37435)
+-- Name: family_family_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.family ALTER COLUMN family_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.family_family_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 227 (class 1259 OID 37444)
 -- Name: genetic_source; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -118,7 +178,22 @@ CREATE TABLE public.genetic_source (
 ALTER TABLE public.genetic_source OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 36305)
+-- TOC entry 226 (class 1259 OID 37443)
+-- Name: genetic_source_genetic_source_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.genetic_source ALTER COLUMN genetic_source_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.genetic_source_genetic_source_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 229 (class 1259 OID 37452)
 -- Name: genus; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -132,7 +207,22 @@ CREATE TABLE public.genus (
 ALTER TABLE public.genus OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 36312)
+-- TOC entry 228 (class 1259 OID 37451)
+-- Name: genus_genus_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.genus ALTER COLUMN genus_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.genus_genus_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 231 (class 1259 OID 37460)
 -- Name: location_type; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -145,7 +235,22 @@ CREATE TABLE public.location_type (
 ALTER TABLE public.location_type OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 36317)
+-- TOC entry 230 (class 1259 OID 37459)
+-- Name: location_type_location_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.location_type ALTER COLUMN location_type_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.location_type_location_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 233 (class 1259 OID 37466)
 -- Name: plant_utility; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -158,7 +263,22 @@ CREATE TABLE public.plant_utility (
 ALTER TABLE public.plant_utility OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 36324)
+-- TOC entry 232 (class 1259 OID 37465)
+-- Name: plant_utility_plant_utility_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.plant_utility ALTER COLUMN plant_utility_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.plant_utility_plant_utility_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 235 (class 1259 OID 37474)
 -- Name: planting; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -181,7 +301,22 @@ CREATE TABLE public.planting (
 ALTER TABLE public.planting OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 36352)
+-- TOC entry 234 (class 1259 OID 37473)
+-- Name: planting_planting_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.planting ALTER COLUMN planting_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.planting_planting_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 244 (class 1259 OID 37507)
 -- Name: removal_cause; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -194,7 +329,7 @@ CREATE TABLE public.removal_cause (
 ALTER TABLE public.removal_cause OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 36368)
+-- TOC entry 248 (class 1259 OID 37525)
 -- Name: species; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -209,7 +344,43 @@ CREATE TABLE public.species (
 ALTER TABLE public.species OWNER TO postgres;
 
 --
--- TOC entry 236 (class 1259 OID 36396)
+-- TOC entry 262 (class 1259 OID 37573)
+-- Name: variety; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.variety (
+    common_name character varying(255),
+    genetic_source_id integer,
+    species_id integer,
+    variety character varying(255),
+    variety_id integer NOT NULL
+);
+
+
+ALTER TABLE public.variety OWNER TO postgres;
+
+--
+-- TOC entry 265 (class 1259 OID 37732)
+-- Name: taxon; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.taxon AS
+ SELECT variety.variety_id,
+    (((((genus.genus)::text || ' '::text) || (species.species)::text) || ' '::text) || (variety.variety)::text) AS taxon,
+    genus.genus,
+    species.species,
+    variety.variety,
+    (((genus.genus)::text || ' '::text) || (species.species)::text) AS genus_and_species
+   FROM ((public.genus
+     JOIN public.species ON ((genus.genus_id = species.genus_id)))
+     JOIN public.variety ON ((species.species_id = variety.species_id)))
+  ORDER BY (((((genus.genus)::text || ' '::text) || (species.species)::text) || ' '::text) || (variety.variety)::text);
+
+
+ALTER VIEW public.taxon OWNER TO postgres;
+
+--
+-- TOC entry 257 (class 1259 OID 37558)
 -- Name: user; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -234,23 +405,7 @@ CREATE TABLE public."user" (
 ALTER TABLE public."user" OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1259 OID 36408)
--- Name: variety; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.variety (
-    common_name character varying(255),
-    genetic_source_id integer,
-    species_id integer,
-    variety character varying(255),
-    variety_id integer NOT NULL
-);
-
-
-ALTER TABLE public.variety OWNER TO postgres;
-
---
--- TOC entry 239 (class 1259 OID 36417)
+-- TOC entry 264 (class 1259 OID 37583)
 -- Name: zone; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -267,36 +422,34 @@ CREATE TABLE public.zone (
 ALTER TABLE public.zone OWNER TO postgres;
 
 --
--- TOC entry 241 (class 1259 OID 36555)
+-- TOC entry 266 (class 1259 OID 37737)
 -- Name: plantings_view; Type: VIEW; Schema: public; Owner: postgres
 --
 
 CREATE VIEW public.plantings_view AS
- SELECT u.full_name AS planted_by,
-    z.zone_number,
-    a.aspect,
-    v.species_id AS taxon,
-    (((g.genus)::text || ' '::text) || (s.species)::text) AS genus_and_species,
-    p.number_planted,
-    p.removal_date,
-    rc.cause AS removal_cause,
-    p.number_removed,
-    p.comments,
-    p.date_planted
-   FROM (((((((public.planting p
-     JOIN public.variety v ON ((p.variety_id = v.variety_id)))
-     JOIN public.species s ON ((v.species_id = s.species_id)))
-     JOIN public.genus g ON ((s.genus_id = g.genus_id)))
-     LEFT JOIN public.removal_cause rc ON ((p.removal_cause_id = rc.removal_cause_id)))
-     LEFT JOIN public."user" u ON ((p.planted_by = u.user_id)))
-     LEFT JOIN public.zone z ON ((p.zone_id = z.zone_id)))
-     LEFT JOIN public.aspect a ON ((z.aspect_id = a.aspect_id)));
+ SELECT "user".full_name AS planted_by,
+    zone.zone_number,
+    aspect.aspect,
+    taxon.taxon,
+    taxon.genus_and_species,
+    planting.number_planted,
+    planting.removal_date,
+    removal_cause.cause AS removal_cause,
+    planting.number_removed,
+    planting.comments,
+    planting.date_planted
+   FROM ((public.aspect
+     RIGHT JOIN public.zone ON ((aspect.aspect_id = zone.aspect_id)))
+     JOIN (public."user"
+     RIGHT JOIN (public.removal_cause
+     RIGHT JOIN (public.planting
+     JOIN public.taxon ON ((planting.variety_id = taxon.variety_id))) ON ((removal_cause.removal_cause_id = planting.removal_cause_id))) ON (("user".user_id = planting.planted_by))) ON ((zone.zone_id = planting.zone_id)));
 
 
 ALTER VIEW public.plantings_view OWNER TO postgres;
 
 --
--- TOC entry 227 (class 1259 OID 36331)
+-- TOC entry 238 (class 1259 OID 37483)
 -- Name: progeny; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -313,7 +466,37 @@ CREATE TABLE public.progeny (
 ALTER TABLE public.progeny OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1259 OID 36340)
+-- TOC entry 236 (class 1259 OID 37481)
+-- Name: progeny_genetic_source_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.progeny ALTER COLUMN genetic_source_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.progeny_genetic_source_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 237 (class 1259 OID 37482)
+-- Name: progeny_sibling_number_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.progeny ALTER COLUMN sibling_number ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.progeny_sibling_number_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 240 (class 1259 OID 37493)
 -- Name: propagation_type; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -328,7 +511,22 @@ CREATE TABLE public.propagation_type (
 ALTER TABLE public.propagation_type OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 36345)
+-- TOC entry 239 (class 1259 OID 37492)
+-- Name: propagation_type_propagation_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.propagation_type ALTER COLUMN propagation_type_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.propagation_type_propagation_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 242 (class 1259 OID 37499)
 -- Name: provenance; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -344,7 +542,37 @@ CREATE TABLE public.provenance (
 ALTER TABLE public.provenance OWNER TO postgres;
 
 --
--- TOC entry 231 (class 1259 OID 36359)
+-- TOC entry 241 (class 1259 OID 37498)
+-- Name: provenance_provenance_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.provenance ALTER COLUMN provenance_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.provenance_provenance_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 243 (class 1259 OID 37506)
+-- Name: removal_cause_removal_cause_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.removal_cause ALTER COLUMN removal_cause_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.removal_cause_removal_cause_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 246 (class 1259 OID 37515)
 -- Name: role; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -358,7 +586,37 @@ CREATE TABLE public.role (
 ALTER TABLE public.role OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1259 OID 36373)
+-- TOC entry 245 (class 1259 OID 37514)
+-- Name: role_role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.role ALTER COLUMN role_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.role_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 247 (class 1259 OID 37524)
+-- Name: species_species_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.species ALTER COLUMN species_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.species_species_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 251 (class 1259 OID 37532)
 -- Name: species_utility_link; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -371,7 +629,37 @@ CREATE TABLE public.species_utility_link (
 ALTER TABLE public.species_utility_link OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1259 OID 36378)
+-- TOC entry 249 (class 1259 OID 37530)
+-- Name: species_utility_link_plant_utility_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.species_utility_link ALTER COLUMN plant_utility_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.species_utility_link_plant_utility_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 250 (class 1259 OID 37531)
+-- Name: species_utility_link_species_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.species_utility_link ALTER COLUMN species_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.species_utility_link_species_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 253 (class 1259 OID 37538)
 -- Name: sub_zone; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -388,7 +676,22 @@ CREATE TABLE public.sub_zone (
 ALTER TABLE public.sub_zone OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1259 OID 36385)
+-- TOC entry 252 (class 1259 OID 37537)
+-- Name: sub_zone_sub_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.sub_zone ALTER COLUMN sub_zone_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.sub_zone_sub_zone_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 255 (class 1259 OID 37546)
 -- Name: supplier; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -404,26 +707,22 @@ CREATE TABLE public.supplier (
 ALTER TABLE public.supplier OWNER TO postgres;
 
 --
--- TOC entry 240 (class 1259 OID 36551)
--- Name: taxon; Type: VIEW; Schema: public; Owner: postgres
+-- TOC entry 254 (class 1259 OID 37545)
+-- Name: supplier_supplier_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE VIEW public.taxon AS
- SELECT v.variety_id,
-    v.species_id AS taxon,
-    g.genus,
-    s.species,
-    v.variety,
-    (((g.genus)::text || ' '::text) || (s.species)::text) AS genus_and_species
-   FROM ((public.variety v
-     JOIN public.genus g ON ((g.genus_id = g.genus_id)))
-     JOIN public.species s ON ((v.species_id = s.species_id)));
+ALTER TABLE public.supplier ALTER COLUMN supplier_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.supplier_supplier_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
 
-
-ALTER VIEW public.taxon OWNER TO postgres;
 
 --
--- TOC entry 237 (class 1259 OID 36403)
+-- TOC entry 260 (class 1259 OID 37567)
 -- Name: user_role_link; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -436,8 +735,83 @@ CREATE TABLE public.user_role_link (
 ALTER TABLE public.user_role_link OWNER TO postgres;
 
 --
--- TOC entry 5078 (class 0 OID 36263)
--- Dependencies: 217
+-- TOC entry 258 (class 1259 OID 37565)
+-- Name: user_role_link_role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.user_role_link ALTER COLUMN role_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.user_role_link_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 259 (class 1259 OID 37566)
+-- Name: user_role_link_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.user_role_link ALTER COLUMN user_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.user_role_link_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 256 (class 1259 OID 37557)
+-- Name: user_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."user" ALTER COLUMN user_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.user_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 261 (class 1259 OID 37572)
+-- Name: variety_variety_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.variety ALTER COLUMN variety_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.variety_variety_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 263 (class 1259 OID 37582)
+-- Name: zone_zone_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.zone ALTER COLUMN zone_id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.zone_zone_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 5107 (class 0 OID 37405)
+-- Dependencies: 218
 -- Data for Name: aspect; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -458,8 +832,8 @@ Uneven	14
 
 
 --
--- TOC entry 5079 (class 0 OID 36270)
--- Dependencies: 218
+-- TOC entry 5108 (class 0 OID 37412)
+-- Dependencies: 219
 -- Data for Name: bioregion; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -556,8 +930,8 @@ YAL	Yalgoo
 
 
 --
--- TOC entry 5080 (class 0 OID 36277)
--- Dependencies: 219
+-- TOC entry 5110 (class 0 OID 37420)
+-- Dependencies: 221
 -- Data for Name: conservation_status; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -575,8 +949,8 @@ COPY public.conservation_status (conservation_status_id, status, status_short_na
 
 
 --
--- TOC entry 5081 (class 0 OID 36286)
--- Dependencies: 220
+-- TOC entry 5112 (class 0 OID 37430)
+-- Dependencies: 223
 -- Data for Name: container; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -591,8 +965,8 @@ tubes	6
 
 
 --
--- TOC entry 5082 (class 0 OID 36291)
--- Dependencies: 221
+-- TOC entry 5114 (class 0 OID 37436)
+-- Dependencies: 225
 -- Data for Name: family; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1584,8 +1958,8 @@ COPY public.family (family_id, famiy_name) FROM stdin;
 
 
 --
--- TOC entry 5083 (class 0 OID 36298)
--- Dependencies: 222
+-- TOC entry 5116 (class 0 OID 37444)
+-- Dependencies: 227
 -- Data for Name: genetic_source; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1687,8 +2061,8 @@ COPY public.genetic_source (acquisition_date, female_genetic_source, generation_
 
 
 --
--- TOC entry 5084 (class 0 OID 36305)
--- Dependencies: 223
+-- TOC entry 5118 (class 0 OID 37452)
+-- Dependencies: 229
 -- Data for Name: genus; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5155,8 +5529,8 @@ COPY public.genus (family_id, genus, genus_id) FROM stdin;
 
 
 --
--- TOC entry 5085 (class 0 OID 36312)
--- Dependencies: 224
+-- TOC entry 5120 (class 0 OID 37460)
+-- Dependencies: 231
 -- Data for Name: location_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5171,8 +5545,8 @@ Local breeding	6
 
 
 --
--- TOC entry 5086 (class 0 OID 36317)
--- Dependencies: 225
+-- TOC entry 5122 (class 0 OID 37466)
+-- Dependencies: 233
 -- Data for Name: plant_utility; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5187,8 +5561,8 @@ COPY public.plant_utility (plant_utility_id, utility) FROM stdin;
 
 
 --
--- TOC entry 5087 (class 0 OID 36324)
--- Dependencies: 226
+-- TOC entry 5124 (class 0 OID 37474)
+-- Dependencies: 235
 -- Data for Name: planting; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5534,8 +5908,8 @@ COPY public.planting (comments, container_type_id, date_planted, genetic_source_
 
 
 --
--- TOC entry 5088 (class 0 OID 36331)
--- Dependencies: 227
+-- TOC entry 5127 (class 0 OID 37483)
+-- Dependencies: 238
 -- Data for Name: progeny; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5544,8 +5918,8 @@ COPY public.progeny (child_name, comments, date_germinated, genetic_source_id, p
 
 
 --
--- TOC entry 5089 (class 0 OID 36340)
--- Dependencies: 228
+-- TOC entry 5129 (class 0 OID 37493)
+-- Dependencies: 240
 -- Data for Name: propagation_type; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5566,8 +5940,8 @@ t	t	Grafting - graft	18
 
 
 --
--- TOC entry 5090 (class 0 OID 36345)
--- Dependencies: 229
+-- TOC entry 5131 (class 0 OID 37499)
+-- Dependencies: 242
 -- Data for Name: provenance; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5599,8 +5973,8 @@ SWA	\N	Y-Hub nursery	6	24
 
 
 --
--- TOC entry 5091 (class 0 OID 36352)
--- Dependencies: 230
+-- TOC entry 5133 (class 0 OID 37507)
+-- Dependencies: 244
 -- Data for Name: removal_cause; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5615,8 +5989,8 @@ Vandalism	6
 
 
 --
--- TOC entry 5092 (class 0 OID 36359)
--- Dependencies: 231
+-- TOC entry 5135 (class 0 OID 37515)
+-- Dependencies: 246
 -- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -5630,8 +6004,8 @@ Read only	Guest	5
 
 
 --
--- TOC entry 5093 (class 0 OID 36368)
--- Dependencies: 232
+-- TOC entry 5137 (class 0 OID 37525)
+-- Dependencies: 248
 -- Data for Name: species; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29443,8 +29817,8 @@ COPY public.species (conservation_status_id, genus_id, species, species_id) FROM
 
 
 --
--- TOC entry 5094 (class 0 OID 36373)
--- Dependencies: 233
+-- TOC entry 5140 (class 0 OID 37532)
+-- Dependencies: 251
 -- Data for Name: species_utility_link; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29453,8 +29827,8 @@ COPY public.species_utility_link (plant_utility_id, species_id) FROM stdin;
 
 
 --
--- TOC entry 5095 (class 0 OID 36378)
--- Dependencies: 234
+-- TOC entry 5142 (class 0 OID 37538)
+-- Dependencies: 253
 -- Data for Name: sub_zone; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29463,8 +29837,8 @@ COPY public.sub_zone (aspect_id, exposure_to_wind, shade, sub_zone_code, sub_zon
 
 
 --
--- TOC entry 5096 (class 0 OID 36385)
--- Dependencies: 235
+-- TOC entry 5144 (class 0 OID 37546)
+-- Dependencies: 255
 -- Data for Name: supplier; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29485,8 +29859,8 @@ f	YBPS	19	Yanchep Botanic Park staff	\N
 
 
 --
--- TOC entry 5097 (class 0 OID 36396)
--- Dependencies: 236
+-- TOC entry 5146 (class 0 OID 37558)
+-- Dependencies: 257
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29498,8 +29872,8 @@ COPY public."user" (address_line_1, address_line_2, email, first_name, full_name
 
 
 --
--- TOC entry 5098 (class 0 OID 36403)
--- Dependencies: 237
+-- TOC entry 5149 (class 0 OID 37567)
+-- Dependencies: 260
 -- Data for Name: user_role_link; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -29511,8 +29885,8 @@ COPY public.user_role_link (role_id, user_id) FROM stdin;
 
 
 --
--- TOC entry 5099 (class 0 OID 36408)
--- Dependencies: 238
+-- TOC entry 5151 (class 0 OID 37573)
+-- Dependencies: 262
 -- Data for Name: variety; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -57478,8 +57852,8 @@ Feathery Cassia	\N	4432	Silver Cascade	27976
 
 
 --
--- TOC entry 5100 (class 0 OID 36417)
--- Dependencies: 239
+-- TOC entry 5153 (class 0 OID 37583)
+-- Dependencies: 264
 -- Data for Name: zone; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -57505,7 +57879,232 @@ COPY public.zone (aspect_id, exposure_to_wind, shade, zone_id, zone_name, zone_n
 
 
 --
--- TOC entry 4838 (class 2606 OID 36269)
+-- TOC entry 5159 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: aspect_aspect_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.aspect_aspect_id_seq', 1, false);
+
+
+--
+-- TOC entry 5160 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: conservation_status_conservation_status_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.conservation_status_conservation_status_id_seq', 1, false);
+
+
+--
+-- TOC entry 5161 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: container_container_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.container_container_type_id_seq', 1, false);
+
+
+--
+-- TOC entry 5162 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: family_family_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.family_family_id_seq', 1, false);
+
+
+--
+-- TOC entry 5163 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: genetic_source_genetic_source_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.genetic_source_genetic_source_id_seq', 1, false);
+
+
+--
+-- TOC entry 5164 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: genus_genus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.genus_genus_id_seq', 1, false);
+
+
+--
+-- TOC entry 5165 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: location_type_location_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.location_type_location_type_id_seq', 1, false);
+
+
+--
+-- TOC entry 5166 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: plant_utility_plant_utility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.plant_utility_plant_utility_id_seq', 1, false);
+
+
+--
+-- TOC entry 5167 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: planting_planting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.planting_planting_id_seq', 1, false);
+
+
+--
+-- TOC entry 5168 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: progeny_genetic_source_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.progeny_genetic_source_id_seq', 1, false);
+
+
+--
+-- TOC entry 5169 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: progeny_sibling_number_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.progeny_sibling_number_seq', 1, false);
+
+
+--
+-- TOC entry 5170 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: propagation_type_propagation_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.propagation_type_propagation_type_id_seq', 1, false);
+
+
+--
+-- TOC entry 5171 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: provenance_provenance_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.provenance_provenance_id_seq', 1, false);
+
+
+--
+-- TOC entry 5172 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: removal_cause_removal_cause_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.removal_cause_removal_cause_id_seq', 1, false);
+
+
+--
+-- TOC entry 5173 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: role_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.role_role_id_seq', 1, false);
+
+
+--
+-- TOC entry 5174 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: species_species_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.species_species_id_seq', 1, false);
+
+
+--
+-- TOC entry 5175 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: species_utility_link_plant_utility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.species_utility_link_plant_utility_id_seq', 1, false);
+
+
+--
+-- TOC entry 5176 (class 0 OID 0)
+-- Dependencies: 250
+-- Name: species_utility_link_species_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.species_utility_link_species_id_seq', 1, false);
+
+
+--
+-- TOC entry 5177 (class 0 OID 0)
+-- Dependencies: 252
+-- Name: sub_zone_sub_zone_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.sub_zone_sub_zone_id_seq', 1, false);
+
+
+--
+-- TOC entry 5178 (class 0 OID 0)
+-- Dependencies: 254
+-- Name: supplier_supplier_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.supplier_supplier_id_seq', 1, false);
+
+
+--
+-- TOC entry 5179 (class 0 OID 0)
+-- Dependencies: 258
+-- Name: user_role_link_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_role_link_role_id_seq', 1, false);
+
+
+--
+-- TOC entry 5180 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: user_role_link_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_role_link_user_id_seq', 1, false);
+
+
+--
+-- TOC entry 5181 (class 0 OID 0)
+-- Dependencies: 256
+-- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.user_user_id_seq', 1, false);
+
+
+--
+-- TOC entry 5182 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: variety_variety_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.variety_variety_id_seq', 1, false);
+
+
+--
+-- TOC entry 5183 (class 0 OID 0)
+-- Dependencies: 263
+-- Name: zone_zone_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.zone_zone_id_seq', 1, false);
+
+
+--
+-- TOC entry 4863 (class 2606 OID 37411)
 -- Name: aspect aspect_aspect_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57514,7 +58113,7 @@ ALTER TABLE ONLY public.aspect
 
 
 --
--- TOC entry 4840 (class 2606 OID 36267)
+-- TOC entry 4865 (class 2606 OID 37409)
 -- Name: aspect aspect_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57523,7 +58122,7 @@ ALTER TABLE ONLY public.aspect
 
 
 --
--- TOC entry 4842 (class 2606 OID 36276)
+-- TOC entry 4867 (class 2606 OID 37418)
 -- Name: bioregion bioregion_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57532,7 +58131,7 @@ ALTER TABLE ONLY public.bioregion
 
 
 --
--- TOC entry 4844 (class 2606 OID 36283)
+-- TOC entry 4869 (class 2606 OID 37426)
 -- Name: conservation_status conservation_status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57541,7 +58140,7 @@ ALTER TABLE ONLY public.conservation_status
 
 
 --
--- TOC entry 4846 (class 2606 OID 36285)
+-- TOC entry 4871 (class 2606 OID 37428)
 -- Name: conservation_status conservation_status_status_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57550,7 +58149,7 @@ ALTER TABLE ONLY public.conservation_status
 
 
 --
--- TOC entry 4848 (class 2606 OID 36290)
+-- TOC entry 4873 (class 2606 OID 37434)
 -- Name: container container_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57559,7 +58158,7 @@ ALTER TABLE ONLY public.container
 
 
 --
--- TOC entry 4850 (class 2606 OID 36297)
+-- TOC entry 4875 (class 2606 OID 37442)
 -- Name: family family_famiy_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57568,7 +58167,7 @@ ALTER TABLE ONLY public.family
 
 
 --
--- TOC entry 4852 (class 2606 OID 36295)
+-- TOC entry 4877 (class 2606 OID 37440)
 -- Name: family family_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57577,7 +58176,7 @@ ALTER TABLE ONLY public.family
 
 
 --
--- TOC entry 4854 (class 2606 OID 36304)
+-- TOC entry 4879 (class 2606 OID 37450)
 -- Name: genetic_source genetic_source_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57586,7 +58185,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4856 (class 2606 OID 36311)
+-- TOC entry 4881 (class 2606 OID 37458)
 -- Name: genus genus_genus_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57595,7 +58194,7 @@ ALTER TABLE ONLY public.genus
 
 
 --
--- TOC entry 4858 (class 2606 OID 36309)
+-- TOC entry 4883 (class 2606 OID 37456)
 -- Name: genus genus_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57604,7 +58203,7 @@ ALTER TABLE ONLY public.genus
 
 
 --
--- TOC entry 4860 (class 2606 OID 36316)
+-- TOC entry 4885 (class 2606 OID 37464)
 -- Name: location_type location_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57613,7 +58212,7 @@ ALTER TABLE ONLY public.location_type
 
 
 --
--- TOC entry 4862 (class 2606 OID 36321)
+-- TOC entry 4887 (class 2606 OID 37470)
 -- Name: plant_utility plant_utility_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57622,7 +58221,7 @@ ALTER TABLE ONLY public.plant_utility
 
 
 --
--- TOC entry 4864 (class 2606 OID 36323)
+-- TOC entry 4889 (class 2606 OID 37472)
 -- Name: plant_utility plant_utility_utility_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57631,7 +58230,7 @@ ALTER TABLE ONLY public.plant_utility
 
 
 --
--- TOC entry 4866 (class 2606 OID 36330)
+-- TOC entry 4891 (class 2606 OID 37480)
 -- Name: planting planting_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57640,7 +58239,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4868 (class 2606 OID 36337)
+-- TOC entry 4893 (class 2606 OID 37489)
 -- Name: progeny progeny_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57649,7 +58248,7 @@ ALTER TABLE ONLY public.progeny
 
 
 --
--- TOC entry 4870 (class 2606 OID 36339)
+-- TOC entry 4895 (class 2606 OID 37491)
 -- Name: progeny progeny_progeny_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57658,7 +58257,7 @@ ALTER TABLE ONLY public.progeny
 
 
 --
--- TOC entry 4872 (class 2606 OID 36344)
+-- TOC entry 4897 (class 2606 OID 37497)
 -- Name: propagation_type propagation_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57667,7 +58266,7 @@ ALTER TABLE ONLY public.propagation_type
 
 
 --
--- TOC entry 4874 (class 2606 OID 36351)
+-- TOC entry 4899 (class 2606 OID 37505)
 -- Name: provenance provenance_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57676,7 +58275,7 @@ ALTER TABLE ONLY public.provenance
 
 
 --
--- TOC entry 4876 (class 2606 OID 36358)
+-- TOC entry 4901 (class 2606 OID 37513)
 -- Name: removal_cause removal_cause_cause_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57685,7 +58284,7 @@ ALTER TABLE ONLY public.removal_cause
 
 
 --
--- TOC entry 4878 (class 2606 OID 36356)
+-- TOC entry 4903 (class 2606 OID 37511)
 -- Name: removal_cause removal_cause_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57694,7 +58293,7 @@ ALTER TABLE ONLY public.removal_cause
 
 
 --
--- TOC entry 4880 (class 2606 OID 36365)
+-- TOC entry 4905 (class 2606 OID 37521)
 -- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57703,7 +58302,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- TOC entry 4882 (class 2606 OID 36367)
+-- TOC entry 4907 (class 2606 OID 37523)
 -- Name: role role_role_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57712,7 +58311,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- TOC entry 4884 (class 2606 OID 36372)
+-- TOC entry 4909 (class 2606 OID 37529)
 -- Name: species species_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57721,7 +58320,7 @@ ALTER TABLE ONLY public.species
 
 
 --
--- TOC entry 4886 (class 2606 OID 36377)
+-- TOC entry 4911 (class 2606 OID 37536)
 -- Name: species_utility_link species_utility_link_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57730,7 +58329,7 @@ ALTER TABLE ONLY public.species_utility_link
 
 
 --
--- TOC entry 4888 (class 2606 OID 36384)
+-- TOC entry 4913 (class 2606 OID 37544)
 -- Name: sub_zone sub_zone_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57739,7 +58338,7 @@ ALTER TABLE ONLY public.sub_zone
 
 
 --
--- TOC entry 4890 (class 2606 OID 36391)
+-- TOC entry 4915 (class 2606 OID 37552)
 -- Name: supplier supplier_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57748,7 +58347,7 @@ ALTER TABLE ONLY public.supplier
 
 
 --
--- TOC entry 4892 (class 2606 OID 36393)
+-- TOC entry 4917 (class 2606 OID 37554)
 -- Name: supplier supplier_short_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57757,7 +58356,7 @@ ALTER TABLE ONLY public.supplier
 
 
 --
--- TOC entry 4894 (class 2606 OID 36395)
+-- TOC entry 4919 (class 2606 OID 37556)
 -- Name: supplier supplier_supplier_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57766,7 +58365,7 @@ ALTER TABLE ONLY public.supplier
 
 
 --
--- TOC entry 4896 (class 2606 OID 36402)
+-- TOC entry 4921 (class 2606 OID 37564)
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57775,16 +58374,16 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- TOC entry 4898 (class 2606 OID 36407)
+-- TOC entry 4923 (class 2606 OID 37571)
 -- Name: user_role_link user_role_link_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.user_role_link
-    ADD CONSTRAINT user_role_link_pkey PRIMARY KEY (user_id, role_id);
+    ADD CONSTRAINT user_role_link_pkey PRIMARY KEY (role_id, user_id);
 
 
 --
--- TOC entry 4900 (class 2606 OID 36416)
+-- TOC entry 4925 (class 2606 OID 37581)
 -- Name: variety variety_genetic_source_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57793,7 +58392,7 @@ ALTER TABLE ONLY public.variety
 
 
 --
--- TOC entry 4902 (class 2606 OID 36414)
+-- TOC entry 4927 (class 2606 OID 37579)
 -- Name: variety variety_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57802,7 +58401,7 @@ ALTER TABLE ONLY public.variety
 
 
 --
--- TOC entry 4904 (class 2606 OID 36423)
+-- TOC entry 4929 (class 2606 OID 37589)
 -- Name: zone zone_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57811,7 +58410,7 @@ ALTER TABLE ONLY public.zone
 
 
 --
--- TOC entry 4906 (class 2606 OID 36425)
+-- TOC entry 4931 (class 2606 OID 37591)
 -- Name: zone zone_zone_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57820,7 +58419,25 @@ ALTER TABLE ONLY public.zone
 
 
 --
--- TOC entry 4907 (class 2606 OID 36426)
+-- TOC entry 4932 (class 2606 OID 37727)
+-- Name: genetic_source genetic_source_female_genetic_source_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.genetic_source
+    ADD CONSTRAINT genetic_source_female_genetic_source_fkey FOREIGN KEY (female_genetic_source) REFERENCES public.genetic_source(genetic_source_id);
+
+
+--
+-- TOC entry 4933 (class 2606 OID 37722)
+-- Name: genetic_source genetic_source_male_genetic_source_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.genetic_source
+    ADD CONSTRAINT genetic_source_male_genetic_source_fkey FOREIGN KEY (male_genetic_source) REFERENCES public.genetic_source(genetic_source_id);
+
+
+--
+-- TOC entry 4934 (class 2606 OID 37592)
 -- Name: genetic_source genetic_source_propagation_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57829,7 +58446,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4908 (class 2606 OID 36431)
+-- TOC entry 4935 (class 2606 OID 37597)
 -- Name: genetic_source genetic_source_provenance_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57838,7 +58455,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4909 (class 2606 OID 36441)
+-- TOC entry 4936 (class 2606 OID 37607)
 -- Name: genetic_source genetic_source_supplier_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57847,7 +58464,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4910 (class 2606 OID 36446)
+-- TOC entry 4937 (class 2606 OID 37612)
 -- Name: genetic_source genetic_source_supplier_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57856,7 +58473,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4911 (class 2606 OID 36436)
+-- TOC entry 4938 (class 2606 OID 37602)
 -- Name: genetic_source genetic_source_variety_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57865,7 +58482,7 @@ ALTER TABLE ONLY public.genetic_source
 
 
 --
--- TOC entry 4912 (class 2606 OID 36456)
+-- TOC entry 4939 (class 2606 OID 37622)
 -- Name: genus genus_family_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57874,7 +58491,7 @@ ALTER TABLE ONLY public.genus
 
 
 --
--- TOC entry 4913 (class 2606 OID 36461)
+-- TOC entry 4940 (class 2606 OID 37627)
 -- Name: planting planting_container_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57883,7 +58500,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4914 (class 2606 OID 36471)
+-- TOC entry 4941 (class 2606 OID 37637)
 -- Name: planting planting_genetic_source_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57892,7 +58509,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4915 (class 2606 OID 36481)
+-- TOC entry 4942 (class 2606 OID 37647)
 -- Name: planting planting_planted_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57901,7 +58518,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4916 (class 2606 OID 36466)
+-- TOC entry 4943 (class 2606 OID 37632)
 -- Name: planting planting_removal_cause_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57910,7 +58527,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4917 (class 2606 OID 36476)
+-- TOC entry 4944 (class 2606 OID 37642)
 -- Name: planting planting_variety_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57919,7 +58536,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4918 (class 2606 OID 36486)
+-- TOC entry 4945 (class 2606 OID 37652)
 -- Name: planting planting_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57928,7 +58545,7 @@ ALTER TABLE ONLY public.planting
 
 
 --
--- TOC entry 4919 (class 2606 OID 36491)
+-- TOC entry 4946 (class 2606 OID 37657)
 -- Name: progeny progeny_genetic_source_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57937,7 +58554,7 @@ ALTER TABLE ONLY public.progeny
 
 
 --
--- TOC entry 4920 (class 2606 OID 36496)
+-- TOC entry 4947 (class 2606 OID 37662)
 -- Name: provenance provenance_bioregion_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57946,7 +58563,7 @@ ALTER TABLE ONLY public.provenance
 
 
 --
--- TOC entry 4921 (class 2606 OID 36501)
+-- TOC entry 4948 (class 2606 OID 37667)
 -- Name: provenance provenance_location_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57955,7 +58572,7 @@ ALTER TABLE ONLY public.provenance
 
 
 --
--- TOC entry 4922 (class 2606 OID 36506)
+-- TOC entry 4949 (class 2606 OID 37672)
 -- Name: species species_conservation_status_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57964,7 +58581,7 @@ ALTER TABLE ONLY public.species
 
 
 --
--- TOC entry 4923 (class 2606 OID 36511)
+-- TOC entry 4950 (class 2606 OID 37677)
 -- Name: species species_genus_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57973,7 +58590,7 @@ ALTER TABLE ONLY public.species
 
 
 --
--- TOC entry 4924 (class 2606 OID 36516)
+-- TOC entry 4951 (class 2606 OID 37682)
 -- Name: species_utility_link species_utility_link_plant_utility_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57982,7 +58599,7 @@ ALTER TABLE ONLY public.species_utility_link
 
 
 --
--- TOC entry 4925 (class 2606 OID 36521)
+-- TOC entry 4952 (class 2606 OID 37687)
 -- Name: species_utility_link species_utility_link_species_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -57991,7 +58608,7 @@ ALTER TABLE ONLY public.species_utility_link
 
 
 --
--- TOC entry 4926 (class 2606 OID 36526)
+-- TOC entry 4953 (class 2606 OID 37692)
 -- Name: sub_zone sub_zone_zone_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -58000,7 +58617,7 @@ ALTER TABLE ONLY public.sub_zone
 
 
 --
--- TOC entry 4927 (class 2606 OID 36531)
+-- TOC entry 4954 (class 2606 OID 37697)
 -- Name: user_role_link user_role_link_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -58009,7 +58626,7 @@ ALTER TABLE ONLY public.user_role_link
 
 
 --
--- TOC entry 4928 (class 2606 OID 36536)
+-- TOC entry 4955 (class 2606 OID 37702)
 -- Name: user_role_link user_role_link_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -58018,7 +58635,16 @@ ALTER TABLE ONLY public.user_role_link
 
 
 --
--- TOC entry 4929 (class 2606 OID 36541)
+-- TOC entry 4956 (class 2606 OID 37717)
+-- Name: variety variety_genetic_source_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.variety
+    ADD CONSTRAINT variety_genetic_source_id_fkey FOREIGN KEY (genetic_source_id) REFERENCES public.genetic_source(genetic_source_id);
+
+
+--
+-- TOC entry 4957 (class 2606 OID 37707)
 -- Name: variety variety_species_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -58027,7 +58653,7 @@ ALTER TABLE ONLY public.variety
 
 
 --
--- TOC entry 4930 (class 2606 OID 36546)
+-- TOC entry 4958 (class 2606 OID 37712)
 -- Name: zone zone_aspect_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -58035,11 +58661,11 @@ ALTER TABLE ONLY public.zone
     ADD CONSTRAINT zone_aspect_id_fkey FOREIGN KEY (aspect_id) REFERENCES public.aspect(aspect_id);
 
 
--- Completed on 2025-09-16 19:23:35
+-- Completed on 2025-09-29 10:53:25
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict kn5DuOqmHfq2wQSg22Fky4BLm2Q3IwLeEoqR2mTAQye5leT4DUS7x7UFr3CHDOW
+\unrestrict haQkgbYHHjrxIWeRi7gSqRQQ06BcV5jHI7kbm5lRECalgg6otgPpBukY86W1Jcg
 

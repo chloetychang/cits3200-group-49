@@ -1,3 +1,5 @@
+import 'package:botanic_guide_a_tool_for_garden_planters/backend/api_service.dart';
+
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -635,447 +637,185 @@ class _ViewPlantingsWidgetState extends State<ViewPlantingsWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
+                              child: FutureBuilder<List<dynamic>>(
+                                future: ApiService.getView_Plantings(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text('Error: ${snapshot.error}'));
+                                  }
+                                  final rows = snapshot.data ?? [];
 
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
+                                  return FlutterFlowDataTable<dynamic>(
+                                    controller: _model.paginatedDataTableController,
+                                    data: rows,
                                     columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 100,
+                                        child: Text(
+                                          'Date planted',
                                           softWrap: true,
-                                          child: Text(
-                                            'Date Planted',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 100,
+                                        child: Text(
+                                          'Planted by',
                                           softWrap: true,
-                                          child: Text(
-                                            'Planted by',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 80,
+                                        child: Text(
+                                          'Zone',
                                           softWrap: true,
-                                          child: Text(
-                                            'Zone',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Species',
                                           softWrap: true,
-                                          child: Text(
-                                            'Species',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Acquisition ID',
                                           softWrap: true,
-                                          child: Text(
-                                            'Acquisition ID',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Number Planted',
                                           softWrap: true,
-                                          child: Text(
-                                            'Number Planted',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Container Type',
                                           softWrap: true,
-                                          child: Text(
-                                            'Container type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Removal Date',
                                           softWrap: true,
-                                          child: Text(
-                                            'Removal data',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Removal Cause',
                                           softWrap: true,
-                                          child: Text(
-                                            'Removal cause',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 120,
+                                        child: Text(
+                                          'Number Removed',
                                           softWrap: true,
-                                          child: Text(
-                                            'Number removed',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
+                                    ),
+                                    DataColumn2(
+                                      label: SizedBox(
+                                        width: 130,
+                                        child: Text(
+                                          'Number Remaining',
                                           softWrap: true,
-                                          child: Text(
-                                            'Number remaining',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
+                                          overflow: TextOverflow.visible,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                    ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
+                                    ),
+],
+
+                                    dataRowBuilder: (row, index, selected, onSelectChanged) => DataRow(
                                       color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                        index.isEven
+                                          ? FlutterFlowTheme.of(context).secondaryBackground
+                                          : FlutterFlowTheme.of(context).primaryBackground,
                                       ),
                                       cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 2',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 3',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 4',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 5',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 6',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 7',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 8',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 9',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 10',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 11',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
+                                        DataCell(Text('${row['date_planted'] ?? ''}')),
+                                        DataCell(Text('${row['planted_by'] ?? ''}')),
+                                        DataCell(Text('${row['zone_number'] ?? ''}')),
+                                        DataCell(Text('${row['species'] ?? ''}')),
+                                        DataCell(Text('${row['acquisition_id'] ?? ''}')),
+                                        DataCell(Text('${row['number_planted'] ?? ''}')),
+                                        DataCell(Text('${row['container_type'] ?? ''}')),
+                                        DataCell(Text('${row['removal_date'] ?? ''}')),
+                                        DataCell(Text('${row['removal_cause'] ?? ''}')),
+                                        DataCell(Text('${row['number_removed'] ?? ''}')),
+                                        DataCell(Text('${row['number_remaining'] ?? ''}')),
+                                      ],
                                     ),
                                     paginated: true,
                                     selectable: false,
                                     hidePaginator: false,
                                     showFirstLastButtons: false,
-                                    headingRowHeight: 56.0,
-                                    dataRowHeight: 48.0,
-                                    columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
+                                    headingRowHeight: 70.0,
+                                    dataRowHeight: 60.0,
+                                    columnSpacing: 25.0,
+                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
                                     borderRadius: BorderRadius.circular(8.0),
                                     addHorizontalDivider: true,
                                     addTopAndBottomDivider: false,
                                     hideDefaultHorizontalDivider: true,
                                     horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
+                                        FlutterFlowTheme.of(context).secondaryBackground,
                                     horizontalDividerThickness: 1.0,
                                     addVerticalDivider: false,
                                   );
                                 },
                               ),
-                            ),
+                            )
+
                           ],
                         ),
                       ),
