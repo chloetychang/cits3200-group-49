@@ -648,10 +648,6 @@ class _ViewProgenyWidgetState extends State<ViewProgenyWidget> {
                                   }
                                   final progeny = snapshot.data ?? [];
 
-                                  if (progeny.isEmpty) {
-                                    return const Center(child: Text('No progeny found.'));
-                                  }
-
                                   return FlutterFlowDataTable<dynamic>(
                                     controller: _model.paginatedDataTableController,
                                     data: progeny,

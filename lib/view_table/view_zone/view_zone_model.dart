@@ -17,7 +17,8 @@ class ViewZoneModel extends FlutterFlowModel<ViewZoneWidget> {
     isLoading = true;
     error = null;
     try {
-      rows = (await ApiService.getView_Zones()).cast<Map<String, dynamic>>();
+      final data = await ApiService.getView_Zones(); 
+      rows = data.map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e)).toList();
     } catch (e) {
       error = e.toString();
     } finally {

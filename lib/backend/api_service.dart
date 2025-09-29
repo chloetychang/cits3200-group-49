@@ -121,5 +121,17 @@ static Future<List<Map<String, dynamic>>> getView_Zones() async {
   }
   throw Exception('Failed to load zones: ${res.statusCode}');
 }
+  // get subzones
+static Future<List<Map<String, dynamic>>> getView_Subzones() async {
+  final res = await http.get(Uri.parse('$baseUrl/subzones/View_subzones'));
+  if (res.statusCode == 200) {
+    final List<dynamic> decoded = jsonDecode(res.body);
+    return decoded.cast<Map<String, dynamic>>();
+  }
+  throw Exception('Failed to load subzones: ${res.statusCode}');
+}
+
+
+
 
 }
