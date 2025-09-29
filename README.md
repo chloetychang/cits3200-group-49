@@ -105,10 +105,14 @@ docker-compose up -d
 
 1. Open **pgAdmin** using either Docker Desktop or your local installation.
    - If using Docker Desktop:
-     1. Make sure your pgAdmin container is running.
-     2. Open Docker Desktop → Click on the Containers tab.
-     3. Find the container named `pgadmin`.
-     4. Under Port(s), click the port number (usually 5050). This will open pgAdmin in your browser.
+     - a. Make sure your pgAdmin container is running.
+     - b. Open Docker Desktop → Click on the Containers tab.
+     - c. Find the container named `pgadmin`.
+     - d. Under Port(s), click the port number (usually 5050). This will open pgAdmin in your browser.
+     - e. Login using the credentials as defined in `.env` file:
+         - Email Address / Username: `PGADMIN_DEFAULT_EMAIL`
+         - Password: `PGADMIN_DEFAULT_PASSWORD`
+     - f. Click the dropdown next to servers. If the server and database is listed under servers, then you can skip steps 2-6
    - If installed locally:
      - Simply search for pgAdmin in your system applications and launch it, which will open in your default browser.
 2. Login using the credentials as defined in `.env` file:
@@ -143,7 +147,15 @@ alembic init alembic
 This creates an `alembic/` directory and an `alembic.ini` config file.
 
 #### b. **Configure Alembic**
-- Open `alembic.ini` and set your database URL:
+- Open `alembic.ini` and set your database URL
+If you are using the Docker container, then set the URL as:
+
+```ini
+# line 66 of file or ~line 87 of the file
+sqlalchemy.url = postgresql+psycopg2://<user>:<password>@postgres:5432/<databasename>
+```
+
+If you are using the local installation of PGAdmin instead, the set the URL as:
 
 ```ini
 # line 66 of file or ~line 87 of the file
