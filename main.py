@@ -15,7 +15,7 @@ from App.routes.View_Routes import view_users
 from App.routes.View_Routes import view_species
 from App.routes.View_Routes import view_genetic_sources
 from App.routes.View_Routes import view_progeny
-
+from App.routes.View_Routes import view_suppliers
 
 app = FastAPI(
     title=settings.API_TITLE,
@@ -28,6 +28,7 @@ app.include_router(view_users.router)
 app.include_router(view_species.router)
 app.include_router(view_genetic_sources.router)
 app.include_router(view_progeny.router)
+app.include_router(view_suppliers.router)
 
 
 app.add_middleware(

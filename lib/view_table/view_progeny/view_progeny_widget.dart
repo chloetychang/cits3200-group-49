@@ -1,3 +1,5 @@
+import 'package:botanic_guide_a_tool_for_garden_planters/backend/api_service.dart';
+
 import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -635,52 +637,62 @@ class _ViewProgenyWidgetState extends State<ViewProgenyWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
-                              child: _model.isLoading
-                                  ? const Center(child: CircularProgressIndicator())
-                                  : (_model.error != null)
-                                      ? Center(child: Text(_model.error!))
-                                      : (_model.rows.isEmpty)
-                                          ? const Center(child: Text('No progeny found.'))
-                                          : FlutterFlowDataTable<dynamic>(
-                                              controller: _model.paginatedDataTableController,
-                                              data: _model.rows, // API 数据
-                                              columnsBuilder: (onSortChanged) => [
-                                                DataColumn2(
-                                                  label: Text(
-                                                    'Family name',
-                                                    style: FlutterFlowTheme.of(context).labelLarge,
-                                                  ),
-                                                ),
-                                                DataColumn2(
-                                                  label: Text(
-                                                    'Child name',
-                                                    style: FlutterFlowTheme.of(context).labelLarge,
-                                                  ),
-                                                ),
-                                                DataColumn2(
-                                                  label: Text(
-                                                    'Comments',
-                                                    style: FlutterFlowTheme.of(context).labelLarge,
-                                                  ),
-                                                ),
-                                              ],
-                                              dataRowBuilder:
-                                                  (item, index, selected, onSelectChanged) => DataRow(
-                                                color: WidgetStateProperty.all(
-                                                  index.isEven
-                                                      ? FlutterFlowTheme.of(context).secondaryBackground
-                                                      : FlutterFlowTheme.of(context).primaryBackground,
-                                                ),
-                                                cells: [
-                                                  DataCell(Text(item['family_name'] ?? '')),
-                                                  DataCell(Text(item['child_name'] ?? '')),
-                                                  DataCell(Text(item['comments'] ?? '')),
-                                                ],
-                                              ),
-                                              paginated: true,
-                                              selectable: false,
-                                            ),
-                            ),
+                              child: FutureBuilder<List<dynamic>>(
+                                future: ApiService.getView_Progeny(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text('Error: ${snapshot.error}'));
+                                  }
+                                  final progeny = snapshot.data ?? [];
+
+                                  if (progeny.isEmpty) {
+                                    return const Center(child: Text('No progeny found.'));
+                                  }
+
+                                  return FlutterFlowDataTable<dynamic>(
+                                    controller: _model.paginatedDataTableController,
+                                    data: progeny,
+                                    columnsBuilder: (onSortChanged) => [
+                                      const DataColumn2(label: Text('Family name')),
+                                      const DataColumn2(label: Text('Child name')),
+                                      const DataColumn2(label: Text('Comments')),
+                                    ],
+                                    dataRowBuilder: (item, index, selected, onSelectChanged) => DataRow(
+                                      color: WidgetStateProperty.all(
+                                        index.isEven
+                                            ? FlutterFlowTheme.of(context).secondaryBackground
+                                            : FlutterFlowTheme.of(context).primaryBackground,
+                                      ),
+                                      cells: [
+                                        DataCell(Text(item['family_name'] ?? '')),
+                                        DataCell(Text(item['child_name'] ?? '')),
+                                        DataCell(Text(item['comments'] ?? '')),
+                                      ],
+                                    ),
+                                    paginated: true,
+                                    selectable: false,
+                                    hidePaginator: false,
+                                    showFirstLastButtons: false,
+                                    headingRowHeight: 56.0,
+                                    dataRowHeight: 48.0,
+                                    columnSpacing: 20.0,
+                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    addHorizontalDivider: true,
+                                    addTopAndBottomDivider: false,
+                                    hideDefaultHorizontalDivider: true,
+                                    horizontalDividerColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                    horizontalDividerThickness: 1.0,
+                                    addVerticalDivider: false,
+                                  );
+                                },
+                              ),
+                            )
+
+
                           ],
                         ),
                       ),

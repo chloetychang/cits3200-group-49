@@ -366,3 +366,12 @@ class ProgenyWithFamilyResponse(BaseSchema):
 
     class Config:
         from_attributes = True
+class SupplierResponse(BaseSchema):
+    supplier_id: int
+    short_name: Optional[str] = None
+    supplier_name: str
+    is_a_research_breeder: Optional[bool] = None
+    web_site: Optional[str] = None
+
+    class Config:
+        from_attributes = True
