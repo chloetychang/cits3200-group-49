@@ -21,6 +21,7 @@ from App.routes.View_Routes import view_plantings
 from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
+from App.routes.Add_Routes.add_acquisitions import router as add_acquisitions_router
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -37,6 +38,7 @@ app.include_router(view_plantings.router)
 app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
+app.include_router(add_acquisitions_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,115 +106,6 @@ def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(g
 
 
 # -------------------- Add Screens --------------------------
-# -------------------- API for Acquistion Source Page --------------------------
-# For Old Species + Variety - It requires "genus" and "species"
-# Creation of a genus dropdown
-@app.get("/acquisition/genus", response_model=List[schemas.GenusResponse])
-def get_genus_dropdown(db: Session = Depends(get_db)):
-    """Get all genus names for dropdown (A→Z)."""
-    genus_list = db.query(models.Genus).order_by(models.Genus.genus.asc()).all()
-    return [schemas.GenusResponse.model_validate(g).model_dump() for g in genus_list]
-
-# Creation of a species dropdown
-@app.get("/acquisition/species", response_model=List[schemas.SpeciesResponse])
-def get_species_dropdown(db: Session = Depends(get_db)):
-    """Get all species names for dropdown (A→Z)."""
-    species = db.query(models.Species).order_by(models.Species.species.asc()).all()
-    return [schemas.SpeciesResponse.model_validate(s).model_dump() for s in species]
-
-# Creation of a supplier dropdown
-@app.get("/acquisition/suppliers", response_model=List[schemas.SupplierResponse])
-def get_supplier_dropdown(db: Session = Depends(get_db)):
-    """Get all supplier names for dropdown (A→Z)."""
-    suppliers = db.query(models.Supplier).order_by(models.Supplier.supplier_name.asc()).all()
-    return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
-
-# Creation of a provenance dropdown
-@app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
-def get_provenance_location_dropdown(db: Session = Depends(get_db)):
-    """Get all provenance locations for dropdown (A→Z)."""
-    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
-    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
-
-@app.get("/acquisition/bioregion_code", response_model=List[schemas.BioregionResponse])
-def get_bioregion_dropdown(db: Session = Depends(get_db)):
-    """Get all bioregion codes for dropdown (A→Z)."""
-    bioregions = db.query(models.Bioregion).order_by(models.Bioregion.bioregion_code.asc()).all()
-    return [schemas.BioregionResponse.model_validate(b).model_dump() for b in bioregions]
-
-# TODO: Family name dropdown - Missing due to data model changes [left as placeholder]
-
-# TODO: Generation number dropdown - Missing due to data model changes [left as placeholder]
-
-# TODO: Fix POST Request on Acquisition model
-@app.post("/acquisition/", response_model=List[schemas.GeneticSourceResponse])
-def create_acquisition(
-    acquisition: schemas.AcquisitionCreate = Body(...),
-    db: Session = Depends(get_db)
-):
-    genetic_source = acquisition.genetic_source
-    supplier = acquisition.supplier
-    provenance = acquisition.provenance
-
-    # Lookup or create supplier
-    supplier_obj = crud.supplier.get_by_name(db, name=supplier.supplier_name)
-    if not supplier_obj:
-        supplier_obj = crud.supplier.create(db, obj_in=supplier)
-    supplier_id = supplier_obj.supplier_id
-
-    # Lookup or create provenance
-    provenance_obj = crud.provenance.get_by_location(db, location=provenance.location)
-    if not provenance_obj:
-        provenance_obj = crud.provenance.create(db, obj_in=provenance)
-    provenance_id = provenance_obj.provenance_id
-
-    # Lookup or create variety (if needed)
-    variety_id = getattr(genetic_source, "variety_id", None)
-    if not variety_id:
-        variety_name = getattr(genetic_source, "variety", None)
-        species_name = getattr(genetic_source, "species", None)
-        if variety_name and species_name:
-            # Lookup species by name
-            species_obj = crud.species.get_by_name(db, name=species_name)
-            if not species_obj:
-                # Create species if not found
-                species_obj = crud.species.create(db, obj_in={"species": species_name})
-            species_id = species_obj.species_id
-            # Lookup variety by name and species_id
-            variety_obj = crud.variety.get_by_name_and_species(db, name=variety_name, species_id=species_id)
-            if not variety_obj:
-                variety_obj = crud.variety.create(db, obj_in={"variety": variety_name, "species_id": species_id})
-            variety_id = variety_obj.variety_id
-        elif variety_name:
-            # Fallback: create variety without species
-            variety_obj = crud.variety.get_by_name(db, name=variety_name)
-            if not variety_obj:
-                variety_obj = crud.variety.create(db, obj_in={"variety": variety_name})
-            variety_id = variety_obj.variety_id
-        else:
-            raise HTTPException(status_code=400, detail="Variety info required (provide variety and species names if new)")
-
-    # Lookup or create family (if needed)
-    family_id = None
-    if hasattr(genetic_source, "family_name") and genetic_source.family_name:
-        family_obj = crud.family.get_by_name(db, name=genetic_source.family_name)
-        if not family_obj:
-            family_obj = crud.family.create(db, obj_in={"famiy_name": genetic_source.family_name})
-        family_id = family_obj.family_id
-
-    gs_data = genetic_source.model_dump()
-    gs_data["supplier_id"] = supplier_id
-    gs_data["provenance_id"] = provenance_id
-    gs_data["variety_id"] = variety_id
-    if family_id:
-        gs_data["family_id"] = family_id
-
-    try:
-        gs_obj = crud.genetic_source.create(db, obj_in=schemas.GeneticSourceCreate(**gs_data))
-    except IntegrityError:
-        raise HTTPException(status_code=400, detail="Failed to create Acquisition")
-    return gs_obj
-
 # -------------------- API for Planting Source Page --------------------------
 # TODO: Creation of Genetic Source dropdown (To be done - currently missing data 25/09/25)
 
