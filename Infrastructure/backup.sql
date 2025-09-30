@@ -57920,7 +57920,7 @@ SELECT pg_catalog.setval('public.family_family_id_seq', 1, false);
 -- Name: genetic_source_genetic_source_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.genetic_source_genetic_source_id_seq', 1, false);
+SELECT pg_catalog.setval('public.genetic_source_genetic_source_id_seq', 95, true);
 
 
 --
