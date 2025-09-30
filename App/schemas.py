@@ -35,8 +35,17 @@ class ConservationStatusBase(BaseSchema):
 class ConservationStatusCreate(ConservationStatusBase):
     pass
 
-class ConservationStatusResponse(ConservationStatusBase):
+# Response schema for list/get operations (added)
+class ConservationStatusOut(ConservationStatusBase):
     conservation_status_id: int
+
+    class Config:
+        orm_mode = True
+
+# Update payload schema (added)
+class ConservationStatusUpdate(ConservationStatusBase):
+    pass
+
 
 # Container schemas
 class ContainerBase(BaseSchema):

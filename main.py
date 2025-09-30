@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload, joinedload
 from sqlalchemy.exc import IntegrityError
 import uvicorn
 from typing import List, Optional
-
+from fastapi.middleware.cors import CORSMiddleware
 from App.database import engine, get_db
 from App.config import settings
 from App import models
@@ -21,10 +21,19 @@ from App.routes.View_Routes import view_plantings
 from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
+from App.routes.Manage_Lookup_Routes import manage_lookup_conservation_status
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
+    
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -37,6 +46,7 @@ app.include_router(view_plantings.router)
 app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
+app.include_router(manage_lookup_conservation_status.router)
 
 app.add_middleware(
     CORSMiddleware,

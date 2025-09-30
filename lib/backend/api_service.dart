@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:8000';
+  static const String baseUrl = 'http://localhost:8000';
 
   // get users
   static Future<List<dynamic>> getView_Users() async {
@@ -277,5 +277,51 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     }
     throw Exception('Failed to load family name dropdown: ${res.statusCode}');
   }
+
+
+  /// Fetch all conservation statuses
+  static Future<List<dynamic>> getConservationStatus() async {
+    final res = await http.get(Uri.parse('$baseUrl/conservation_status/'));
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load conservation status: ${res.statusCode}');
+  }
+
+
+  /// Create a new conservation status row
+  static Future<Map<String, dynamic>> createConservationStatus({
+    required String status,
+    required String shortName,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/conservation_status/'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "status": status,
+        "status_short_name": shortName,
+      }),
+    );
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to create conservation status: ${res.statusCode} ${res.body}');
+  }
+
+
+  /// Update an existing conservation status row by id
+  static Future<Map<String, dynamic>> updateConservationStatus({
+    required int id,
+    required String status,
+    required String shortName,
+  }) async {
+    final res = await http.put(
+      Uri.parse('$baseUrl/conservation_status/$id'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "status": status,
+        "status_short_name": shortName,
+      }),
+    );
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to update conservation status: ${res.statusCode} ${res.body}');
+  }
+  
 
 }
