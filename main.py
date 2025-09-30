@@ -22,6 +22,12 @@ from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
 from App.routes.Manage_Lookup_Routes import manage_lookup_conservation_status
+from App.routes.Manage_Lookup_Routes import manage_lookup_container_type
+from App.routes.Manage_Lookup_Routes import manage_plan_utility
+from App.routes.Manage_Lookup_Routes import manage_removal_cause
+from App.routes.Manage_Lookup_Routes import manage_lookup_provenance
+from App.routes.Manage_Lookup_Routes import manage_lookup_location_type
+
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -47,6 +53,11 @@ app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
 app.include_router(manage_lookup_conservation_status.router)
+app.include_router(manage_lookup_container_type.router)
+app.include_router(manage_plan_utility.router)
+app.include_router(manage_removal_cause.router)
+app.include_router(manage_lookup_provenance.router)
+app.include_router(manage_lookup_location_type.router)
 
 app.add_middleware(
     CORSMiddleware,

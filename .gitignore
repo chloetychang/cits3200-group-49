@@ -28,3 +28,5 @@ alembic/README
 alembic/versions
 alembic/versions/__pycache__
 alembic/script.py.mako
+android/build/
+

@@ -46,7 +46,6 @@ class ConservationStatusOut(ConservationStatusBase):
 class ConservationStatusUpdate(ConservationStatusBase):
     pass
 
-
 # Container schemas
 class ContainerBase(BaseSchema):
     container_type: str
@@ -56,6 +55,16 @@ class ContainerCreate(ContainerBase):
 
 class ContainerResponse(ContainerBase):
     container_type_id: int
+
+class ContainerOut(ContainerBase):
+    container_type_id: int
+
+    class Config:
+        orm_mode = True
+
+# Update payload schema (added)
+class ContainerUpdate(ContainerBase):
+    pass
 
 # Family schemas
 class FamilyBase(BaseSchema):
@@ -85,8 +94,14 @@ class LocationTypeBase(BaseSchema):
 class LocationTypeCreate(LocationTypeBase):
     pass
 
+class LocationTypeUpdate(LocationTypeBase):
+    pass
+
 class LocationTypeResponse(LocationTypeBase):
     location_type_id: int
+
+    class Config:
+        orm_mode = True
 
 # Plant Utility schemas
 class PlantUtilityBase(BaseSchema):
@@ -97,6 +112,14 @@ class PlantUtilityCreate(PlantUtilityBase):
 
 class PlantUtilityResponse(PlantUtilityBase):
     plant_utility_id: int
+class PlantUtilityUpdate(PlantUtilityBase):
+    pass
+
+class PlantUtilityOut(PlantUtilityBase):
+    plant_utility_id: int
+
+    class Config:
+        orm_mode = True
 
 # Propagation Type schemas
 class PropagationTypeBase(BaseSchema):
@@ -118,14 +141,18 @@ class ProvenanceBase(BaseSchema):
     extra_details: Optional[str] = None
 
 class ProvenanceCreate(ProvenanceBase):
-    bioregion_code: Optional[str] = None
-    location: str
-    location_type_id: Optional[int] = None
-    extra_details: Optional[str] = None
+    pass
 
-class ProvenanceResponse(ProvenanceBase):
+class ProvenanceUpdate(ProvenanceBase):
+    pass
+
+
+class ProvenanceOut(ProvenanceBase):
     provenance_id: int
-    location_type: Optional["LocationTypeResponse"] = None
+    location_type: str
+
+    class Config:
+        orm_mode = True
 
 # Removal Cause schemas
 class RemovalCauseBase(BaseSchema):
@@ -377,7 +404,7 @@ class GeneticSourceFullResponse(BaseModel):
     research_notes: Optional[str] = None
     
     species: Optional[SpeciesSimpleResponse] = None
-    provenance: Optional[ProvenanceResponse] = None
+    provenance: Optional[ProvenanceOut] = None
     supplier: Optional[SupplierResponse] = None
     propagation_type: Optional[PropagationTypeResponse] = None
     supplier_lot_number: Optional[str] = None
@@ -427,7 +454,7 @@ class ViewProvenanceResponse(BaseModel):
     extra_details: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
-
+ProvenanceResponse = ViewProvenanceResponse
 # POST Acquistion Schema 
 class AcquisitionCreate(BaseModel):
     genetic_source: GeneticSourceCreate

@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
+import '/backend/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'manage_provenance_model.dart';
@@ -24,18 +25,117 @@ class _ManageProvenanceWidgetState extends State<ManageProvenanceWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // controllers
+  final Map<int, TextEditingController> _locationCtrls = {};
+  final Map<int, TextEditingController> _bioregionCtrls = {};
+  final Map<int, TextEditingController> _extraCtrls = {};
+  final Map<int, int?> _locationTypeIds = {}; // 下拉的外键
+
+  final TextEditingController _newLocationCtrl = TextEditingController();
+  final TextEditingController _newBioregionCtrl = TextEditingController();
+  final TextEditingController _newExtraCtrl = TextEditingController();
+  int? _newLocationTypeId;
+
+  final Set<int> _dirtyIds = <int>{};
+  bool _loading = false;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManageProvenanceModel());
+    _load();
   }
 
   @override
   void dispose() {
+    for (final c in _locationCtrls.values) c.dispose();
+    for (final c in _bioregionCtrls.values) c.dispose();
+    for (final c in _extraCtrls.values) c.dispose();
+    _newLocationCtrl.dispose();
+    _newBioregionCtrl.dispose();
+    _newExtraCtrl.dispose();
     _model.dispose();
-
     super.dispose();
   }
+
+Future<void> _load() async {
+  setState(() => _loading = true);
+  try {
+    final list = await ApiService.getProvenances();
+    _model.provenanceRows = list
+        .map((e) => ProvenanceRow.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    _model.locationTypes = await ApiService.getLocationTypes();
+
+    for (final r in _model.provenanceRows) {
+      _locationCtrls.putIfAbsent(r.id, () => TextEditingController(text: r.location));
+      _bioregionCtrls.putIfAbsent(r.id, () => TextEditingController(text: r.bioregionCode ?? ''));
+      _extraCtrls.putIfAbsent(r.id, () => TextEditingController(text: r.extraDetails ?? ''));
+      _locationTypeIds[r.id] = r.locationTypeId;
+    }
+  } finally {
+    if (mounted) setState(() => _loading = false);
+  }
+}
+
+
+  void _markDirty(int id) {
+    if (id != -1) _dirtyIds.add(id);
+  }
+
+  Future<void> _onCancel() async {
+    await _load();
+    _newLocationCtrl.clear();
+    _newBioregionCtrl.clear();
+    _newExtraCtrl.clear();
+    _newLocationTypeId = null;
+    _dirtyIds.clear();
+  }
+
+  Future<void> _onSave() async {
+    try {
+      // 新增
+      final newLocation = _newLocationCtrl.text.trim();
+      if (newLocation.isNotEmpty) {
+        await ApiService.createProvenance(
+          location: newLocation,
+          bioregionCode: _newBioregionCtrl.text.trim(),
+          extraDetails: _newExtraCtrl.text.trim(),
+          locationTypeId: _newLocationTypeId,
+        );
+        _newLocationCtrl.clear();
+        _newBioregionCtrl.clear();
+        _newExtraCtrl.clear();
+        _newLocationTypeId = null;
+      }
+
+      // 更新
+      for (final id in _dirtyIds) {
+        await ApiService.updateProvenance(
+        id: id,
+        location: _locationCtrls[id]?.text ?? '',
+        bioregionCode: _bioregionCtrls[id]?.text.isNotEmpty == true 
+            ? _bioregionCtrls[id]!.text 
+            : null,
+        extraDetails: _extraCtrls[id]?.text.isNotEmpty == true 
+            ? _extraCtrls[id]!.text 
+            : null,
+        locationTypeId: _locationTypeIds[id],
+        );
+      }
+      _dirtyIds.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saved")));
+      }
+      await _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Save failed: $e")));
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -642,8 +742,7 @@ class _ManageProvenanceWidgetState extends State<ManageProvenanceWidget> {
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         alignment: AlignmentDirectional(0.0, 0.0),
@@ -653,171 +752,119 @@ class _ManageProvenanceWidgetState extends State<ManageProvenanceWidget> {
                             Expanded(
                               child: Builder(
                                 builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
-
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
-                                    columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Bioregion',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Location',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Location Type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Extra details',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
-                                      color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
-                                      ),
-                                      cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 2',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 3',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Text(
-                                          'Edit Column 4',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
+                                  final rows = [
+                                    ..._model.provenanceRows,
+                                    ProvenanceRow(
+                                      id: -1,
+                                      bioregionCode: '',
+                                      location: '',
+                                      locationTypeId: null,
+                                      extraDetails: '',
                                     ),
+                                  ];
+
+                                  return FlutterFlowDataTable<ProvenanceRow>(
+                                    controller: _model.provenanceTableController,
+                                    data: rows,
+                                    columnsBuilder: (onSortChanged) => [
+                                      DataColumn2(label: Text('Bioregion code')),
+                                      DataColumn2(label: Text('Location')),
+                                      DataColumn2(label: Text('Location Type')),
+                                      DataColumn2(label: Text('Extra details')),
+                                    ],
+                                    dataRowBuilder: (row, rowIndex, selected, onSelectChanged) {
+                                      final isNew = row.id == -1;
+
+                                      final bioregionCtrl = isNew
+                                          ? _newBioregionCtrl
+                                          : (_bioregionCtrls[row.id] ??=
+                                              TextEditingController(text: row.bioregionCode));
+
+                                      final locationCtrl = isNew
+                                          ? _newLocationCtrl
+                                          : (_locationCtrls[row.id] ??=
+                                              TextEditingController(text: row.location));
+
+                                      final extraCtrl = isNew
+                                          ? _newExtraCtrl
+                                          : (_extraCtrls[row.id] ??=
+                                              TextEditingController(text: row.extraDetails ?? ''));
+
+                                      final selectedLocationTypeId = isNew
+                                          ? _newLocationTypeId
+                                          : _locationTypeIds[row.id] ?? row.locationTypeId;
+
+                                      return DataRow(
+                                        selected: _dirtyIds.contains(row.id),
+                                        onSelectChanged: (val) {
+                                          if (!isNew && val == true) {
+                                            setState(() => _dirtyIds.add(row.id));
+                                          } else {
+                                            setState(() => _dirtyIds.remove(row.id));
+                                          }
+                                        },
+                                        color: WidgetStateProperty.all(
+                                          rowIndex % 2 == 0
+                                              ? FlutterFlowTheme.of(context).secondaryBackground
+                                              : FlutterFlowTheme.of(context).primaryBackground,
+                                        ),
+                                        cells: [
+                                          // Bioregion code
+                                          DataCell(TextFormField(
+                                            controller: bioregionCtrl,
+                                            decoration: InputDecoration(
+                                              hintText: 'Bioregion code',
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (_) => _markDirty(row.id),
+                                          )),
+
+                                          // Location
+                                          DataCell(TextFormField(
+                                            controller: locationCtrl,
+                                            decoration: InputDecoration(
+                                              hintText: 'Location',
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (_) => _markDirty(row.id),
+                                          )),
+
+                                          // Location Type (Dropdown)
+                                          DataCell(DropdownButtonFormField<int>(
+                                            value: selectedLocationTypeId,
+                                            items: _model.locationTypes
+                                                .map((lt) => DropdownMenuItem<int>(
+                                                      value: lt.id,
+                                                      child: Text(lt.locationType),
+                                                    ))
+                                                .toList(),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                if (isNew) {
+                                                  _newLocationTypeId = val;
+                                                } else {
+                                                  _locationTypeIds[row.id] = val;
+                                                  _markDirty(row.id);
+                                                }
+                                              });
+                                            },
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                            ),
+                                          )),
+
+                                          // Extra details
+                                          DataCell(TextFormField(
+                                            controller: extraCtrl,
+                                            decoration: InputDecoration(
+                                              hintText: 'Extra details',
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (_) => _markDirty(row.id),
+                                          )),
+                                        ],
+                                      );
+                                    },
                                     paginated: true,
                                     selectable: false,
                                     hidePaginator: false,
@@ -825,26 +872,64 @@ class _ManageProvenanceWidgetState extends State<ManageProvenanceWidget> {
                                     headingRowHeight: 56.0,
                                     dataRowHeight: 48.0,
                                     columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
+                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
                                     borderRadius: BorderRadius.circular(8.0),
                                     addHorizontalDivider: true,
                                     addTopAndBottomDivider: false,
                                     hideDefaultHorizontalDivider: true,
                                     horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
+                                        FlutterFlowTheme.of(context).secondaryBackground,
                                     horizontalDividerThickness: 1.0,
                                     addVerticalDivider: false,
                                   );
                                 },
                               ),
                             ),
+                            const SizedBox(height: 12.0),
+                            Row(
+                              children: [
+                                const Spacer(),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onCancel,
+                                  text: 'Cancel',
+                                  options: FFButtonOptions(
+                                    width: 100.0,
+                                    height: 48.0,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context).titleSmallFamily,
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                    borderSide: BorderSide(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onSave,
+                                  text: 'Save',
+                                  options: FFButtonOptions(
+                                    width: 100.0,
+                                    height: 48.0,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context).titleSmallFamily,
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                    borderSide: BorderSide(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
             ),
