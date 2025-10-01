@@ -21,6 +21,9 @@ from App.routes.View_Routes import view_plantings
 from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
+
+from App.routes.Add_Routes import add_provenances # add_progeny
+
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -37,6 +40,8 @@ app.include_router(view_plantings.router)
 app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
+
+app.include_router(add_provenances.router) # Add this code
 
 app.add_middleware(
     CORSMiddleware,

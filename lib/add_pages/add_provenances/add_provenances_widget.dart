@@ -7,6 +7,7 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'add_provenances_model.dart';
 export 'add_provenances_model.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 class AddProvenancesWidget extends StatefulWidget {
   const AddProvenancesWidget({
@@ -29,10 +30,17 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _loadBioregion() async {
+    await _model.loadBioregionDropdown();
+    setState(() {});
+  } 
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AddProvenancesModel());
+
+    _loadBioregion();
 
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
@@ -916,52 +924,37 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
                                     ),
                                     Expanded(
                                       flex: 6,
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController1 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue1 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                      child: DropDownTextField(
+                                              controller: _model.BioregionComboController,
+                                              clearOption: true,
+                                              enableSearch: true,
+                                              textFieldDecoration: InputDecoration(
+                                                labelText: 'Bioregion',
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
+                                                filled: true,
+                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              ),
+                                              dropDownItemCount: 6,
+                                              dropDownList: _model.BioregionDropdown
+                                                  .map((g) => DropDownValueModel(name: g, value: g))
+                                                  .toList(),
+                                              onChanged: (val) {
+                                                setState(() {
+                                                  if (val is DropDownValueModel) {
+                                                    _model.selectedBioregion = val.value;
+                                                  } else if (val is String) {
+                                                    _model.selectedBioregion = val;
+                                                    if (!_model.BioregionDropdown.contains(val)) {
+                                                      _model.BioregionDropdown.add(val);
+                                                    }
+                                                    _model.BioregionComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                  }
+                                                  // Optionally, trigger species dropdown update here
+                                                });
+                                              },
                                             ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
-                                        ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
-                                      ),
                                     ),
                                   ]
                                       .divide(SizedBox(width: 16.0))

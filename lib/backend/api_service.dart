@@ -278,4 +278,13 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load family name dropdown: ${res.statusCode}');
   }
 
+  // ------------------------------- Provenances --------------------------------
+  static Future<List<String>> getProvenanceBioregionDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/provenances/bioregion'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['bioregion_code'] as String).toList();
+    }
+    throw Exception('Failed to load bioregion name dropdown: ${res.statusCode}');
+  }
 }
