@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from App import models, schemas
 from App.database import get_db
 
-# 主 router
 router = APIRouter()
 
 # ==============================================================

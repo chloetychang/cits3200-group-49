@@ -1,6 +1,7 @@
 // lib/backend/api_service.dart
 import 'dart:convert';
 import 'package:botanic_guide_a_tool_for_garden_planters/manage_lookups_table/manage_provenance/manage_provenance_model.dart';
+import 'package:botanic_guide_a_tool_for_garden_planters/manage_lookups_table/manage_provenance_location_types/manage_provenance_location_types_model.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -13,12 +14,22 @@ class ApiService {
     throw Exception('Failed to load users: ${res.statusCode}');
   }
 
-  // get species
-  static Future<List<dynamic>> getSpecies() async {
-    final res = await http.get(Uri.parse('$baseUrl/species/'));
-    if (res.statusCode == 200) return jsonDecode(res.body);
-    throw Exception('Failed to load species: ${res.statusCode}');
+static Future<List<Map<String, dynamic>>> getSpecies({String? search}) async {
+  final url = search != null && search.isNotEmpty
+      ? '$baseUrl/species/?search=$search&limit=50'
+      : '$baseUrl/species/?limit=50';
+
+  final res = await http.get(Uri.parse(url));
+
+  if (res.statusCode == 200) {
+    final data = jsonDecode(res.body) as List<dynamic>;
+    return data.map((e) => {
+      "id": e["species_id"],
+      "name": e["species"],
+    }).toList();
   }
+  throw Exception('Failed to load species: ${res.statusCode}');
+}
 
   // get varieties
   static Future<List<dynamic>> getVarieties() async {
@@ -358,10 +369,20 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to update container type: ${res.statusCode}');
   }
 
-// get plant utilities
-static Future<List<dynamic>> getPlantUtilities() async {
-  final res = await http.get(Uri.parse('$baseUrl/plant_utility/'));
-  if (res.statusCode == 200) return jsonDecode(res.body);
+static Future<List<Map<String, dynamic>>> getPlantUtilities({String? search}) async {
+  final url = search != null && search.isNotEmpty
+      ? '$baseUrl/plant_utility/?search=$search&limit=50'
+      : '$baseUrl/plant_utility/?limit=50';
+
+  final res = await http.get(Uri.parse(url));
+
+  if (res.statusCode == 200) {
+    final data = jsonDecode(res.body) as List<dynamic>;
+    return data.map((e) => {
+      "id": e["plant_utility_id"],
+      "utility": e["utility"],
+    }).toList();
+  }
   throw Exception('Failed to load plant utilities: ${res.statusCode}');
 }
 
@@ -471,14 +492,145 @@ static Future<void> updateRemovalCause({required int id, required String cause})
     throw Exception('Failed to update provenance: ${res.body}');
   }
 
+  /// Get all location types
   static Future<List<LocationTypeRow>> getLocationTypes() async {
+    final res = await http.get(Uri.parse('$baseUrl/location_type'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((e) => LocationTypeRow.fromJson(e)).toList();
+    }
+    throw Exception('Failed to load location types: ${res.statusCode}');
+  }
+
+  /// Create a new location type
+  static Future<LocationTypeRow> createLocationType({
+    required String locationType,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/location_type'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"location_type": locationType}),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return LocationTypeRow.fromJson(jsonDecode(res.body));
+    }
+    throw Exception('Failed to create location type: ${res.statusCode}');
+  }
+
+  /// Update an existing location type
+  static Future<LocationTypeRow> updateLocationType({
+    required int id,
+    required String locationType,
+  }) async {
+    final res = await http.put(
+      Uri.parse('$baseUrl/location_type/$id'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"location_type": locationType}),
+    );
+    if (res.statusCode == 200) {
+      return LocationTypeRow.fromJson(jsonDecode(res.body));
+    }
+    throw Exception('Failed to update location type: ${res.statusCode}');
+  }
+static Future<List<P_LocationTypeRow>> getP_LocationTypes() async {
   final res = await http.get(Uri.parse('$baseUrl/location_type'));
   if (res.statusCode == 200) {
     final List<dynamic> data = jsonDecode(res.body);
     return data
-        .map((e) => LocationTypeRow.fromJson(e as Map<String, dynamic>))
+        .map((e) => P_LocationTypeRow.fromJson(e as Map<String, dynamic>))
         .toList();
   }
   throw Exception('Failed to load location types: ${res.statusCode}');
 }
+
+// ---------------- Propagation Type ----------------
+
+// GET all
+static Future<List<dynamic>> getPropagationTypes() async {
+  final res = await http.get(Uri.parse('$baseUrl/propagation_type/'));
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to load propagation types: ${res.statusCode}');
+}
+
+// CREATE
+static Future<Map<String, dynamic>> createPropagationType({
+  required String propagationType,
+  bool needsTwoParents = false,
+  bool canCrossGenera = false,
+}) async {
+  final res = await http.post(
+    Uri.parse('$baseUrl/propagation_type/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'propagation_type': propagationType,
+      'needs_two_parents': needsTwoParents,
+      'can_cross_genera': canCrossGenera,
+    }),
+  );
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to create propagation type: ${res.statusCode}');
+}
+
+// UPDATE
+static Future<Map<String, dynamic>> updatePropagationType({
+  required int id,
+  required String propagationType,
+  bool needsTwoParents = false,
+  bool canCrossGenera = false,
+}) async {
+  final res = await http.put(
+    Uri.parse('$baseUrl/propagation_type/$id'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'propagation_type': propagationType,
+      'needs_two_parents': needsTwoParents,
+      'can_cross_genera': canCrossGenera,
+    }),
+  );
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to update propagation type: ${res.statusCode}');
+}
+
+// ---------- Species Utility Link ----------
+static Future<List<dynamic>> getSpeciesUtilityLinks() async {
+  final res = await http.get(Uri.parse('$baseUrl/species_utility/'));
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to load species-utility links: ${res.statusCode}');
+}
+
+static Future<Map<String, dynamic>> createSpeciesUtilityLink({
+  required int speciesId,
+  required int plantUtilityId,
+}) async {
+  final res = await http.post(
+    Uri.parse('$baseUrl/species_utility/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'species_id': speciesId,
+      'plant_utility_id': plantUtilityId,
+    }),
+  );
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to create species-utility link: ${res.statusCode}');
+}
+
+static Future<Map<String, dynamic>> updateSpeciesUtilityLink({
+  required int speciesId,
+  required int plantUtilityId,
+  int? newSpeciesId,
+  int? newPlantUtilityId,
+}) async {
+  final res = await http.put(
+    Uri.parse('$baseUrl/species_utility/$speciesId/$plantUtilityId'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'species_id': newSpeciesId ?? speciesId,
+      'plant_utility_id': newPlantUtilityId ?? plantUtilityId,
+    }),
+  );
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to update species-utility link: ${res.statusCode}');
+}
+
+
 }

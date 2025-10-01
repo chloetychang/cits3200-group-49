@@ -26,7 +26,8 @@ from App.routes.Manage_Lookup_Routes import manage_lookup_container_type
 from App.routes.Manage_Lookup_Routes import manage_plan_utility
 from App.routes.Manage_Lookup_Routes import manage_removal_cause
 from App.routes.Manage_Lookup_Routes import manage_lookup_provenance
-from App.routes.Manage_Lookup_Routes import manage_lookup_location_type
+from App.routes.Manage_Lookup_Routes import manage_lookup_propagation
+from App.routes.Manage_Lookup_Routes import manage_lookup_species_utility
 
 app = FastAPI(
     title=settings.API_TITLE,
@@ -57,7 +58,8 @@ app.include_router(manage_lookup_container_type.router)
 app.include_router(manage_plan_utility.router)
 app.include_router(manage_removal_cause.router)
 app.include_router(manage_lookup_provenance.router)
-app.include_router(manage_lookup_location_type.router)
+app.include_router(manage_lookup_propagation.router)
+app.include_router(manage_lookup_species_utility.router)
 
 app.add_middleware(
     CORSMiddleware,

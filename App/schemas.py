@@ -122,16 +122,22 @@ class PlantUtilityOut(PlantUtilityBase):
         orm_mode = True
 
 # Propagation Type schemas
-class PropagationTypeBase(BaseSchema):
-    propagation_type: Optional[str] = None
-    needs_two_parents: bool
-    can_cross_genera: bool
+class PropagationTypeBase(BaseModel):
+    propagation_type: str
+    needs_two_parents: Optional[bool] = False
+    can_cross_genera: Optional[bool] = False
 
 class PropagationTypeCreate(PropagationTypeBase):
     pass
 
+class PropagationTypeUpdate(PropagationTypeBase):
+    pass
+
 class PropagationTypeResponse(PropagationTypeBase):
     propagation_type_id: int
+
+    class Config:
+        orm_mode = True
 
 # Provenance schemas
 class ProvenanceBase(BaseSchema):
@@ -188,15 +194,20 @@ class SpeciesResponse(SpeciesBase):
     species_id: int
 
 # Species Utility Link schemas
-class SpeciesUtilityLinkBase(BaseSchema):
+class SpeciesUtilityLinkBase(BaseModel):
     species_id: int
     plant_utility_id: int
 
 class SpeciesUtilityLinkCreate(SpeciesUtilityLinkBase):
     pass
 
+class SpeciesUtilityLinkUpdate(BaseModel):
+    species_id: Optional[int] = None
+    plant_utility_id: Optional[int] = None
+
 class SpeciesUtilityLinkResponse(SpeciesUtilityLinkBase):
-    pass
+    class Config:
+        orm_mode = True
 
 # Supplier schemas
 class SupplierBase(BaseSchema):

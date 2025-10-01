@@ -1,9 +1,9 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
+import '/backend/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'manage_provenance_location_types_model.dart';
@@ -23,21 +23,97 @@ class ManageProvenanceLocationTypesWidget extends StatefulWidget {
 class _ManageProvenanceLocationTypesWidgetState
     extends State<ManageProvenanceLocationTypesWidget> {
   late ManageProvenanceLocationTypesModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final Map<int, TextEditingController> _controllers = {};
+  final TextEditingController _newController = TextEditingController();
+
+  final Set<int> _dirtyIds = <int>{};
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManageProvenanceLocationTypesModel());
+    _load();
   }
 
   @override
   void dispose() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    _newController.dispose();
     _model.dispose();
-
     super.dispose();
   }
+
+Future<void> _load() async {
+  setState(() => _loading = true);
+  try {
+
+    final list = await ApiService.getLocationTypes();
+
+    _model.locationTypeRows = list.map((e) => P_LocationTypeRow(
+      id: e.id,
+      locationType: e.locationType,
+    )).toList();
+
+    for (final r in _model.locationTypeRows) {
+      _controllers.putIfAbsent(
+        r.id,
+        () => TextEditingController(text: r.locationType),
+      );
+    }
+  } finally {
+    if (mounted) setState(() => _loading = false);
+  }
+}
+
+
+
+  void _markDirty(int id) {
+    _dirtyIds.add(id);
+  }
+
+  Future<void> _onCancel() async {
+    await _load();
+    _newController.clear();
+    _dirtyIds.clear();
+  }
+
+  Future<void> _onSave() async {
+  try {
+
+    final newValue = _newController.text.trim();
+    if (newValue.isNotEmpty) {
+      await ApiService.createLocationType(locationType: newValue);
+      _newController.clear();
+    }
+
+
+    for (final id in _dirtyIds) {
+      final ctrl = _controllers[id];
+      if (ctrl != null) {
+        await ApiService.updateLocationType(id: id, locationType: ctrl.text);
+      }
+    }
+
+    _dirtyIds.clear();
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Saved")));
+    }
+    await _load();
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Save failed: $e")),
+      );
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -644,8 +720,7 @@ class _ManageProvenanceLocationTypesWidgetState
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         alignment: AlignmentDirectional(0.0, 0.0),
@@ -655,63 +730,56 @@ class _ManageProvenanceLocationTypesWidgetState
                             Expanded(
                               child: Builder(
                                 builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
-
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
-                                    columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Location type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
-                                      color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
-                                      ),
-                                      cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
+                                  final rows = [
+                                    ..._model.locationTypeRows,
+                                    P_LocationTypeRow(
+                                      id: -1,
+                                      locationType: '',
                                     ),
+                                  ];
+
+                                  return FlutterFlowDataTable<P_LocationTypeRow>(
+                                    controller: _model.locationTypeTableController,
+                                    data: rows,
+                                    columnsBuilder: (onSortChanged) => [
+                                      DataColumn2(label: Text('Location Type')),
+                                    ],
+                                    dataRowBuilder: (row, rowIndex, selected, onSelectChanged) {
+                                      final isNew = row.id == -1;
+
+                                      return DataRow(
+                                        selected: _dirtyIds.contains(row.id),
+                                        onSelectChanged: (val) {
+                                          if (!isNew && val == true) {
+                                            setState(() => _dirtyIds.add(row.id));
+                                          } else {
+                                            setState(() => _dirtyIds.remove(row.id));
+                                          }
+                                        },
+                                        color: WidgetStateProperty.all(
+                                          rowIndex % 2 == 0
+                                              ? FlutterFlowTheme.of(context).secondaryBackground
+                                              : FlutterFlowTheme.of(context).primaryBackground,
+                                        ),
+                                        cells: [
+                                          DataCell(
+                                            TextFormField(
+                                              controller: isNew
+                                                  ? _newController
+                                                  : _controllers[row.id],
+                                              decoration: const InputDecoration(
+                                                hintText: 'Location type',
+                                                border: InputBorder.none,
+                                              ),
+                                              onChanged: (_) {
+                                                if (!isNew) _markDirty(row.id);
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+
                                     paginated: true,
                                     selectable: false,
                                     hidePaginator: false,
@@ -719,26 +787,64 @@ class _ManageProvenanceLocationTypesWidgetState
                                     headingRowHeight: 56.0,
                                     dataRowHeight: 48.0,
                                     columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
+                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
                                     borderRadius: BorderRadius.circular(8.0),
                                     addHorizontalDivider: true,
                                     addTopAndBottomDivider: false,
                                     hideDefaultHorizontalDivider: true,
                                     horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
+                                        FlutterFlowTheme.of(context).secondaryBackground,
                                     horizontalDividerThickness: 1.0,
                                     addVerticalDivider: false,
                                   );
                                 },
                               ),
                             ),
+                            const SizedBox(height: 12.0),
+                            Row(
+                              children: [
+                                const Spacer(),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onCancel,
+                                  text: 'Cancel',
+                                  options: FFButtonOptions(
+                                    width: 100.0,
+                                    height: 48.0,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context).titleSmallFamily,
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                    borderSide: BorderSide(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                const SizedBox(width: 12.0),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onSave,
+                                  text: 'Save',
+                                  options: FFButtonOptions(
+                                    width: 100.0,
+                                    height: 48.0,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context).titleSmallFamily,
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                        ),
+                                    borderSide: BorderSide(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 ],
               ),
             ),
