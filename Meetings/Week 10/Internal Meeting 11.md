@@ -30,8 +30,6 @@
  - Problem: Initial post request was a one off success. However, if another POST request is sent, it will fail to add a new data entry.
  - Solution: Investigate further and implement Harper's solution throughout the other tables.
 
-### Actions
- - 
 <br>
 
 ## Item 2 - Discussion on Progeny Table issue + Response to Kevin regarding routings + acquistion id
@@ -87,8 +85,6 @@
  - Ryan: By this weekend, will try to fully implement Provenances Page. 
  - Dennis and Chloe: Update Species Table
 
-### Actions
- - 
 <br>
 
 ## Meeting Closed: 17:10
