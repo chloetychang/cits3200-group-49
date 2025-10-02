@@ -19,6 +19,13 @@ class ApiService {
     throw Exception('Failed to load species: ${res.statusCode}');
   }
 
+  // get species by genus_id
+  static Future<List<dynamic>> getSpeciesByGenusId(int genusId) async {
+    final res = await http.get(Uri.parse('$baseUrl/species/?genus_id=$genusId'));
+    if (res.statusCode == 200) return jsonDecode(res.body);
+    throw Exception('Failed to load species by genus_id: ${res.statusCode}');
+  }
+
   // get varieties
   static Future<List<dynamic>> getVarieties() async {
     final res = await http.get(Uri.parse('$baseUrl/varieties/'));

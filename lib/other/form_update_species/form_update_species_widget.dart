@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'form_update_species_model.dart';
@@ -33,10 +34,17 @@ class _FormUpdateSpeciesWidgetState extends State<FormUpdateSpeciesWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _loadGenus() async {
+    await _model.loadGenusDropdown();
+    setState(() {});
+  } 
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => FormUpdateSpeciesModel());
+
+     _loadGenus();
   }
 
   @override
@@ -158,44 +166,44 @@ class _FormUpdateSpeciesWidgetState extends State<FormUpdateSpeciesWidget> {
                                       ),
                                 ),
                               ),
-                              FlutterFlowDropDown<String>(
-                                controller: _model.dropDownValueController ??=
-                                    FormFieldController<String>(null),
-                                options: ['Option 1', 'Option 2', 'Option 3'],
-                                onChanged: (val) => safeSetState(
-                                    () => _model.dropDownValue = val),
-                                width: 400.0,
-                                height: 50.0,
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: FlutterFlowTheme.of(context)
-                                          .bodyMediumFamily,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts:
-                                          !FlutterFlowTheme.of(context)
-                                              .bodyMediumIsCustom,
-                                    ),
-                                hintText: 'Select your record here',
-                                icon: Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  size: 24.0,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Genus Dropdown
+                                      SizedBox(
+                                        width: 350.0, // Increased dropdown width
+                                        child: DropDownTextField(
+                                          controller: _model.genusComboController,
+                                          clearOption: true,
+                                          enableSearch: true,
+                                          textFieldDecoration: InputDecoration(
+                                            hintText: 'Select genus',
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              borderSide: BorderSide(color: FlutterFlowTheme.of(context).primaryText),
+                                            ),
+                                            filled: true,
+                                            fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                          ),
+                                          dropDownItemCount: 6,
+                                          dropDownList: _model.genusDropdown
+                                              .map((g) => DropDownValueModel(name: g, value: g))
+                                              .toList(),
+                                          onChanged: (val) {
+                                            setState(() {
+                                              if (val is DropDownValueModel) {
+                                                _model.selectedGenus = val.value;
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                fillColor: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                elevation: 2.0,
-                                borderColor:
-                                    FlutterFlowTheme.of(context).primaryText,
-                                borderWidth: 0.0,
-                                borderRadius: 8.0,
-                                margin: EdgeInsetsDirectional.fromSTEB(
-                                    12.0, 0.0, 12.0, 0.0),
-                                hidesUnderline: true,
-                                isOverButton: false,
-                                isSearchable: false,
-                                isMultiSelect: false,
                               ),
                             ],
                           ),
