@@ -285,4 +285,14 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load family name dropdown: ${res.statusCode}');
   }
 
+  // ------------------ Others: Update Species Table --------------------------
+    static Future<List<String>> getOtherGenusDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/acquisition/genus'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['genus'] as String).toList();
+    }
+    throw Exception('Failed to load genus dropdown: ${res.statusCode}');
+  }
+
 }

@@ -19,7 +19,7 @@ class FormUpdateSpeciesModel extends FlutterFlowModel<FormUpdateSpeciesWidget> {
 
   // Fetch Genus Dropdown 
   Future<void> loadGenusDropdown() async {
-    final rawList = await ApiService.getGenusDropdown();
+    final rawList = await ApiService.getOtherGenusDropdown();
     genusDropdown = rawList.toSet().toList()..sort();
   }
 
