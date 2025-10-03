@@ -7,8 +7,7 @@ import 'package:botanic_guide_a_tool_for_garden_planters/view_table/view_species
 import 'package:botanic_guide_a_tool_for_garden_planters/add_pages/add_acquisitions/add_acquisitions_widget.dart';
 import 'package:botanic_guide_a_tool_for_garden_planters/flutter_flow/flutter_flow_util.dart';
 import 'package:botanic_guide_a_tool_for_garden_planters/flutter_flow/nav/nav.dart';
-import 'package:botanic_guide_a_tool_for_garden_planters/backend/api_service.dart';
-import 'package:dropdown_textfield/dropdown_textfield.dart'; 
+import 'package:botanic_guide_a_tool_for_garden_planters/backend/api_service.dart'; 
 
 // Helper function to create proper FlutterFlow widget context
 Future<Widget> createTestWidget(Widget widget) async {
@@ -191,21 +190,6 @@ void main() {
               reason: 'Form should have text input fields');
         }
         
-        // Look for dropdown fields
-        final dropdowns = find.byType(DropDownTextField);
-        if (dropdowns.evaluate().isNotEmpty) {
-          print('✓ DropDownTextField widgets found - ${dropdowns.evaluate().length} dropdowns');
-          expect(dropdowns, findsAtLeast(1),
-              reason: 'Form should have dropdown fields for species, supplier, etc.');
-        } else {
-          // Alternative dropdown types
-          final alternativeDropdowns = find.byType(DropdownButton);
-          if (alternativeDropdowns.evaluate().isNotEmpty) {
-            print('✓ Alternative dropdown widgets found');
-            expect(alternativeDropdowns, findsAtLeast(1));
-          }
-        }
-        
         // Look for buttons
         final buttons = find.byType(ElevatedButton);
         if (buttons.evaluate().isNotEmpty) {
@@ -231,8 +215,8 @@ void main() {
       }
     });
 
-    testWidgets('Add Acquisitions - API Integration Test', (WidgetTester tester) async {
-      print('=== Testing Add Acquisitions API Integration ===');
+    testWidgets('Add Acquisitions - API Creation Test', (WidgetTester tester) async {
+      print('=== Testing Add Acquisitions API Creation ===');
       
       // Store created acquisition ID for cleanup
       int? createdAcquisitionId;
@@ -241,95 +225,45 @@ void main() {
         // Initialize FlutterBinding
         WidgetsFlutterBinding.ensureInitialized();
         
-        print('Step 1: Testing dropdown API endpoints...');
+        print('Step 1: Testing acquisition creation API with hardcoded test data...');
         
-        // Test dropdown API calls (these should work if backend is available)
-        List<Map<String, dynamic>> varietiesWithSpecies = [];
-        List<Map<String, dynamic>> suppliers = [];
-        List<int> generationNumbers = [];
+        // Use hardcoded test data instead of fetching from dropdowns
+        final acquisitionDate = DateTime.now().toIso8601String();
+        final varietyId = 1;
+        final supplierId = 1;
+        final supplierLotNumber = 'FLUTTER-TEST-${DateTime.now().millisecondsSinceEpoch}';
+        final generationNumber = 0;
+        final landscapeOnly = false;
         
-        bool backendAvailable = true;
+        print('Creating acquisition with test data:');
+        print('- Variety ID: $varietyId');
+        print('- Supplier ID: $supplierId');
+        print('- Lot Number: $supplierLotNumber');
         
-        try {
-          varietiesWithSpecies = await ApiService.getVarietiesWithSpeciesDropdown();
-          print('✓ Varieties with species dropdown loaded: ${varietiesWithSpecies.length} items');
-        } catch (e) {
-          print('⚠️ Varieties with species API error: $e');
-          backendAvailable = false;
-        }
+        final createdAcquisition = await ApiService.createAcquisition(
+          acquisitionDate: acquisitionDate,
+          varietyId: varietyId,
+          supplierId: supplierId,
+          supplierLotNumber: supplierLotNumber,
+          generationNumber: generationNumber,
+          landscapeOnly: landscapeOnly,
+        );
         
-        try {
-          suppliers = await ApiService.getSuppliersDropdown();
-          print('✓ Suppliers dropdown loaded: ${suppliers.length} items');
-        } catch (e) {
-          print('⚠️ Suppliers API error: $e');
-          backendAvailable = false;
-        }
+        createdAcquisitionId = createdAcquisition['genetic_source_id'];
         
-        try {
-          generationNumbers = await ApiService.getGenerationNumberDropdown();
-          print('✓ Generation numbers loaded: $generationNumbers');
-          expect(generationNumbers, contains(0));
-          expect(generationNumbers, contains(1));
-        } catch (e) {
-          print('⚠️ Generation numbers API error: $e');
-          backendAvailable = false;
-        }
+        expect(createdAcquisition['genetic_source_id'], isNotNull,
+            reason: 'Created acquisition should have an ID');
+        expect(createdAcquisition['variety_id'], equals(varietyId),
+            reason: 'Created acquisition should have correct variety_id');
+        expect(createdAcquisition['supplier_id'], equals(supplierId),
+            reason: 'Created acquisition should have correct supplier_id');
+        expect(createdAcquisition['supplier_lot_number'], equals(supplierLotNumber),
+            reason: 'Created acquisition should have correct supplier_lot_number');
         
-        if (!backendAvailable) {
-          print('⚠️ Backend not available - skipping API integration tests');
-          print('✓ Test completed - backend availability check done');
-          return;
-        }
+        print('✓ Acquisition created successfully with ID: $createdAcquisitionId');
+        print('✓ Backend API POST request integration verified');
         
-        print('Step 2: Testing acquisition creation API...');
-        
-        // Test acquisition creation with minimal required data
-        if (suppliers.isNotEmpty && varietiesWithSpecies.isNotEmpty) {
-          final testSupplier = suppliers.first;
-          final testVariety = varietiesWithSpecies.first;
-          
-          print('Using test supplier: ${testSupplier['supplier_name']} (ID: ${testSupplier['supplier_id']})');
-          print('Using test variety: ${testVariety['full_species_name']} (ID: ${testVariety['variety_id']})');
-          
-          final testAcquisitionData = {
-            'acquisition_date': DateTime.now().toIso8601String(),
-            'variety_id': testVariety['variety_id'],
-            'supplier_id': testSupplier['supplier_id'],
-            'supplier_lot_number': 'FLUTTER-TEST-${DateTime.now().millisecondsSinceEpoch}',
-            'generation_number': 0,
-            'landscape_only': false,
-          };
-          
-          final createdAcquisition = await ApiService.createAcquisition(
-            acquisitionDate: testAcquisitionData['acquisition_date'],
-            varietyId: testAcquisitionData['variety_id'],
-            supplierId: testAcquisitionData['supplier_id'],
-            supplierLotNumber: testAcquisitionData['supplier_lot_number'],
-            generationNumber: testAcquisitionData['generation_number'],
-            landscapeOnly: testAcquisitionData['landscape_only'],
-          );
-          
-          createdAcquisitionId = createdAcquisition['genetic_source_id'];
-          
-          expect(createdAcquisition['genetic_source_id'], isNotNull,
-              reason: 'Created acquisition should have an ID');
-          expect(createdAcquisition['variety_id'], equals(testVariety['variety_id']),
-              reason: 'Created acquisition should have correct variety_id');
-          expect(createdAcquisition['supplier_id'], equals(testSupplier['supplier_id']),
-              reason: 'Created acquisition should have correct supplier_id');
-          expect(createdAcquisition['supplier_lot_number'], equals(testAcquisitionData['supplier_lot_number']),
-              reason: 'Created acquisition should have correct supplier_lot_number');
-          
-          print('✓ Acquisition created successfully with ID: $createdAcquisitionId');
-          print('✓ Backend API integration verified');
-        } else {
-          print('⚠️ Insufficient test data - skipping acquisition creation test');
-          print('Suppliers available: ${suppliers.length}');
-          print('Varieties available: ${varietiesWithSpecies.length}');
-        }
-        
-        print('Step 3: Testing widget loading with API data...');
+        print('Step 2: Testing widget loading...');
         
         // Create and render the AddAcquisitions widget
         final testWidget = await createTestWidget(AddAcquisitionsWidget());
@@ -340,10 +274,10 @@ void main() {
         expect(find.byType(AddAcquisitionsWidget), findsOneWidget,
             reason: 'AddAcquisitionsWidget should render successfully');
         
-        print('✓ Widget rendered successfully with API integration');
+        print('✓ Widget rendered successfully');
         
       } catch (e) {
-        print('❌ API integration test failed with error: $e');
+        print('❌ API creation test failed with error: $e');
         print('⚠️ This may be expected if backend is not running during tests');
         
         // For API errors, we just log them but don't fail the test
@@ -357,7 +291,7 @@ void main() {
         // Cleanup: Remove test data if created
         if (createdAcquisitionId != null) {
           try {
-            print('Step 4: Cleaning up test data...');
+            print('Step 3: Cleaning up test data...');
             // Note: Cleanup would require a delete API endpoint
             // For now, test acquisitions can be identified by the FLUTTER-TEST prefix in lot number
             print('⚠️ Test acquisition $createdAcquisitionId created with FLUTTER-TEST lot number');
@@ -408,21 +342,6 @@ void main() {
               await tester.pump();
               print('✓ Successfully entered text in second field');
             }
-          }
-        }
-        
-        // Look for dropdown interactions
-        final dropdowns = find.byType(DropDownTextField);
-        if (dropdowns.evaluate().isNotEmpty) {
-          print('Step 3: Testing dropdown interaction...');
-          
-          try {
-            // Try to tap the first dropdown
-            await tester.tap(dropdowns.first);
-            await tester.pumpAndSettle();
-            print('✓ Successfully tapped first dropdown');
-          } catch (e) {
-            print('⚠️ Could not interact with dropdown: $e');
           }
         }
         

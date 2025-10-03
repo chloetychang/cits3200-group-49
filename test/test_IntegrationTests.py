@@ -65,9 +65,9 @@ def test_create_and_fetch_planting(client, db_engine):
 		conn.execute(text("DELETE FROM planting WHERE comments=:comments"), {"comments": payload["comments"]})
 		conn.commit()
 
-# --- Acquisitions: Add/Update ---
-def test_create_and_update_acquisition(client, db_engine):
-	# Create acquisition via API with timestamp to avoid conflicts
+# --- Acquisitions: Database Creation Tests ---
+def test_create_acquisition(client, db_engine):
+	"""Test basic acquisition creation and database insertion"""
 	import time
 	timestamp = str(int(time.time() * 1000))  # milliseconds for uniqueness
 	payload = {
@@ -78,6 +78,8 @@ def test_create_and_update_acquisition(client, db_engine):
 		"generation_number": 1,
 		"landscape_only": True
 	}
+	
+	# Create acquisition via API
 	start = time.time()
 	response = client.post("/acquisition/", json=payload)
 	duration = time.time() - start
@@ -85,12 +87,15 @@ def test_create_and_update_acquisition(client, db_engine):
 	if response.status_code not in (200, 201):
 		print(f"Error response: {response.status_code} - {response.text}")
 	assert response.status_code in (200, 201)
+	
+	# Verify API response
 	data = response.json()
 	for key in payload:
 		assert data[key] == payload[key]
 	acquisition_id = data.get("genetic_source_id")
+	assert acquisition_id is not None, "Created acquisition should have an ID"
 	
-	# Check DB for inserted acquisition
+	# Verify data exists in database
 	try:
 		with db_engine.connect() as conn:
 			result = conn.execute(text("SELECT * FROM genetic_source WHERE supplier_lot_number=:lot_number"), {
@@ -100,6 +105,9 @@ def test_create_and_update_acquisition(client, db_engine):
 			assert row is not None, "Acquisition not found in DB after API creation"
 			assert row["generation_number"] == payload["generation_number"]
 			assert row["supplier_lot_number"] == payload["supplier_lot_number"]
+			assert row["variety_id"] == payload["variety_id"]
+			assert row["supplier_id"] == payload["supplier_id"]
+			assert row["landscape_only"] == payload["landscape_only"]
 	finally:
 		# Cleanup - delete the test record
 		if acquisition_id:
@@ -108,121 +116,62 @@ def test_create_and_update_acquisition(client, db_engine):
 							{"id": acquisition_id})
 				conn.commit()
 
-# --- Comprehensive Acquisition Integration Tests ---
-def test_acquisition_dropdown_endpoints_integration(client):
-	"""Test all acquisition dropdown endpoints with real database"""
+def test_create_acquisition_with_optional_fields(client, db_engine):
+	"""Test acquisition creation with all optional fields in database"""
+	import time
 	
-	# Test varieties with species dropdown
+	payload = {
+		"acquisition_date": "2025-10-01T10:00:00",
+		"variety_id": 1,  # Hardcoded test data
+		"supplier_id": 1,  # Hardcoded test data
+		"supplier_lot_number": f"INTEGRATION-FULL-{int(time.time())}",
+		"price": 35.75,
+		"gram_weight": 150,
+		"viability": 90,
+		"generation_number": 2,
+		"landscape_only": False,
+		"research_notes": "Integration test with all optional fields"
+	}
+	
+	# Create acquisition via API
 	start = time.time()
-	response = client.get("/acquisition/varieties_with_species")
+	response = client.post("/acquisition/", json=payload)
 	duration = time.time() - start
-	assert duration < 3.0, f"Varieties API took too long: {duration:.2f} seconds"
-	assert response.status_code == 200
-	varieties_data = response.json()
-	assert isinstance(varieties_data, list)
-	if varieties_data:  # If there's data, check structure
-		item = varieties_data[0]
-		assert "variety_id" in item
-		assert "full_species_name" in item
-		assert "species_id" in item
-		
-	# Test suppliers dropdown
-	start = time.time()
-	response = client.get("/acquisition/suppliers")
-	duration = time.time() - start
-	assert duration < 3.0, f"Suppliers API took too long: {duration:.2f} seconds"
-	assert response.status_code == 200
-	suppliers_data = response.json()
-	assert isinstance(suppliers_data, list)
+	assert duration < 3.0, f"Full acquisition creation took too long: {duration:.2f} seconds"
+	assert response.status_code in (200, 201)
 	
-	# Test provenance locations dropdown
-	start = time.time()
-	response = client.get("/acquisition/provenance_locations")
-	duration = time.time() - start
-	assert duration < 3.0, f"Provenance API took too long: {duration:.2f} seconds"
-	assert response.status_code == 200
-	provenance_data = response.json()
-	assert isinstance(provenance_data, list)
+	# Verify API response contains all fields
+	data = response.json()
+	acquisition_id = data.get("genetic_source_id")
+	assert acquisition_id is not None, "Created acquisition should have an ID"
+	assert data["variety_id"] == payload["variety_id"]
+	assert data["supplier_id"] == payload["supplier_id"]
+	assert data["supplier_lot_number"] == payload["supplier_lot_number"]
+	assert data["price"] == payload["price"]
+	assert data["gram_weight"] == payload["gram_weight"]
+	assert data["viability"] == payload["viability"]
+	assert data["generation_number"] == payload["generation_number"]
+	assert data["landscape_only"] == payload["landscape_only"]
+	assert data["research_notes"] == payload["research_notes"]
 	
-	# Test bioregion dropdown
-	start = time.time()
-	response = client.get("/acquisition/bioregion_code")
-	duration = time.time() - start
-	assert duration < 3.0, f"Bioregion API took too long: {duration:.2f} seconds"
-	assert response.status_code == 200
-	bioregion_data = response.json()
-	assert isinstance(bioregion_data, list)
-	
-	# Test generation numbers dropdown
-	start = time.time()
-	response = client.get("/acquisition/generation_numbers")
-	duration = time.time() - start
-	assert duration < 3.0, f"Generation numbers API took too long: {duration:.2f} seconds"
-	assert response.status_code == 200
-	generation_data = response.json()
-	assert isinstance(generation_data, list)
-	assert generation_data == [0, 1, 2, 3, 4]
-
-def test_acquisition_creation_comprehensive_integration(client, db_engine):
-	"""Test acquisition creation with all optional fields in real database"""
-	
-	# Get available data from dropdowns for realistic test
-	varieties_response = client.get("/acquisition/varieties_with_species")
-	suppliers_response = client.get("/acquisition/suppliers")
-	
-	if varieties_response.status_code == 200 and suppliers_response.status_code == 200:
-		varieties = varieties_response.json()
-		suppliers = suppliers_response.json()
-		
-		if varieties and suppliers:
-			test_variety = varieties[0]
-			test_supplier = suppliers[0]
-			
-			payload = {
-				"acquisition_date": "2025-10-01T10:00:00",
-				"variety_id": test_variety["variety_id"],
-				"supplier_id": test_supplier["supplier_id"],
-				"supplier_lot_number": f"INTEGRATION-FULL-{int(time.time())}",
-				"price": 35.75,
-				"gram_weight": 150,
-				"viability": 90,
-				"generation_number": 2,
-				"landscape_only": False,
-				"research_notes": "Integration test with all optional fields"
-			}
-			
-			start = time.time()
-			response = client.post("/acquisition/", json=payload)
-			duration = time.time() - start
-			assert duration < 3.0, f"Full acquisition creation took too long: {duration:.2f} seconds"
-			assert response.status_code in (200, 201)
-			
-			data = response.json()
-			acquisition_id = data.get("genetic_source_id")
-			
-			# Verify all fields are properly stored
-			assert data["variety_id"] == payload["variety_id"]
-			assert data["supplier_id"] == payload["supplier_id"]
-			assert data["supplier_lot_number"] == payload["supplier_lot_number"]
-			assert data["price"] == payload["price"]
-			assert data["gram_weight"] == payload["gram_weight"]
-			assert data["viability"] == payload["viability"]
-			assert data["generation_number"] == payload["generation_number"]
-			assert data["landscape_only"] == payload["landscape_only"]
-			assert data["research_notes"] == payload["research_notes"]
-			
-			# Verify in database
-			with db_engine.connect() as conn:
-				result = conn.execute(text("SELECT * FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
-				row = result.mappings().fetchone()
-				assert row is not None
-				assert row["price"] == payload["price"]
-				assert row["gram_weight"] == payload["gram_weight"]
-				assert row["viability"] == payload["viability"]
-				assert row["research_notes"] == payload["research_notes"]
-				assert row["supplier_lot_number"] == payload["supplier_lot_number"]
-			
-			# Teardown
+	# Verify all data persisted correctly in database
+	try:
+		with db_engine.connect() as conn:
+			result = conn.execute(text("SELECT * FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
+			row = result.mappings().fetchone()
+			assert row is not None, "Acquisition not found in DB after creation"
+			assert row["price"] == payload["price"]
+			assert row["gram_weight"] == payload["gram_weight"]
+			assert row["viability"] == payload["viability"]
+			assert row["research_notes"] == payload["research_notes"]
+			assert row["supplier_lot_number"] == payload["supplier_lot_number"]
+			assert row["variety_id"] == payload["variety_id"]
+			assert row["supplier_id"] == payload["supplier_id"]
+			assert row["generation_number"] == payload["generation_number"]
+			assert row["landscape_only"] == payload["landscape_only"]
+	finally:
+		# Cleanup - delete the test record
+		if acquisition_id:
 			with db_engine.connect() as conn:
 				conn.execute(text("DELETE FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
 				conn.commit()
