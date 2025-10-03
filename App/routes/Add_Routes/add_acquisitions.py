@@ -20,14 +20,7 @@ router = APIRouter(
 def get_genus_dropdown(db: Session = Depends(get_db)):
     """Get all genus names for dropdown (A→Z)."""
     genus_list = db.query(models.Genus).order_by(models.Genus.genus.asc()).all()
-    return genus_list
-
-# Creation of a species dropdown
-@router.get("/species", response_model=List[schemas.SpeciesResponse])
-def get_species_dropdown(db: Session = Depends(get_db)):
-    """Get all species names for dropdown (A→Z)."""
-    species = db.query(models.Species).order_by(models.Species.species.asc()).all()
-    return species
+    return [schemas.GenusResponse.model_validate(g).model_dump() for g in genus_list]
 
 # Creation of varieties with full species names dropdown (replaces separate genus/species)
 @router.get("/varieties_with_species")
@@ -57,20 +50,20 @@ def get_varieties_with_species_dropdown(db: Session = Depends(get_db)):
 def get_supplier_dropdown(db: Session = Depends(get_db)):
     """Get all supplier names for dropdown (A→Z)."""
     suppliers = db.query(models.Supplier).order_by(models.Supplier.supplier_name.asc()).all()
-    return suppliers
+    return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
 
 # Creation of a provenance dropdown
 @router.get("/provenance_locations", response_model=List[schemas.ProvenanceResponse])
 def get_provenance_location_dropdown(db: Session = Depends(get_db)):
     """Get all provenance locations for dropdown (A→Z)."""
     provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc()).all()
-    return provenances
+    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
 
 @router.get("/bioregion_code", response_model=List[schemas.BioregionResponse])
 def get_bioregion_dropdown(db: Session = Depends(get_db)):
     """Get all bioregion codes for dropdown (A→Z)."""
     bioregions = db.query(models.Bioregion).order_by(models.Bioregion.bioregion_code.asc()).all()
-    return bioregions
+    return [schemas.BioregionResponse.model_validate(b).model_dump() for b in bioregions]
 
 # TODO: Family name dropdown - Missing due to data model changes [left as placeholder]
 
