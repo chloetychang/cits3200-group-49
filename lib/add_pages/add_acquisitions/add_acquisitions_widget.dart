@@ -1,5 +1,4 @@
 import '/flutter_flow/flutter_flow_drop_down.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -32,53 +31,28 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _loadVarietiesWithSpecies() async {
-    try {
-      await _model.loadVarietiesWithSpeciesDropdown();
-      setState(() {});
-    } catch (e) {
-      print('⚠️ Could not load varieties with species: $e');
-      // Continue with empty data - dropdowns will show as empty
-    }
+    await _model.loadVarietiesWithSpeciesDropdown();
+    setState(() {});
   }
 
   Future<void> _loadSuppliers() async {
-    try {
-      await _model.loadSuppliersDropdown();
-      setState(() {});
-    } catch (e) {
-      print('⚠️ Could not load suppliers: $e');
-      // Continue with empty data - dropdowns will show as empty
-    }
+    await _model.loadSuppliersDropdown();
+    setState(() {});
   }
 
   Future<void> _loadLocations() async {
-    try {
-      await _model.loadLocationDropdown();
-      setState(() {});
-    } catch (e) {
-      print('⚠️ Could not load locations: $e');
-      // Continue with empty data - dropdowns will show as empty
-    }
+    await _model.loadLocationDropdown();
+    setState(() {});
   }
 
   Future<void> _loadBioregions() async {
-    try {
-      await _model.loadBioregionDropdown();
-      setState(() {});
-    } catch (e) {
-      print('⚠️ Could not load bioregions: $e');
-      // Continue with empty data - dropdowns will show as empty
-    }
+    await _model.loadBioregionDropdown();
+    setState(() {});
   }
 
   Future<void> _loadGenerationNumbers() async {
-    try {
-      await _model.loadGenerationNumberDropdown();
-      setState(() {});
-    } catch (e) {
-      print('⚠️ Could not load generation numbers: $e');
-      // Continue with empty data - dropdowns will show as empty
-    }
+    await _model.loadGenerationNumberDropdown();
+    setState(() {});
   }
 
   @override
@@ -1150,7 +1124,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                               dropDownItemCount: 8,
                                               dropDownList: _model.varietiesWithSpeciesDropdown
                                                   .map((item) => DropDownValueModel(
-                                                      name: '${item['full_species_name']} - ${item['variety']}',
+                                                      name: '${item['full_species_name'] ?? 'Unknown Species'} - ${item['variety_id']?.toString() ?? 'Unknown ID'}',
                                                       value: item['variety_id'].toString()))
                                                   .toList(),
                                               onChanged: (val) {
@@ -1235,9 +1209,9 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                               ),
                                               dropDownItemCount: 6,
                                               dropDownList: _model.suppliersDropdown
-                                                  .map((supplier) => DropDownValueModel(
-                                                      name: supplier['name'] as String,
-                                                      value: supplier['id'].toString()))
+                                                  .map((s) => DropDownValueModel(
+                                                      name: s['supplier_name'] ?? 'Unknown Supplier', 
+                                                      value: s['supplier_id'].toString()))
                                                   .toList(),
                                               onChanged: (val) {
                                                 setState(() {
@@ -1849,39 +1823,37 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        Flexible(
-                                          child: Container(
-                                            constraints: BoxConstraints(maxWidth: 400),
-                                            child: DropDownTextField(
-                                              controller: _model.bioregionComboController,
-                                              clearOption: true,
-                                              enableSearch: true,
-                                              textFieldDecoration: InputDecoration(
-                                                labelText: 'Bioregion',
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                ),
-                                                filled: true,
-                                                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                        Container(
+                                          constraints: BoxConstraints(maxWidth: 400),
+                                          child: DropDownTextField(
+                                            controller: _model.bioregionComboController,
+                                            clearOption: true,
+                                            enableSearch: true,
+                                            textFieldDecoration: InputDecoration(
+                                              labelText: 'Bioregion',
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
-                                              dropDownItemCount: 6,
-                                              dropDownList: _model.bioregionDropdown
-                                                  .map((b) => DropDownValueModel(name: b, value: b))
-                                                  .toList(),
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  if (val is DropDownValueModel) {
-                                                    _model.selectedBioregionCode = val.value;
-                                                  } else if (val is String) {
-                                                    _model.selectedBioregionCode = val;
-                                                    if (!_model.bioregionDropdown.contains(val)) {
-                                                      _model.bioregionDropdown.add(val);
-                                                    }
-                                                    _model.bioregionComboController.setDropDown(DropDownValueModel(name: val, value: val));
-                                                  }
-                                                });
-                                              },
+                                              filled: true,
+                                              fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                                             ),
+                                            dropDownItemCount: 6,
+                                            dropDownList: _model.bioregionDropdown
+                                                .map((b) => DropDownValueModel(name: b, value: b))
+                                                .toList(),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                if (val is DropDownValueModel) {
+                                                  _model.selectedBioregionCode = val.value;
+                                                } else if (val is String) {
+                                                  _model.selectedBioregionCode = val;
+                                                  if (!_model.bioregionDropdown.contains(val)) {
+                                                    _model.bioregionDropdown.add(val);
+                                                  }
+                                                  _model.bioregionComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                }
+                                              });
+                                            },
                                           ),
                                         ),
                                         Text(
@@ -1939,9 +1911,9 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                               ),
                                               dropDownItemCount: 6,
                                               dropDownList: _model.locationDropdown
-                                                  .map((location) => DropDownValueModel(
-                                                      name: location['name'] as String,
-                                                      value: location['id'].toString()))
+                                                  .map((l) => DropDownValueModel(
+                                                      name: l['location'] ?? 'Unknown Location', 
+                                                      value: l['provenance_id'].toString()))
                                                   .toList(),
                                               onChanged: (val) {
                                                 setState(() {
@@ -2179,34 +2151,49 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      constraints: BoxConstraints(maxWidth: 150),
-                                      child: DropDownTextField(
-                                        controller: _model.generationNumberComboController,
-                                        clearOption: true,
-                                        enableSearch: false,
-                                        textFieldDecoration: InputDecoration(
-                                          labelText: 'Generation',
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                    FlutterFlowDropDown<String>(
+                                      controller: _model.dropDownValueController5 ??=
+                                          FormFieldController<String>(null),
+                                      options: _model.generationNumberDropdown
+                                          .map((num) => num.toString())
+                                          .toList(),
+                                      onChanged: (val) => safeSetState(() {
+                                        _model.dropDownValue5 = val;
+                                        _model.selectedGenerationNumber = int.tryParse(val ?? '');
+                                      }),
+                                      width: 150.0,
+                                      height: 50.0,
+                                      textStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
                                           ),
-                                          filled: true,
-                                          fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                                        ),
-                                        dropDownItemCount: 5,
-                                        dropDownList: _model.generationNumberDropdown
-                                            .map((num) => DropDownValueModel(
-                                                name: num.toString(),
-                                                value: num.toString()))
-                                            .toList(),
-                                        onChanged: (val) {
-                                          setState(() {
-                                            if (val is DropDownValueModel) {
-                                              _model.selectedGenerationNumber = int.tryParse(val.value);
-                                            }
-                                          });
-                                        },
+                                      hintText: 'Select...',
+                                      icon: Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        size: 24.0,
                                       ),
+                                      fillColor: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      elevation: 2.0,
+                                      borderColor: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                      borderWidth: 0.0,
+                                      borderRadius: 8.0,
+                                      margin: EdgeInsetsDirectional.fromSTEB(
+                                          12.0, 0.0, 12.0, 0.0),
+                                      hidesUnderline: true,
+                                      isOverButton: false,
+                                      isSearchable: false,
+                                      isMultiSelect: false,
                                     ),
                                   ]
                                       .divide(SizedBox(width: 16.0))
