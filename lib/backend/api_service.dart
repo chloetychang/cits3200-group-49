@@ -133,27 +133,6 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // -------------------------- Add Screen Designs ------------------------------
   // ------------------------------- Acquisition --------------------------------
-  // For the old Species + variety dropdown:
-  // GET genus dropdown
-  static Future<List<String>> getGenusDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/acquisition/genus'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['genus'] as String).toList();
-    }
-    throw Exception('Failed to load genus dropdown: ${res.statusCode}');
-  }
-
-  // GET species dropdown
-  static Future<List<String>> getSpeciesDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/acquisition/species'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['species'] as String).toList();
-    }
-    throw Exception('Failed to load species dropdown: ${res.statusCode}');
-  }
-
   // GET suppliers dropdown
   static Future<List<Map<String, dynamic>>> getSuppliersDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/acquisition/suppliers'));
