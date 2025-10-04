@@ -133,43 +133,22 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // -------------------------- Add Screen Designs ------------------------------
   // ------------------------------- Acquisition --------------------------------
-  // For the old Species + variety dropdown:
-  // GET genus dropdown
-  static Future<List<String>> getGenusDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/acquisition/genus'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['genus'] as String).toList();
-    }
-    throw Exception('Failed to load genus dropdown: ${res.statusCode}');
-  }
-
-  // GET species dropdown
-  static Future<List<String>> getSpeciesDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/acquisition/species'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['species'] as String).toList();
-    }
-    throw Exception('Failed to load species dropdown: ${res.statusCode}');
-  }
-
   // GET suppliers dropdown
-  static Future<List<String>> getSuppliersDropdown() async {
+  static Future<List<Map<String, dynamic>>> getSuppliersDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/acquisition/suppliers'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['supplier_name'] as String).toList();
+      return data.map((item) => item as Map<String, dynamic>).toList();
     }
     throw Exception('Failed to load suppliers dropdown: ${res.statusCode}');
   }
 
   // GET location dropdown  
-  static Future<List<String>> getLocationDropdown() async {
+  static Future<List<Map<String, dynamic>>> getLocationDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/acquisition/provenance_locations'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['location'] as String).toList();
+      return data.map((item) => item as Map<String, dynamic>).toList();
     }
     throw Exception('Failed to load location dropdown: ${res.statusCode}');
   }
@@ -183,29 +162,73 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load bioregion code dropdown: ${res.statusCode}');
   }
 
-  // POST Save button - (Pending Fix, still WIP)
+  // GET generation numbers dropdown
+  static Future<List<int>> getGenerationNumberDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/acquisition/generation_numbers'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as int).toList();
+    }
+    throw Exception('Failed to load generation numbers: ${res.statusCode}');
+  }
+
+  // GET varieties with species names dropdown (replaces separate genus/species)
+  static Future<List<Map<String, dynamic>>> getVarietiesWithSpeciesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/acquisition/varieties_with_species'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
+    throw Exception('Failed to load varieties with species: ${res.statusCode}');
+  }
+
+  // POST Save button - Create new genetic source (acquisition)
   static Future<Map<String, dynamic>> createAcquisition({
-    required Map<String, dynamic> geneticSource,
-    required Map<String, dynamic> supplier,
-    required Map<String, dynamic> provenance,
+    required String acquisitionDate,
+    required int varietyId,
+    required int supplierId,
+    required String supplierLotNumber,
+    double? price,
+    int? gramWeight,
+    int? provenanceId,
+    int? viability,
+    int? propagationType,
+    int? generationNumber,
+    bool landscapeOnly = false,
+    String? researchNotes,
+    int? femaleGeneticSource,
+    int? maleGeneticSource,
   }) async {
+    final Map<String, dynamic> requestBody = {
+      "acquisition_date": acquisitionDate,
+      "variety_id": varietyId,
+      "supplier_id": supplierId,
+      "supplier_lot_number": supplierLotNumber,
+      "generation_number": generationNumber ?? 0,
+      "landscape_only": landscapeOnly,
+    };
+
+    // Add optional fields only if they have values
+    if (price != null) requestBody["price"] = price;
+    if (gramWeight != null) requestBody["gram_weight"] = gramWeight;
+    if (provenanceId != null) requestBody["provenance_id"] = provenanceId;
+    if (viability != null) requestBody["viability"] = viability;
+    if (propagationType != null) requestBody["propagation_type"] = propagationType;
+    if (researchNotes != null && researchNotes.isNotEmpty) requestBody["research_notes"] = researchNotes;
+    if (femaleGeneticSource != null) requestBody["female_genetic_source"] = femaleGeneticSource;
+    if (maleGeneticSource != null) requestBody["male_genetic_source"] = maleGeneticSource;
+
     final res = await http.post(
       Uri.parse('$baseUrl/acquisition/'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "genetic_source": geneticSource,
-        "supplier": supplier,
-        "provenance": provenance,
-      }),
+      body: jsonEncode(requestBody),
     );
+    
     if (res.statusCode == 200 || res.statusCode == 201) {
       return jsonDecode(res.body);
     }
-    print(jsonEncode({
-      "genetic_source": geneticSource,
-      "supplier": supplier,
-      "provenance": provenance,
-    }));
+    
+    print('Request body: ${jsonEncode(requestBody)}');
     throw Exception('Failed to create acquisition: ${res.statusCode}, error: ${res.body}');
   }
 

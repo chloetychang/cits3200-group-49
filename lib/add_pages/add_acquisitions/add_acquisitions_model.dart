@@ -8,11 +8,11 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
   ///  Dropdown combo contoller state
-  late final SingleValueDropDownController genusComboController;
-  late final SingleValueDropDownController speciesComboController;
+  late final SingleValueDropDownController varietyWithSpeciesComboController;
   late final SingleValueDropDownController supplierComboController;
   late final SingleValueDropDownController locationComboController;
   late final SingleValueDropDownController bioregionComboController;
+  late final SingleValueDropDownController generationNumberComboController;
 
   // State field for selected variety ID (from dropdown)
   int? selectedVarietyId;
@@ -25,53 +25,39 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
   TextEditingController? textController1;
   String? Function(BuildContext, String?)? textController1Validator;
   
-  // 2) Genus DropDown widget.
-  List<String> genusDropdown = []; // Holds list of genus to show in dropdown
-  String? selectedGenus; // Stores the current selected genus
-  FormFieldController<String>? genusDropdownController; // Manage state of genus dropdown form field
+  // 2) Variety with Species DropDown widget (replaces separate genus/species)
+  List<Map<String, dynamic>> varietiesWithSpeciesDropdown = []; // Holds list of varieties with species to show in dropdown
+  String? selectedVarietyWithSpecies; // Stores the current selected variety with species display text
+  FormFieldController<String>? varietyWithSpeciesDropdownController; // Manage state of variety with species dropdown form field
 
-  // Fetch Genus Dropdown 
-  Future<void> loadGenusDropdown() async {
-    final rawList = await ApiService.getGenusDropdown();
-    genusDropdown = rawList.toSet().toList()..sort();
-  }
-
-  // 2b) Species DropDown widget.
-  List<String> speciesDropdown = []; // Holds list of species to show in dropdown
-  String? selectedSpecies; // Stores the current selected species
-  FormFieldController<String>? speciesDropdownController; // Manage state of species dropdown form field
-
-  // Fetch Species Dropdown based on selected genus
-  Future<void> loadSpeciesDropdown() async {
-    final rawList = await ApiService.getSpeciesDropdown();
-    speciesDropdown = rawList.toSet().toList()..sort();
+  // Fetch Varieties with Species Dropdown 
+  Future<void> loadVarietiesWithSpeciesDropdown() async {
+    final rawList = await ApiService.getVarietiesWithSpeciesDropdown();
+    varietiesWithSpeciesDropdown = rawList;
   }
 
   // 3) Supplier DropDown widget.
-  List<String> suppliersDropdown = [];
-  String? dropDownSupplier;
+  List<Map<String, dynamic>> suppliersDropdown = [];
+  int? selectedSupplierId;
+  String? selectedSupplierName;
   FormFieldController<String>? dropDownSupplierController;
 
   // Fetch Suppliers Dropdown
   Future<void> loadSuppliersDropdown() async {
     final rawList = await ApiService.getSuppliersDropdown();
-    suppliersDropdown = rawList.toSet().toList()..sort();
-
-     if (supplierComboController.dropDownValue != null &&
-         !suppliersDropdown.contains(supplierComboController.dropDownValue!.value)) {
-       suppliersDropdown.add(supplierComboController.dropDownValue!.value);
-     }
+    suppliersDropdown = rawList;
   }
 
   // 4) Location DropDown widget
-  List<String> locationDropdown = [];
-  String? dropDownLocation;
+  List<Map<String, dynamic>> locationDropdown = [];
+  int? selectedProvenanceId;
+  String? selectedLocationName;
   FormFieldController<String>? dropDownLocationController;
 
   // Fetch Provenance Location Dropdown
   Future<void> loadLocationDropdown() async {
     final rawList = await ApiService.getLocationDropdown();
-    locationDropdown = rawList.toSet().toList()..sort();
+    locationDropdown = rawList;
   }
 
   List<String> bioregionDropdown = [];
@@ -85,30 +71,44 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
     bioregionDropdown = rawList.toSet().toList()..sort();
   }
 
-  // For future implementation - Add Family name and Generation Number into this Genetic_source data map. 
+  // Generation Number DropDown widget
+  List<int> generationNumberDropdown = [];
+  FormFieldController<int>? generationNumberDropdownController;
+
+  // Fetch Generation Number Dropdown
+  Future<void> loadGenerationNumberDropdown() async {
+    generationNumberDropdown = await ApiService.getGenerationNumberDropdown();
+  }
+
   // 5) Save Button Widget
   Future<void> saveAcquisition() async {
-    final geneticSource = {
-      "acquisition_date": textController1?.text,
-      "variety_id": selectedVarietyId,
-      "price": double.tryParse(textController3?.text ?? ''),
-      "gram_weight": int.tryParse(textController4?.text ?? ''),
-      "viability": int.tryParse(textController5?.text ?? ''),
-      "generation_number": selectedGenerationNumber,
-      "landscape_only": checkboxValue ?? false,
-    };
-    final supplier = {
-      "supplier_name": dropDownSupplier,
-    };
-    final provenance = {
-      "bioregion_code": selectedBioregionCode,
-      "location": dropDownLocation,
-    };
+    // Validate required fields
+    if (selectedVarietyId == null) {
+      throw Exception('Please select a species and variety');
+    }
+    if (selectedSupplierId == null) {
+      throw Exception('Please select a supplier');
+    }
+    if (textController2?.text == null || textController2!.text.isEmpty) {
+      throw Exception('Please enter a lot number');
+    }
+    if (textController1?.text == null || textController1!.text.isEmpty) {
+      throw Exception('Please enter an acquisition date');
+    }
+
     await ApiService.createAcquisition(
-      geneticSource: geneticSource,
-      supplier: supplier,
-      provenance: provenance,
-    );  }
+      acquisitionDate: textController1!.text,
+      varietyId: selectedVarietyId!,
+      supplierId: selectedSupplierId!,
+      supplierLotNumber: textController2!.text,
+      price: double.tryParse(textController3?.text ?? ''),
+      gramWeight: int.tryParse(textController4?.text ?? ''),
+      viability: int.tryParse(textController5?.text ?? ''),
+      provenanceId: selectedProvenanceId, 
+      generationNumber: selectedGenerationNumber ?? 0,
+      landscapeOnly: checkboxValue ?? false,
+    );
+  }
 
   // State field(s) for TextField widget.
   FocusNode? textFieldFocusNode2;
@@ -138,11 +138,11 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
 
   @override
   void initState(BuildContext context) {
+    varietyWithSpeciesComboController = SingleValueDropDownController();
     supplierComboController = SingleValueDropDownController();
-    genusComboController = SingleValueDropDownController();
-    speciesComboController = SingleValueDropDownController();
     locationComboController = SingleValueDropDownController();
     bioregionComboController = SingleValueDropDownController();
+    generationNumberComboController = SingleValueDropDownController();
   }
 
   @override
@@ -163,10 +163,10 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
     textController5?.dispose();
 
     supplierComboController.dispose();
-    genusComboController.dispose();
-    speciesComboController.dispose();
+    varietyWithSpeciesComboController.dispose();
     locationComboController.dispose();
     bioregionComboController.dispose();
+    generationNumberComboController.dispose();
 
   }
 

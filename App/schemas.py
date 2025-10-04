@@ -291,9 +291,9 @@ class GeneticSourceBase(BaseSchema):
 
 class GeneticSourceCreate(GeneticSourceBase):
     acquisition_date: datetime
-    variety_id: Optional[int] = None
-    supplier_id: Optional[int] = None
-    supplier_lot_number: Optional[str] = None
+    variety_id: int  
+    supplier_id: int 
+    supplier_lot_number: str
     price: Optional[float] = None
     gram_weight: Optional[int] = None
     provenance_id: Optional[int] = None
