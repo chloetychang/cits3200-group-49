@@ -408,52 +408,109 @@ def test_row_counts_and_data(table, inspector, access_cursor, engine):
         issues.append(f"Failed to get Access row count: {e}")
         access_count = None
     
+    # Use single connection for all PostgreSQL operations
     try:
         with engine.connect() as conn:
+            # Get PostgreSQL row count
             pg_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
-    except Exception as e:
-        issues.append(f"Failed to get PostgreSQL row count: {e}")
-        pg_count = None
-    
-    # Row count comparison
-    if access_count is not None and pg_count is not None:
-        if access_count != pg_count:
-            issues.append(f"Row count mismatch: Access={access_count}, Postgres={pg_count}")
-    
-    # Data comparison for first 5 rows
-    if access_count is not None and pg_count is not None and access_count == pg_count:
-        try:
-            # Get column names in order for both databases
-            access_cursor.execute(f'SELECT * FROM [{table}]')
-            access_desc = [desc[0] for desc in access_cursor.description]
-            pg_desc = [col['name'] for col in inspector.get_columns(table)]
-            access_rows = access_cursor.fetchmany(5)
             
-            with engine.connect() as conn:
-                pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
-                
-                # Reorder Postgres rows to match Access column order
-                pg_rows_reordered = []
-                for row in pg_rows:
-                    row_dict = dict(zip(pg_desc, row))
-                    pg_rows_reordered.append(tuple(row_dict[col] for col in access_desc))
-                
-                def rows_equal(rows1, rows2):
-                    if len(rows1) != len(rows2):
-                        return False
-                    for r1, r2 in zip(rows1, rows2):
-                        if len(r1) != len(r2):
-                            return False
-                        for v1, v2 in zip(r1, r2):
-                            if str(v1) != str(v2):
-                                return False
-                    return True
-                
-                if not rows_equal(access_rows, pg_rows_reordered):
-                    issues.append(f"First 5 rows data mismatch: Access={access_rows}, Postgres={pg_rows_reordered}")
+            # Row count comparison
+            if access_count is not None:
+                if access_count != pg_count:
+                    issues.append(f"Row count mismatch: Access={access_count}, Postgres={pg_count}")
+            
+            # Data comparison for first 5 rows (only if row counts match)
+            if access_count is not None and access_count == pg_count:
+                try:
+                    # Get column names in order for both databases
+                    access_cursor.execute(f'SELECT * FROM [{table}]')
+                    access_desc = [desc[0] for desc in access_cursor.description]
+                    pg_desc = [col['name'] for col in inspector.get_columns(table)]
+                    access_rows = access_cursor.fetchmany(5)
                     
-        except Exception as e:
-            issues.append(f"Failed to compare row data: {e}")
+                    # Get PostgreSQL rows using the same connection
+                    pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
+                    
+                    # Reorder Postgres rows to match Access column order
+                    pg_rows_reordered = []
+                    for row in pg_rows:
+                        row_dict = dict(zip(pg_desc, row))
+                        pg_rows_reordered.append(tuple(row_dict[col] for col in access_desc))
+                    
+                    def rows_equal(rows1, rows2):
+                        if len(rows1) != len(rows2):
+                            return False
+                        for r1, r2 in zip(rows1, rows2):
+                            if len(r1) != len(r2):
+                                return False
+                            for v1, v2 in zip(r1, r2):
+                                if str(v1) != str(v2):
+                                    return False
+                        return True
+                    
+                    if not rows_equal(access_rows, pg_rows_reordered):
+                        issues.append(f"First 5 rows data mismatch: Access={access_rows}, Postgres={pg_rows_reordered}")
+                        
+                except Exception as e:
+                    issues.append(f"Failed to compare row data: {e}")
+                    
+    except Exception as e:
+        issues.append(f"Failed to get PostgreSQL data: {e}")
     
     if issues:
         pytest.fail(f"Issues in table {table}: " + "; ".join(issues))
+
+
+def test_sequence_values(engine, inspector):
+    """Test that sequences for identity columns are properly set above existing data"""
+    failures = []
+    
+    with engine.connect() as conn:
+        tables = inspector.get_table_names()
+        
+        for table in tables:
+            try:
+                columns = inspector.get_columns(table)
+                pk_columns = inspector.get_pk_constraint(table)['constrained_columns']
+                
+                for column in columns:
+                    if (column['name'] in pk_columns and 
+                        column.get('autoincrement') and 
+                        'INTEGER' in str(column['type']).upper()):
+                        
+                        column_name = column['name']
+                        
+                        # Use pg_get_serial_sequence to get the actual sequence name
+                        seq_name_result = conn.execute(text("""
+                            SELECT pg_get_serial_sequence(:table_name, :column_name)
+                        """), {"table_name": table, "column_name": column_name})
+                        sequence_name = seq_name_result.scalar()
+                        
+                        if sequence_name:
+                            # Check if sequence has proper next value
+                            max_value_result = conn.execute(text(f'SELECT COALESCE(MAX("{column_name}"), 0) FROM "{table}"'))
+                            max_existing_value = max_value_result.scalar()
+                            
+                            # Get both last_value and is_called to determine next value
+                            seq_info_result = conn.execute(text(f'SELECT last_value, is_called FROM {sequence_name}'))
+                            seq_info = seq_info_result.fetchone()
+                            last_value, is_called = seq_info
+                            
+                            # Calculate the actual next value the sequence will produce
+                            next_sequence_value = last_value + 1 if is_called else last_value
+                            expected_min_next_value = max_existing_value + 1
+                            
+                            if next_sequence_value <= max_existing_value:
+                                failures.append(
+                                    f"Table '{table}' column '{column_name}': "
+                                    f"next sequence value will be {next_sequence_value}, "
+                                    f"but max existing data is {max_existing_value}. "
+                                    f"Expected next value ≥ {expected_min_next_value}"
+                                )
+                                
+            except Exception as e:
+                failures.append(f"Table '{table}': Error checking sequence values - {str(e)}")
+    
+    if failures:
+        failure_summary = "\n".join([f"  - {failure}" for failure in failures])
+        pytest.fail(f"Tables with incorrectly set sequences:\n{failure_summary}")

@@ -210,23 +210,6 @@ def fix_sequences(pg_cur):
         except Exception as e:
             print(f'Error fixing sequence {sequence_name}: {e}')
 
-def fix_single_sequence(pg_cur, table_name, column_name, seq_name):
-    """Fix a single sequence by setting it to max(column_value) + 1"""
-    try:
-        # Get the maximum value from the table
-        pg_cur.execute(f'SELECT COALESCE(MAX("{column_name}"), 0) FROM "{table_name}"')
-        max_id = pg_cur.fetchone()[0]
-        
-        if max_id > 0:
-            # Set the sequence to max_id + 1
-            pg_cur.execute(f"SELECT setval('{seq_name}', %s, true)", (max_id,))
-            print(f'Fixed sequence {seq_name}: set to {max_id} (next value will be {max_id + 1})')
-        else:
-            print(f'Table {table_name} is empty, leaving sequence {seq_name} as is')
-            
-    except Exception as e:
-        print(f'Error fixing sequence {seq_name} for {table_name}.{column_name}: {e}')
-
 # Function to create views in PostgreSQL
 def create_views(pg_cur):
     print('Creating views...')
