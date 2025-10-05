@@ -160,6 +160,9 @@ class ProvenanceCreate(ProvenanceBase):
 class ProvenanceUpdate(ProvenanceBase):
     pass
 
+class ProvenanceResponse(ProvenanceBase):
+    provenance_id: int
+    location_type: Optional["LocationTypeResponse"] = None
 
 class ProvenanceOut(ProvenanceBase):
     provenance_id: int
@@ -486,7 +489,7 @@ class ViewProvenanceResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-ProvenanceResponse = ViewProvenanceResponse
+
 
 # POST Acquistion Schema 
 class AcquisitionCreate(BaseModel):
