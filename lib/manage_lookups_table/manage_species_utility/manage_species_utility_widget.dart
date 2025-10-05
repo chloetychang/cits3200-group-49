@@ -9,60 +9,112 @@ import 'package:provider/provider.dart';
 import 'manage_species_utility_model.dart';
 export 'manage_species_utility_model.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+
 
 class ManageSpeciesUtilityWidget extends StatefulWidget {
   const ManageSpeciesUtilityWidget({super.key});
 
   static String routeName = 'ManageSpeciesUtility';
   static String routePath = '/manageSpeciesUtility';
+  
 
   @override
   State<ManageSpeciesUtilityWidget> createState() =>
       _ManageSpeciesUtilityWidgetState();
 }
 
-class _ManageSpeciesUtilityWidgetState
-    extends State<ManageSpeciesUtilityWidget> {
+class _ManageSpeciesUtilityWidgetState extends State<ManageSpeciesUtilityWidget> {
   late ManageSpeciesUtilityModel _model;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  
 
-  /// 行 ID -> 选中的 speciesId / utilityId
-  final Map<int, int?> _speciesIds = {};
-  final Map<int, int?> _utilityIds = {};
+  void _createNewRowObject() {
+    _newRow = SpeciesUtilityLinkRow(
+      localKey: 'new_row_${DateTime.now().millisecondsSinceEpoch}',
+      speciesId: -1,
+      plantUtilityId: -1,
+    );
+  }
 
-  /// 下拉选项缓存（key: "species_<localKey>" / "utility_<localKey>"）
+  final Map<String, int?> _selectedSpeciesIds = {};
+  final Map<String, int?> _selectedUtilityIds = {};
+
   final Map<String, List<Map<String, dynamic>>> _dropdownOptions = {};
 
-  final Set<int> _dirtyIds = <int>{};
+  final Set<String> _dirtyKeys = <String>{};
   bool _loading = false;
+
+  List<Map<String, dynamic>> _preloadedSpecies = [];
+  List<Map<String, dynamic>> _preloadedUtilities = [];
+  late SpeciesUtilityLinkRow _newRow;
+  final Map<String, TextEditingController> _speciesSearchControllers = {};
+  final Map<String, TextEditingController> _utilitySearchControllers = {};
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManageSpeciesUtilityModel());
-    _loadLinks(); // 初始化加载表格数据
+    _createNewRowObject();
+    _loadLinks();
   }
 
-  /// 加载 species_utility_link 表格数据
-  Future<void> _loadLinks() async {
-    setState(() => _loading = true);
-    try {
-      final list = await ApiService.getSpeciesUtilityLinks();
-      _model.rows = list
-          .map((e) => SpeciesUtilityLinkRow.fromJson(e as Map<String, dynamic>))
-          .toList();
 
-      for (final r in _model.rows) {
-        _speciesIds[r.speciesId] = r.speciesId;
-        _utilityIds[r.speciesId] = r.plantUtilityId;
+
+Future<void> _loadLinks() async {
+  if (!mounted) return;
+  setState(() => _loading = true);
+  
+
+  _selectedSpeciesIds.clear();
+  _selectedUtilityIds.clear();
+  _dropdownOptions.clear();
+  _dirtyKeys.clear();
+
+  try {
+
+    final results = await Future.wait([
+      ApiService.getSpeciesUtilityLinks(),        
+      ApiService.getSpeciesForPreloading(),      
+      ApiService.getPlantUtilitiesForPreloading(), 
+    ]);
+    final linkList = results[0] as List<dynamic>;
+
+    _preloadedSpecies = results[1] as List<Map<String, dynamic>>;
+    _preloadedUtilities = results[2] as List<Map<String, dynamic>>;
+    
+    _model.rows = linkList
+        .map((e) => SpeciesUtilityLinkRow.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    for (final r in _model.rows) {
+      _selectedSpeciesIds[r.localKey] = r.speciesId;
+      _selectedUtilityIds[r.localKey] = r.plantUtilityId;
+
+      if (r.speciesId != -1 && r.speciesName != null) {
+        final speciesKey = 'species_${r.localKey}';
+        _dropdownOptions[speciesKey] = [{'id': r.speciesId, 'name': r.speciesName!}];
       }
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      if (r.plantUtilityId != -1 && r.utilityName != null) {
+        final utilityKey = 'utility_${r.localKey}';
+        _dropdownOptions[utilityKey] = [{'id': r.plantUtilityId, 'utility': r.utilityName!}];
+      }
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load initial data: $e')),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() => _loading = false);
     }
   }
+}
 
-  /// 输入即搜：去后端查 species / utility
-  Future<void> _searchDropdownItems(String key, String query, bool isSpecies) async {
+  Future<void> _searchDropdownItems(String dropdownKey, String query, bool isSpecies) async {
     List<Map<String, dynamic>> results;
     if (isSpecies) {
       results = await ApiService.getSpecies(search: query);
@@ -70,48 +122,84 @@ class _ManageSpeciesUtilityWidgetState
       results = await ApiService.getPlantUtilities(search: query);
     }
     if (!mounted) return;
+
     setState(() {
-      _dropdownOptions[key] = results;
+      final currentOptions = _dropdownOptions[dropdownKey] ?? [];
+      final selectedId = isSpecies 
+          ? _selectedSpeciesIds[dropdownKey.split('_').last] 
+          : _selectedUtilityIds[dropdownKey.split('_').last];
+      
+      if (selectedId != null && !results.any((item) => item['id'] == selectedId)) {
+        final selectedOption = currentOptions.firstWhere((item) => item['id'] == selectedId, orElse: () => {});
+        if (selectedOption.isNotEmpty) {
+          results.insert(0, selectedOption);
+        }
+      }
+      _dropdownOptions[dropdownKey] = results;
     });
   }
 
-  /// 标记行被修改
-  void _markDirty(int id) {
-    _dirtyIds.add(id);
+  void _markDirty(String key) {
+    if (mounted) {
+      setState(() {
+        _dirtyKeys.add(key);
+      });
+    }
   }
 
-  /// 取消修改
   Future<void> _onCancel() async {
-    await _loadLinks();
-    _dirtyIds.clear();
+    await _loadLinks(); 
   }
-
-  /// 保存修改（逐条创建/覆盖 link）
   Future<void> _onSave() async {
+    if(_dirtyKeys.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No changes to save.')),
+      );
+      return;
+    }
+    setState(() => _loading = true);
     try {
-      for (final id in _dirtyIds) {
-        final speciesId = _speciesIds[id];
-        final utilityId = _utilityIds[id];
+      for (final key in _dirtyKeys) {
+        final speciesId = _selectedSpeciesIds[key];
+        final utilityId = _selectedUtilityIds[key];
         if (speciesId != null && utilityId != null) {
+
           await ApiService.createSpeciesUtilityLink(
             speciesId: speciesId,
             plantUtilityId: utilityId,
           );
         }
       }
-      _dirtyIds.clear();
+      
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved')),
+        const SnackBar(content: Text('Saved successfully!')),
       );
-      await _loadLinks();
+      setState(() {
+        _createNewRowObject();
+      });
+      await _loadLinks(); 
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Save failed: $e')),
       );
+    } finally {
+      if(mounted) setState(() => _loading = false);
     }
   }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+
+    _speciesSearchControllers.values.forEach((controller) => controller.dispose());
+    _utilitySearchControllers.values.forEach((controller) => controller.dispose());
+
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +215,6 @@ class _ManageSpeciesUtilityWidgetState
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              /// 顶部菜单按钮行
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                 child: Row(
@@ -441,7 +528,6 @@ class _ManageSpeciesUtilityWidgetState
                       flex: 10,
                       child: FFButtonWidget(
                         onPressed: () {
-                          // 当前页
                         },
                         text: 'Species/Utility',
                         options: FFButtonOptions(
@@ -512,7 +598,6 @@ class _ManageSpeciesUtilityWidgetState
                 ),
               ),
 
-              /// 内容区：表格 + 操作按钮
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -529,22 +614,32 @@ class _ManageSpeciesUtilityWidgetState
                             controller: _model.speciesUtilityTableController,
                             data: [
                               ..._model.rows,
-                              SpeciesUtilityLinkRow(
-                                localKey: DateTime.now().millisecondsSinceEpoch.toString(),
-                                speciesId: -1,
-                                plantUtilityId: -1,
-                              ), // new row
+                              _newRow, 
                             ],
                             columnsBuilder: (onSortChanged) => const [
                               DataColumn2(label: Text('Species')),
                               DataColumn2(label: Text('Utility')),
                             ],
                             dataRowBuilder: (row, rowIndex, selected, onSelectChanged) {
-                              final speciesKey = 'species_${row.localKey}';
-                              final utilityKey = 'utility_${row.localKey}';
+                              final speciesDropdownKey = 'species_${row.localKey}';
+                              final utilityDropdownKey = 'utility_${row.localKey}';
 
-                              _dropdownOptions.putIfAbsent(speciesKey, () => []);
-                              _dropdownOptions.putIfAbsent(utilityKey, () => []);
+                              _dropdownOptions.putIfAbsent(speciesDropdownKey, () => []);
+                              _dropdownOptions.putIfAbsent(utilityDropdownKey, () => []);
+
+                              final speciesOptions = _dropdownOptions[speciesDropdownKey]!.isNotEmpty
+                                  ? _dropdownOptions[speciesDropdownKey]!
+                                  : _preloadedSpecies;
+                                  
+                              final utilityOptions = _dropdownOptions[utilityDropdownKey]!.isNotEmpty
+                                  ? _dropdownOptions[utilityDropdownKey]!
+                                  : _preloadedUtilities;
+
+                              final speciesSearchController = _speciesSearchControllers.putIfAbsent(
+                                row.localKey, () => TextEditingController());
+                              final utilitySearchController = _utilitySearchControllers.putIfAbsent(
+                                row.localKey, () => TextEditingController());
+
 
                               return DataRow(
                                 color: WidgetStateProperty.all(
@@ -552,54 +647,58 @@ class _ManageSpeciesUtilityWidgetState
                                       ? FlutterFlowTheme.of(context).secondaryBackground
                                       : FlutterFlowTheme.of(context).primaryBackground,
                                 ),
+                                
+                            
+
                                 cells: [
-                                  /// Species 下拉
                                   DataCell(
                                     DropdownButton2<int>(
+                                      key: ValueKey('species_${row.localKey}_${speciesOptions.hashCode}'),
                                       isExpanded: true,
-                                      value: (_dropdownOptions[speciesKey] ?? [])
-                                              .any((item) => item['id'] == _speciesIds[row.speciesId])
-                                          ? _speciesIds[row.speciesId]
-                                          : null,
+                                      value: _selectedSpeciesIds[row.localKey],
                                       hint: const Text('Select species'),
-                                      items: (_dropdownOptions[speciesKey] ?? [])
-                                          .map(
-                                            (item) => DropdownMenuItem<int>(
-                                              value: item['id'],
-                                              child: Text(item['name']),
-                                            ),
-                                          )
+                                      items: speciesOptions
+                                          .map((item) => DropdownMenuItem<int>(
+                                                value: item['species_id'],
+                                                child: Text(
+                                                  item['species']?.toString() ?? 'Unknown',
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ))
                                           .toList(),
                                       onChanged: (val) {
+                                        if (val == null) return;
                                         setState(() {
-                                          _speciesIds[row.speciesId] = val;
-                                          _markDirty(row.speciesId);
+                                          _selectedSpeciesIds[row.localKey] = val;
+                                          _markDirty(row.localKey);
                                         });
                                       },
                                       onMenuStateChange: (isOpen) {
-                                        if (isOpen && (_dropdownOptions[speciesKey]?.isEmpty ?? true)) {
-                                          _searchDropdownItems(speciesKey, '', true); // 首次打开拉一批
+                                        if (isOpen) {
+                                          if (_dropdownOptions[speciesDropdownKey]!.isEmpty) {
+                                            _searchDropdownItems(speciesDropdownKey, '', true);
+                                          }
                                         }
                                       },
-                                      dropdownStyleData: const DropdownStyleData(
-                                        maxHeight: 300,
-                                      ),
+                                      dropdownStyleData: const DropdownStyleData(maxHeight: 300),
+                                      
+                                      // --- 修改这里 ---
                                       dropdownSearchData: DropdownSearchData(
-                                        searchController: TextEditingController(),
+                                        searchController: speciesSearchController, // 使用 state 中的 controller
                                         searchInnerWidgetHeight: 50,
                                         searchInnerWidget: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextField(
+                                            controller: speciesSearchController, // 确保 TextField 也使用同一个 controller
                                             decoration: const InputDecoration(
                                               hintText: 'Search species...',
                                               border: OutlineInputBorder(),
                                             ),
-                                            onChanged: (query) async {
-                                              await _searchDropdownItems(speciesKey, query, true);
+                                            onChanged: (query) {
+                                              _searchDropdownItems(speciesDropdownKey, query, true);
                                             },
                                           ),
                                         ),
-                                        // 后端已过滤，前端始终匹配
                                         searchMatchFn: (item, searchValue) => true,
                                       ),
                                     ),
@@ -608,46 +707,49 @@ class _ManageSpeciesUtilityWidgetState
                                   /// Utility 下拉
                                   DataCell(
                                     DropdownButton2<int>(
+                                      // ... (isExpanded, value, hint, items, onChanged 保持不变)
                                       isExpanded: true,
-                                      value: (_dropdownOptions[utilityKey] ?? [])
-                                              .any((item) => item['id'] == _utilityIds[row.speciesId])
-                                          ? _utilityIds[row.speciesId]
-                                          : null,
+                                      value: _selectedUtilityIds[row.localKey],
                                       hint: const Text('Select utility'),
-                                      items: (_dropdownOptions[utilityKey] ?? [])
-                                          .map(
-                                            (item) => DropdownMenuItem<int>(
-                                              value: item['id'],
-                                              child: Text(item['utility']),
-                                            ),
-                                          )
+                                      items: utilityOptions
+                                          .map((item) => DropdownMenuItem<int>(
+                                                value: item['plant_utility_id'],
+                                                child: Text(
+                                                  item['utility']?.toString() ?? 'Unknown',
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ))
                                           .toList(),
                                       onChanged: (val) {
+                                        if (val == null) return;
                                         setState(() {
-                                          _utilityIds[row.speciesId] = val;
-                                          _markDirty(row.speciesId);
+                                          _selectedUtilityIds[row.localKey] = val;
+                                          _markDirty(row.localKey);
                                         });
                                       },
                                       onMenuStateChange: (isOpen) {
-                                        if (isOpen && (_dropdownOptions[utilityKey]?.isEmpty ?? true)) {
-                                          _searchDropdownItems(utilityKey, '', false);
+                                        if (isOpen) {
+                                          if (_dropdownOptions[utilityDropdownKey]!.isEmpty) {
+                                            _searchDropdownItems(utilityDropdownKey, '', false);
+                                          }
                                         }
                                       },
-                                      dropdownStyleData: const DropdownStyleData(
-                                        maxHeight: 300,
-                                      ),
+                                      dropdownStyleData: const DropdownStyleData(maxHeight: 300),
+                                      
+                                      // --- 修改这里 ---
                                       dropdownSearchData: DropdownSearchData(
-                                        searchController: TextEditingController(),
+                                        searchController: utilitySearchController, // 使用 state 中的 controller
                                         searchInnerWidgetHeight: 50,
                                         searchInnerWidget: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: TextField(
+                                            controller: utilitySearchController, // 确保 TextField 也使用同一个 controller
                                             decoration: const InputDecoration(
                                               hintText: 'Search utilities...',
                                               border: OutlineInputBorder(),
                                             ),
-                                            onChanged: (query) async {
-                                              await _searchDropdownItems(utilityKey, query, false);
+                                            onChanged: (query) {
+                                              _searchDropdownItems(utilityDropdownKey, query, false);
                                             },
                                           ),
                                         ),

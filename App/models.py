@@ -183,6 +183,7 @@ class Provenance(Base):
     location_type = relationship("LocationType", back_populates="provenances")
     genetic_sources = relationship("GeneticSource", back_populates="provenance")
 
+
 class RemovalCause(Base):
     __tablename__ = "removal_cause"
     

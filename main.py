@@ -23,11 +23,13 @@ from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
 from App.routes.Manage_Lookup_Routes import manage_lookup_conservation_status
 from App.routes.Manage_Lookup_Routes import manage_lookup_container_type
-from App.routes.Manage_Lookup_Routes import manage_plan_utility
+from App.routes.Manage_Lookup_Routes import manage_plant_utility
 from App.routes.Manage_Lookup_Routes import manage_removal_cause
 from App.routes.Manage_Lookup_Routes import manage_lookup_provenance
 from App.routes.Manage_Lookup_Routes import manage_lookup_propagation
 from App.routes.Manage_Lookup_Routes import manage_lookup_species_utility
+from App.routes.Manage_Lookup_Routes import manage_zone_aspect
+from App.routes.Manage_Lookup_Routes import manage_zone_aspect
 
 app = FastAPI(
     title=settings.API_TITLE,
@@ -55,11 +57,13 @@ app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
 app.include_router(manage_lookup_conservation_status.router)
 app.include_router(manage_lookup_container_type.router)
-app.include_router(manage_plan_utility.router)
+app.include_router(manage_plant_utility.router)
 app.include_router(manage_removal_cause.router)
 app.include_router(manage_lookup_provenance.router)
 app.include_router(manage_lookup_propagation.router)
-app.include_router(manage_lookup_species_utility.router)
+app.include_router(manage_lookup_species_utility.router_su) 
+app.include_router(manage_lookup_species_utility.router_s)
+app.include_router(manage_zone_aspect.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -93,13 +97,6 @@ def get_plantings(skip: int = 0, limit: int = None, db: Session = Depends(get_db
 @app.get("/families/", response_model=List[schemas.FamilyResponse])
 def get_families(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
     return crud.family.get_multi(db=db, skip=skip, limit=limit)
-
-# -------------------- Species --------------------
-@app.get("/species/", response_model=List[schemas.SpeciesResponse])
-def get_species(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
-    q = db.query(models.Species).order_by(models.Species.species.asc())
-    q = apply_pagination(q, skip=skip, limit=limit)
-    return q.all()
 
 # -------------------- Varieties --------------------
 @app.get("/varieties/", response_model=List[schemas.VarietyResponse])

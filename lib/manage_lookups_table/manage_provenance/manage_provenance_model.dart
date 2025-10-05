@@ -33,9 +33,8 @@ class ProvenanceRow {
   String location;
   String? bioregionCode;
   String? extraDetails;
-  int? locationTypeId;   // 外键 id，用来提交
-  String? locationType;  // 展示用名称
-
+  int? locationTypeId;   
+  String? locationType;  
   ProvenanceRow({
     required this.id,
     required this.location,

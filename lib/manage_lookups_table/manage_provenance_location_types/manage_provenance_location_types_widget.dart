@@ -780,20 +780,22 @@ Future<void> _load() async {
                                       );
                                     },
 
-                                    paginated: true,
+                                                                        paginated: true,
                                     selectable: false,
                                     hidePaginator: false,
                                     showFirstLastButtons: false,
                                     headingRowHeight: 56.0,
                                     dataRowHeight: 48.0,
                                     columnSpacing: 20.0,
-                                    headingRowColor: FlutterFlowTheme.of(context).secondary,
+                                    headingRowColor: FlutterFlowTheme.of(context)
+                                        .secondary,
                                     borderRadius: BorderRadius.circular(8.0),
-                                    addHorizontalDivider: true,
+                                    addHorizontalDivider: false,
                                     addTopAndBottomDivider: false,
                                     hideDefaultHorizontalDivider: true,
                                     horizontalDividerColor:
-                                        FlutterFlowTheme.of(context).secondaryBackground,
+                                        FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
                                     horizontalDividerThickness: 1.0,
                                     addVerticalDivider: false,
                                   );

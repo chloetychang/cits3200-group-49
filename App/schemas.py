@@ -1,6 +1,8 @@
-from pydantic import BaseModel, ConfigDict
+
 from typing import Optional
 from datetime import date, datetime
+from pydantic import BaseModel, ConfigDict, computed_field
+from typing import List
 
 # Base schemas for common patterns
 class BaseSchema(BaseModel):
@@ -13,8 +15,14 @@ class AspectBase(BaseSchema):
 class AspectCreate(AspectBase):
     pass
 
+class AspectUpdate(AspectBase):
+    pass
+
 class AspectResponse(AspectBase):
     aspect_id: int
+
+    class Config:
+        orm_mode = True
 
 # Bioregion schemas
 class BioregionBase(BaseSchema):
@@ -40,7 +48,7 @@ class ConservationStatusOut(ConservationStatusBase):
     conservation_status_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Update payload schema (added)
 class ConservationStatusUpdate(ConservationStatusBase):
@@ -155,10 +163,15 @@ class ProvenanceUpdate(ProvenanceBase):
 
 class ProvenanceOut(ProvenanceBase):
     provenance_id: int
-    location_type: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+    @computed_field
+    @property
+    def location_type(self) -> Optional[str]:
+        if hasattr(self, 'location_type_rel') and self.location_type_rel:
+            return self.location_type_rel.location_type
+        return None
+
 
 # Removal Cause schemas
 class RemovalCauseBase(BaseSchema):
@@ -194,6 +207,16 @@ class SpeciesResponse(SpeciesBase):
     species_id: int
 
 # Species Utility Link schemas
+class SpeciesSimpleResponse(BaseModel):
+    species_id: int
+    species: str
+    model_config = ConfigDict(from_attributes=True)
+
+class PlantUtilitySimpleResponse(BaseModel):
+    plant_utility_id: int
+    utility: str
+    model_config = ConfigDict(from_attributes=True)
+
 class SpeciesUtilityLinkBase(BaseModel):
     species_id: int
     plant_utility_id: int
@@ -205,9 +228,13 @@ class SpeciesUtilityLinkUpdate(BaseModel):
     species_id: Optional[int] = None
     plant_utility_id: Optional[int] = None
 
-class SpeciesUtilityLinkResponse(SpeciesUtilityLinkBase):
-    class Config:
-        orm_mode = True
+class SpeciesUtilityLinkResponse(BaseModel):
+    species_id: int
+    plant_utility_id: int
+    species: Optional[SpeciesSimpleResponse] = None
+    plant_utility: Optional[PlantUtilitySimpleResponse] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 # Supplier schemas
 class SupplierBase(BaseSchema):
@@ -280,7 +307,7 @@ class VarietyNestedResponse(BaseSchema):
         from_attributes = True
 
 # Species + Varieties schema
-from typing import List
+
 
 class SpeciesWithVarietyResponse(BaseSchema):
     species_id: int
@@ -421,7 +448,7 @@ class GeneticSourceFullResponse(BaseModel):
     supplier_lot_number: Optional[str] = None
     generation_number: Optional[int] = None
 
-    model_config = ConfigDict(from_attributes=True)  # pydantic v2 写法
+    model_config = ConfigDict(from_attributes=True) 
 
 # Progeny with Family schema
 class ProgenyWithFamilyResponse(BaseSchema):
@@ -429,15 +456,6 @@ class ProgenyWithFamilyResponse(BaseSchema):
     child_name: str
     comments: Optional[str] = None
     family_name: Optional[str] = None
-
-    class Config:
-        from_attributes = True
-class SupplierResponse(BaseSchema):
-    supplier_id: int
-    short_name: Optional[str] = None
-    supplier_name: str
-    is_a_research_breeder: Optional[bool] = None
-    web_site: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -457,6 +475,8 @@ class ViewPlantingResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
+
 class ViewProvenanceResponse(BaseModel):
     provenance_id: int
     bioregion: Optional[str] = None
@@ -465,7 +485,9 @@ class ViewProvenanceResponse(BaseModel):
     extra_details: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+
 ProvenanceResponse = ViewProvenanceResponse
+
 # POST Acquistion Schema 
 class AcquisitionCreate(BaseModel):
     genetic_source: GeneticSourceCreate

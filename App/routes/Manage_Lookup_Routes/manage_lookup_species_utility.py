@@ -1,24 +1,65 @@
+from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from App import models, schemas
 from App.database import get_db
 
-router = APIRouter(
+router_su = APIRouter(
     prefix="/species_utility",
     tags=["Species Utility"]
 )
 
+router_s = APIRouter(
+    prefix="/species",
+    tags=["Species"]
+)
 
-@router.get("/", response_model=list[schemas.SpeciesUtilityLinkResponse])
+
+def apply_pagination(query, skip: int = 0, limit: Optional[int] = None):
+    if skip:
+        query = query.offset(skip)
+    if isinstance(limit, int) and limit > 0:
+        query = query.limit(limit)
+    return query
+
+
+@router_s.get("/", response_model=List[schemas.SpeciesResponse])
+def get_species(
+    db: Session = Depends(get_db),
+    skip: int = 0, 
+    limit: Optional[int] = 50,
+    search: Optional[str] = None
+):
+    """
+    Get a list of species with pagination and search functionality.
+    This is intended for management tables.
+    """
+    q = db.query(models.Species).order_by(models.Species.species.asc())
+
+    if search:
+        q = q.filter(models.Species.species.ilike(f"{search}%"))
+
+    q = apply_pagination(q, skip=skip, limit=limit)
+    return q.all()
+
+
+
+@router_su.get("/", response_model=List[schemas.SpeciesUtilityLinkResponse]) 
 def get_species_utilities(
     db: Session = Depends(get_db), 
     skip: int = 0, 
     limit: int = 50
 ):
-    return db.query(models.SpeciesUtilityLink).offset(skip).limit(limit).all()
+    query = db.query(models.SpeciesUtilityLink).options(
+        joinedload(models.SpeciesUtilityLink.species),
+        joinedload(models.SpeciesUtilityLink.plant_utility)
+    ).offset(skip).limit(limit)
+    
+    results = query.all()
+    
+    return results
 
-
-@router.post("/", response_model=schemas.SpeciesUtilityLinkResponse)
+@router_su.post("/", response_model=schemas.SpeciesUtilityLinkResponse)
 def create_species_utility(
     link: schemas.SpeciesUtilityLinkCreate,
     db: Session = Depends(get_db),
@@ -37,7 +78,7 @@ def create_species_utility(
     return new_link
 
 
-@router.put("/{species_id}/{plant_utility_id}", response_model=schemas.SpeciesUtilityLinkResponse)
+@router_su.put("/{species_id}/{plant_utility_id}", response_model=schemas.SpeciesUtilityLinkResponse)
 def update_species_utility(
     species_id: int,
     plant_utility_id: int,
@@ -59,5 +100,3 @@ def update_species_utility(
     db.commit()
     db.refresh(db_link)
     return db_link
-
-

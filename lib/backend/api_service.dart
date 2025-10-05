@@ -16,17 +16,14 @@ class ApiService {
 
 static Future<List<Map<String, dynamic>>> getSpecies({String? search}) async {
   final url = search != null && search.isNotEmpty
-      ? '$baseUrl/species/?search=$search&limit=50'
-      : '$baseUrl/species/?limit=50';
+      ? '$baseUrl/species/?search=$search'
+      : '$baseUrl/species/';
 
   final res = await http.get(Uri.parse(url));
 
   if (res.statusCode == 200) {
     final data = jsonDecode(res.body) as List<dynamic>;
-    return data.map((e) => {
-      "id": e["species_id"],
-      "name": e["species"],
-    }).toList();
+    return data.cast<Map<String, dynamic>>().toList();
   }
   throw Exception('Failed to load species: ${res.statusCode}');
 }
@@ -38,36 +35,18 @@ static Future<List<Map<String, dynamic>>> getSpecies({String? search}) async {
     throw Exception('Failed to load varieties: ${res.statusCode}');
   }
 
-  // species with varieties
-  static Future<List<Map<String, dynamic>>> getView_Species() async {
-    final species = await getSpecies();
-    final varieties = await getVarieties();
 
-    final Map<int, List<dynamic>> varietyBySpeciesId = {};
-    for (final v in varieties) {
-      final sid = v['species_id'];
-      if (sid == null) continue;
-      varietyBySpeciesId.putIfAbsent(sid, () => []).add(v);
-    }
-
-    final rows = <Map<String, dynamic>>[];
-    for (final s in species) {
-      final sid = s['species_id'];
-      final list = varietyBySpeciesId[sid] ?? [];
-      final varietiesText = list.isEmpty
-          ? ''
-          : list
-              .map((v) => (v['variety'] ?? v['common_name'] ?? '').toString())
-              .where((e) => e.trim().isNotEmpty)
-              .join(', ');
-      rows.add({
-        'species_id': sid,
-        'species': s['species'] ?? '',
-        'varieties': varietiesText,
-      });
-    }
-    return rows;
+// species with varieties
+static Future<List<Map<String, dynamic>>> getView_Species() async {
+  final res = await http.get(Uri.parse('$baseUrl/species/View_Species'));
+  
+  if (res.statusCode == 200) {
+    final List<dynamic> data = jsonDecode(res.body);
+    return data.cast<Map<String, dynamic>>().toList();
   }
+  
+  throw Exception('Failed to load species with varieties: ${res.statusCode}');
+}
 
   /// get genetic sources full
 static Future<List<Map<String, dynamic>>> getView_GeneticSources({int skip = 0, int? limit}) async {
@@ -376,12 +355,8 @@ static Future<List<Map<String, dynamic>>> getPlantUtilities({String? search}) as
 
   final res = await http.get(Uri.parse(url));
 
-  if (res.statusCode == 200) {
-    final data = jsonDecode(res.body) as List<dynamic>;
-    return data.map((e) => {
-      "id": e["plant_utility_id"],
-      "utility": e["utility"],
-    }).toList();
+  if (res.statusCode == 200) {    final data = jsonDecode(res.body) as List<dynamic>;
+    return data.cast<Map<String, dynamic>>().toList();
   }
   throw Exception('Failed to load plant utilities: ${res.statusCode}');
 }
@@ -630,6 +605,57 @@ static Future<Map<String, dynamic>> updateSpeciesUtilityLink({
   );
   if (res.statusCode == 200) return jsonDecode(res.body);
   throw Exception('Failed to update species-utility link: ${res.statusCode}');
+}
+
+static Future<List<Map<String, dynamic>>> getSpeciesForPreloading({int limit = 20}) async {
+  final url = '$baseUrl/species/?limit=$limit'; 
+  final res = await http.get(Uri.parse(url));
+
+  if (res.statusCode == 200) {
+    final data = jsonDecode(res.body) as List<dynamic>;
+    return data.cast<Map<String, dynamic>>().toList();
+  }
+  throw Exception('Failed to preload species: ${res.statusCode}');
+}
+
+static Future<List<Map<String, dynamic>>> getPlantUtilitiesForPreloading({int limit = 20}) async {
+  final url = '$baseUrl/plant_utility/?limit=$limit'; 
+  final res = await http.get(Uri.parse(url));
+
+  if (res.statusCode == 200) {
+    final data = jsonDecode(res.body) as List<dynamic>;
+    return data.cast<Map<String, dynamic>>().toList();
+  }
+  throw Exception('Failed to preload plant utilities: ${res.statusCode}');
+}
+
+// get all zone aspects
+static Future<List<dynamic>> getZoneAspects() async {
+  final res = await http.get(Uri.parse('$baseUrl/zone_aspect/'));
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to load zone aspects: ${res.statusCode}');
+}
+
+// create a new zone aspect
+static Future<Map<String, dynamic>> createZoneAspect(String aspect) async {
+  final res = await http.post(
+    Uri.parse('$baseUrl/zone_aspect/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'aspect': aspect}),
+  );
+  if (res.statusCode == 200 || res.statusCode == 201) return jsonDecode(res.body);
+  throw Exception('Failed to create zone aspect: ${res.statusCode}');
+}
+
+// update zone aspect
+static Future<Map<String, dynamic>> updateZoneAspect(int id, String aspect) async {
+  final res = await http.put(
+    Uri.parse('$baseUrl/zone_aspect/$id'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'aspect': aspect}),
+  );
+  if (res.statusCode == 200) return jsonDecode(res.body);
+  throw Exception('Failed to update zone aspect: ${res.statusCode}');
 }
 
 
