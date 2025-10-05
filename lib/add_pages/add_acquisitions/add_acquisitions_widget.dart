@@ -1194,8 +1194,8 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        Flexible(
-                                          child: Container(
+                                       
+                                          Container(
                                             constraints: BoxConstraints(maxWidth: 400),
                                             child: DropDownTextField(
                                               controller: _model.supplierComboController,
@@ -1229,7 +1229,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                               },
                                             ),
                                           ),
-                                        ),
+                                        
                                         Text(
                                           'Lot No.',
                                           style: FlutterFlowTheme.of(context)
@@ -1894,8 +1894,8 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        Flexible(
-                                          child: Container(
+                                        
+                                          Container(
                                             constraints: BoxConstraints(maxWidth: 400),
                                             child: DropDownTextField(
                                               controller: _model.locationComboController,
@@ -1930,7 +1930,7 @@ class _AddAcquisitionsWidgetState extends State<AddAcquisitionsWidget> {
                                               },
                                             ),
                                           ),
-                                        ),
+                                        
                                         Text(
                                           'Landscape only?',
                                           textAlign: TextAlign.start,

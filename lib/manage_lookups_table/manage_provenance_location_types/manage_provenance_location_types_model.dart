@@ -1,24 +1,47 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
+import 'package:flutter/material.dart';
 import 'manage_provenance_location_types_widget.dart'
     show ManageProvenanceLocationTypesWidget;
-import 'package:flutter/material.dart';
 
 class ManageProvenanceLocationTypesModel
     extends FlutterFlowModel<ManageProvenanceLocationTypesWidget> {
-  ///  State fields for stateful widgets in this page.
+  /// State for location_type table
+  final locationTypeTableController =
+      FlutterFlowDataTableController<P_LocationTypeRow>();
 
-  // State field(s) for PaginatedDataTable widget.
-  final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
+  List<P_LocationTypeRow> locationTypeRows = [];
+  bool isLoading = false;
+  String? errorMessage;
 
   @override
   void initState(BuildContext context) {}
 
   @override
   void dispose() {
-    paginatedDataTableController.dispose();
+    locationTypeTableController.dispose();
   }
+}
+
+// ---------- Data model for location_type ----------
+class P_LocationTypeRow {
+  final int id;
+  String locationType;
+
+  P_LocationTypeRow({
+    required this.id,
+    required this.locationType,
+  });
+
+  factory P_LocationTypeRow.fromJson(Map<String, dynamic> json) {
+    return P_LocationTypeRow(
+      id: json['location_type_id'] as int,
+      locationType: (json['location_type'] ?? '').toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'location_type_id': id,
+        'location_type': locationType,
+      };
 }

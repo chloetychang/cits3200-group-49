@@ -1,36 +1,54 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
-import 'manage_propagation_type_widget.dart' show ManagePropagationTypeWidget;
 import 'package:flutter/material.dart';
+import 'manage_propagation_type_widget.dart' show ManagePropagationTypeWidget;
 
 class ManagePropagationTypeModel
     extends FlutterFlowModel<ManagePropagationTypeWidget> {
-  ///  State fields for stateful widgets in this page.
+  /// State for propagation_type table
+  final propagationTypeTableController =
+      FlutterFlowDataTableController<PropagationTypeRow>();
 
-  // State field(s) for PaginatedDataTable widget.
-  final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
-  // State field(s) for Checkbox widget.
-  Map<ZonesStruct, bool> checkboxValueMap1 = {};
-  List<ZonesStruct> get checkboxCheckedItems1 => checkboxValueMap1.entries
-      .where((e) => e.value)
-      .map((e) => e.key)
-      .toList();
-
-  // State field(s) for Checkbox widget.
-  Map<ZonesStruct, bool> checkboxValueMap2 = {};
-  List<ZonesStruct> get checkboxCheckedItems2 => checkboxValueMap2.entries
-      .where((e) => e.value)
-      .map((e) => e.key)
-      .toList();
+  List<PropagationTypeRow> propagationTypeRows = [];
+  bool isLoading = false;
+  String? errorMessage;
 
   @override
   void initState(BuildContext context) {}
 
   @override
   void dispose() {
-    paginatedDataTableController.dispose();
+    propagationTypeTableController.dispose();
   }
+}
+
+// ---------- Data model for propagation_type ----------
+class PropagationTypeRow {
+  final int id;
+  String propagationType;
+  bool needsTwoParents;
+  bool canCrossGenera;
+
+  PropagationTypeRow({
+    required this.id,
+    required this.propagationType,
+    this.needsTwoParents = false,
+    this.canCrossGenera = false,
+  });
+
+  factory PropagationTypeRow.fromJson(Map<String, dynamic> json) {
+    return PropagationTypeRow(
+      id: json['propagation_type_id'] as int,
+      propagationType: (json['propagation_type'] ?? '').toString(),
+      needsTwoParents: json['needs_two_parents'] ?? false,
+      canCrossGenera: json['can_cross_genera'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'propagation_type_id': id,
+        'propagation_type': propagationType,
+        'needs_two_parents': needsTwoParents,
+        'can_cross_genera': canCrossGenera,
+      };
 }
