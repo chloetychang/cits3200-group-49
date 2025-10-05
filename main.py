@@ -22,6 +22,8 @@ from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
 from App.routes.Add_Routes import add_acquisitions
+from App.routes.Add_Routes import add_provenances
+
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -39,6 +41,7 @@ app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
 app.include_router(add_acquisitions.router)
+app.include_router(add_provenances.router)
 
 app.add_middleware(
     CORSMiddleware,

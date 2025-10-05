@@ -99,7 +99,7 @@ class CRUDProvenance(CRUDBase[models.Provenance, schemas.ProvenanceCreate, schem
     def get_by_bioregion(self, db: Session, *, bioregion_code: str) -> List[models.Provenance]:
         return db.query(models.Provenance).filter(models.Provenance.bioregion_code == bioregion_code).all()
 
-    def get_by_location(self, db, location: str):
+    def get_by_location(self, db: Session, *, location: str) -> Optional[models.Provenance]:
         return db.query(models.Provenance).filter(models.Provenance.location == location).first()
 
 class CRUDRemovalCause(CRUDBase[models.RemovalCause, schemas.RemovalCauseCreate, schemas.RemovalCauseCreate]):

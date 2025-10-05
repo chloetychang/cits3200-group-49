@@ -1,26 +1,14 @@
 # Minutes 
 
 - Date: 05/10/25
-- Present: Dennis, Harper, Naren, Chloe, Tri, Ryan
+- Present: Dennis, Harper, Naren, Chloe, Tri, Ryan 
 - Absent:
 - Apologies:
-- Venue: Online Discord
-- Minutes by:
+- Venue: Discord (Online)
+- Minutes by: 
 - Meeting Start: 20:00
 
-## Item 1 - Progress Check in
-> **<Description>**
- - Check in on progress with work allocated.
- - Highlight any current challenges faced with implementation and come up with a plan to tackle them.
-
-### Discussion
- - 
-
-### Actions
- - 
-<br>
-
-## Item 2 - 
+## Item 1 - Progress Checkup
 > **<Description>**
 
 ### Discussion
@@ -30,7 +18,17 @@
  - 
 <br>
 
-## Item 3 - 
+## Item 2 - Project Acceptance Planning
+> **<Description>**
+
+### Discussion
+ - 
+
+### Actions
+ - 
+<br>
+
+## Item 3 - Task Allocation
 > **<Description>**
 
 ### Discussion
