@@ -278,4 +278,54 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load family name dropdown: ${res.statusCode}');
   }
 
+  // ------------------------------- Provenances --------------------------------
+  static Future<List<String>> getProvenanceBioregionDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/provenances/bioregion'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['bioregion_code'] as String).toList();
+    }
+    throw Exception('Failed to load bioregion name dropdown: ${res.statusCode}');
+  }
+
+  static Future<List<String>> getLocationTypeDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/provenances/location_type'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['location_type'] as String).toList();
+    }
+    throw Exception('Failed to load location type dropdown: ${res.statusCode}');
+  }
+
+  static Future<List<Map<String, dynamic>>> getLocationTypeDropdownFull() async {
+    final res = await http.get(Uri.parse('$baseUrl/provenances/location_type'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load location type dropdown: ${res.statusCode}');
+  }
+
+  // POST create provenance
+  static Future<Map<String, dynamic>> createProvenance({
+    required String location,
+    String? bioregionCode,
+    int? locationTypeId,
+    String? extraDetails,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/provenances/provenance/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'location': location,
+        if (bioregionCode != null) 'bioregion_code': bioregionCode,
+        if (locationTypeId != null) 'location_type_id': locationTypeId,
+        if (extraDetails != null) 'extra_details': extraDetails,
+      }),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
+    }
+    throw Exception('Failed to create provenance: ${res.statusCode}, error: ${res.body}');
+  }
 }

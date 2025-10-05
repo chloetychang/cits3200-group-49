@@ -21,6 +21,9 @@ from App.routes.View_Routes import view_plantings
 from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
+
+from App.routes.Add_Routes import add_provenances # add_progeny
+
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -37,6 +40,8 @@ app.include_router(view_plantings.router)
 app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
+
+app.include_router(add_provenances.router) # Add this code
 
 app.add_middleware(
     CORSMiddleware,
@@ -128,11 +133,11 @@ def get_supplier_dropdown(db: Session = Depends(get_db)):
     return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
 
 # Creation of a provenance dropdown
-@app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
-def get_provenance_location_dropdown(db: Session = Depends(get_db)):
-    """Get all provenance locations for dropdown (A→Z)."""
-    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
-    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
+# @app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
+# def get_provenance_location_dropdown(db: Session = Depends(get_db)):
+#     """Get all provenance locations for dropdown (A→Z)."""
+#     provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
+#     return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
 
 @app.get("/acquisition/bioregion_code", response_model=List[schemas.BioregionResponse])
 def get_bioregion_dropdown(db: Session = Depends(get_db)):

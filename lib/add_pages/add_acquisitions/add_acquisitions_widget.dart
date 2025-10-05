@@ -1,5 +1,4 @@
 import '/flutter_flow/flutter_flow_drop_down.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
