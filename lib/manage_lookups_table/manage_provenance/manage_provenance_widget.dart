@@ -95,10 +95,9 @@ Future<void> _load() async {
 
   Future<void> _onSave() async {
     try {
-      // 新增
       final newLocation = _newLocationCtrl.text.trim();
       if (newLocation.isNotEmpty) {
-        await ApiService.createProvenance(
+        await ApiService.createProvenanceM(
           location: newLocation,
           bioregionCode: _newBioregionCtrl.text.trim(),
           extraDetails: _newExtraCtrl.text.trim(),
@@ -110,7 +109,7 @@ Future<void> _load() async {
         _newLocationTypeId = null;
       }
 
-      // 更新
+
       for (final id in _dirtyIds) {
         await ApiService.updateProvenance(
         id: id,
