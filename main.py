@@ -133,11 +133,11 @@ def get_supplier_dropdown(db: Session = Depends(get_db)):
     return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
 
 # Creation of a provenance dropdown
-@app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
-def get_provenance_location_dropdown(db: Session = Depends(get_db)):
-    """Get all provenance locations for dropdown (A→Z)."""
-    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
-    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
+# @app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
+# def get_provenance_location_dropdown(db: Session = Depends(get_db)):
+#     """Get all provenance locations for dropdown (A→Z)."""
+#     provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
+#     return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
 
 @app.get("/acquisition/bioregion_code", response_model=List[schemas.BioregionResponse])
 def get_bioregion_dropdown(db: Session = Depends(get_db)):

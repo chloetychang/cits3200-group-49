@@ -30,8 +30,8 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future<void> _loadBioregion() async {
-    await _model.loadBioregionDropdown();
+  Future<void> _loadDropdowns() async {
+    await _model.loadAllDropdowns();
     setState(() {});
   } 
 
@@ -40,7 +40,7 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
     super.initState();
     _model = createModel(context, () => AddProvenancesModel());
 
-    _loadBioregion();
+    _loadDropdowns();
 
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
@@ -1132,13 +1132,11 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
                                         controller: _model
                                                 .dropDownValueController2 ??=
                                             FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue2 = val),
+                                        options: _model.LocationTypeDropdown,
+                                        onChanged: (val) => safeSetState(() {
+                                          _model.dropDownValue2 = val;
+                                          _model.selectedLocationType = val;
+                                        }),
                                         width: 400.0,
                                         height: 50.0,
                                         textStyle: FlutterFlowTheme.of(context)
@@ -1152,7 +1150,7 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
                                                   !FlutterFlowTheme.of(context)
                                                       .bodyMediumIsCustom,
                                             ),
-                                        hintText: 'Select your date here',
+                                        hintText: 'Select location type',
                                         icon: Icon(
                                           Icons.keyboard_arrow_down_rounded,
                                           color: FlutterFlowTheme.of(context)
@@ -1357,8 +1355,35 @@ class _AddProvenancesWidgetState extends State<AddProvenancesWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                            onPressed: () async {
+                              try {
+                                final result = await _model.saveProvenance();
+                                if (result != null) {
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Provenance created successfully!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  // Optionally clear the form or navigate back
+                                  _model.textController1?.clear();
+                                  _model.textController2?.clear();
+                                  _model.selectedBioregion = null;
+                                  _model.selectedLocationType = null;
+                                  _model.dropDownValueController2?.reset();
+                                  _model.BioregionComboController.clearDropDown();
+                                  setState(() {});
+                                }
+                              } catch (e) {
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error: ${e.toString()}'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                             text: 'Save',
                             options: FFButtonOptions(
