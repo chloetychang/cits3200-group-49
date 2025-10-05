@@ -176,6 +176,40 @@ def copy_table_data(access_cur, pg_cur, table, columns):
         insert_sql = f'INSERT INTO "{table}" ({", ".join([f"\"{c}\"" for c in col_names])}) VALUES (' + ', '.join(['%s'] * len(col_names)) + ')'
     psycopg2.extras.execute_batch(pg_cur, insert_sql, rows)
 
+# Function to fix sequences after data migration
+def fix_sequences(pg_cur):
+    """
+    Fix PostgreSQL sequences to start from the maximum existing ID + 1.
+    This is crucial after using OVERRIDING SYSTEM VALUE during data insertion.
+    """
+    print('Fixing sequences...')
+    
+    # Get all sequences and their associated table/column info
+    pg_cur.execute("""
+        SELECT 
+            c.table_name,
+            c.column_name,
+            pg_get_serial_sequence(c.table_name, c.column_name) as sequence_name
+        FROM information_schema.columns c
+        WHERE c.table_schema = 'public' 
+        AND c.is_identity = 'YES'
+        AND pg_get_serial_sequence(c.table_name, c.column_name) IS NOT NULL
+    """)
+    
+    sequences = pg_cur.fetchall()
+    
+    for table_name, column_name, sequence_name in sequences:
+        try:
+            # Simple approach: set sequence to max value in table
+            pg_cur.execute(f"""
+                SELECT setval('{sequence_name}', 
+                    COALESCE((SELECT MAX("{column_name}") FROM "{table_name}"), 1)
+                )
+            """)
+            print(f'Fixed sequence {sequence_name} for {table_name}.{column_name}')
+        except Exception as e:
+            print(f'Error fixing sequence {sequence_name}: {e}')
+
 # Function to create views in PostgreSQL
 def create_views(pg_cur):
     print('Creating views...')
@@ -228,6 +262,11 @@ def migrate():
         # Store schema info for uniqueness checks
         table_schemas[table] = {'pk': pk, 'uniques': uniques}
         all_foreign_keys.extend(foreign_keys)
+    
+    # Fix all sequences after data migration
+    fix_sequences(pg_cur)
+    pg_conn.commit()
+    
     # Add all foreign keys after all tables are created
     for fk in all_foreign_keys:
         alter_sql = f'ALTER TABLE "{fk["table"]}" ADD FOREIGN KEY ("{fk["column"]}") REFERENCES "{fk["ref_table"]}"("{fk["ref_column"]}")'
