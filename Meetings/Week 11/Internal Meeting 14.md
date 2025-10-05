@@ -1,14 +1,14 @@
 # Minutes 
 
-- Date: 05/10/25
+- Date: 08/10/25
 - Present: Dennis, Harper, Naren, Chloe, Tri, Ryan 
 - Absent:
 - Apologies:
 - Venue: EZONE NTH 202B 
 - Minutes by: 
-- Meeting Start: 20:00
+- Meeting Start: 14:55
 
-## Item 1 - Progress Checkup
+## Item 1 - 
 > **<Description>**
 
 ### Discussion
@@ -18,7 +18,7 @@
  - 
 <br>
 
-## Item 2 - Project Acceptance Planning
+## Item 2 - 
 > **<Description>**
 
 ### Discussion
@@ -28,7 +28,7 @@
  - 
 <br>
 
-## Item 3 - Task Allocation
+## Item 3 - 
 > **<Description>**
 
 ### Discussion
