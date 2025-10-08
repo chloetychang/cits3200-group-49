@@ -8,33 +8,25 @@ from App import models, schemas
 router = APIRouter(prefix="/genetic_sources", tags=["genetic_sources"])
 
 @router.get("/View_GeneticSources", response_model=List[schemas.GeneticSourceFullResponse])
-def get_genetic_sources_full(
-    skip: int = 0,
-    limit: Optional[int] = 100,
-    db: Session = Depends(get_db),
-):
+def get_genetic_sources_full(db: Session = Depends(get_db)):
     try:
-        q = (
-    db.query(models.GeneticSource)
-    .options(
-        # genetic_source -> variety -> species
-        joinedload(models.GeneticSource.variety)
-            .joinedload(models.Variety.species),
-        joinedload(models.GeneticSource.provenance)
-            .joinedload(models.Provenance.location_type_rel),
+        rows = (
+            db.query(models.GeneticSource)
+            .options(
+                # genetic_source -> variety -> species
+                joinedload(models.GeneticSource.variety)
+                    .joinedload(models.Variety.species),
+                joinedload(models.GeneticSource.provenance)
+                    .joinedload(models.Provenance.location_type_rel),
 
-        joinedload(models.GeneticSource.provenance)
-            .joinedload(models.Provenance.bioregion),
+                joinedload(models.GeneticSource.provenance)
+                    .joinedload(models.Provenance.bioregion),
 
-        joinedload(models.GeneticSource.supplier),
-        joinedload(models.GeneticSource.propagation_type_rel),
-    )
-    .offset(skip)
+                joinedload(models.GeneticSource.supplier),
+                joinedload(models.GeneticSource.propagation_type_rel),
+            )
+            .all()
         )
-        if limit is not None:
-            q = q.limit(limit)
-
-        rows = q.all()
 
         results: List[schemas.GeneticSourceFullResponse] = []
         for gs in rows:
@@ -54,6 +46,10 @@ def get_genetic_sources_full(
                     species=(
                         schemas.SpeciesSimpleResponse.model_validate(gs.variety.species)
                         if gs.variety and gs.variety.species else None
+                    ),
+                    variety=(
+                        schemas.VarietyResponse.model_validate(gs.variety)
+                        if gs.variety else None
                     ),
                     provenance=(
                         schemas.ProvenanceOut.model_validate(gs.provenance)
