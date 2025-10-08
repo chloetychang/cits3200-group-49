@@ -1,9 +1,9 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
+import '/backend/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'manage_propagation_type_model.dart';
@@ -23,20 +23,109 @@ class ManagePropagationTypeWidget extends StatefulWidget {
 class _ManagePropagationTypeWidgetState
     extends State<ManagePropagationTypeWidget> {
   late ManagePropagationTypeModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final Map<int, TextEditingController> _controllers = {};
+  final TextEditingController _newController = TextEditingController();
+
+  final Map<int, bool> _needsTwoParents = {};
+  final Map<int, bool> _canCrossGenera = {};
+
+  bool _newNeedsTwoParents = false;
+  bool _newCanCrossGenera = false;
+
+  final Set<int> _dirtyIds = <int>{};
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManagePropagationTypeModel());
+    _load();
   }
 
   @override
   void dispose() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    _newController.dispose();
     _model.dispose();
-
     super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() => _loading = true);
+    try {
+      final list = await ApiService.getPropagationTypes();
+      _model.propagationTypeRows = list
+          .map((e) => PropagationTypeRow.fromJson(e))
+          .toList();
+
+      for (final r in _model.propagationTypeRows) {
+        _controllers.putIfAbsent(
+          r.id,
+          () => TextEditingController(text: r.propagationType),
+        );
+        _needsTwoParents[r.id] = r.needsTwoParents;
+        _canCrossGenera[r.id] = r.canCrossGenera;
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _markDirty(int id) {
+    _dirtyIds.add(id);
+  }
+
+  Future<void> _onCancel() async {
+    await _load();
+    _newController.clear();
+    _newNeedsTwoParents = false;
+    _newCanCrossGenera = false;
+    _dirtyIds.clear();
+  }
+
+  Future<void> _onSave() async {
+    try {
+      // 新增
+      final newValue = _newController.text.trim();
+      if (newValue.isNotEmpty) {
+        await ApiService.createPropagationType(
+          propagationType: newValue,
+          needsTwoParents: _newNeedsTwoParents,
+          canCrossGenera: _newCanCrossGenera,
+        );
+        _newController.clear();
+        _newNeedsTwoParents = false;
+        _newCanCrossGenera = false;
+      }
+      for (final id in _dirtyIds) {
+        final ctrl = _controllers[id];
+        if (ctrl != null) {
+          await ApiService.updatePropagationType(
+            id: id,
+            propagationType: ctrl.text,
+            needsTwoParents: _needsTwoParents[id] ?? false,
+            canCrossGenera: _canCrossGenera[id] ?? false,
+          );
+        }
+      }
+
+      _dirtyIds.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Saved")));
+      }
+      await _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Save failed: $e")),
+        );
+      }
+    }
   }
 
   @override
@@ -638,219 +727,151 @@ class _ManagePropagationTypeWidgetState
                           .addToEnd(SizedBox(width: 16.0)),
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        alignment: AlignmentDirectional(0.0, 0.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final zones = FFAppState().mockZones.toList();
-
-                                  return FlutterFlowDataTable<ZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: zones,
-                                    columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Propagation type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Needs two parents',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Can cross genera?',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    dataRowBuilder: (zonesItem, zonesIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
-                                      color: WidgetStateProperty.all(
-                                        zonesIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
-                                      ),
-                                      cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                        ),
-                                        Theme(
-                                          data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(4.0),
-                                              ),
-                                            ),
-                                            unselectedWidgetColor: Colors.black,
-                                          ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValueMap1[
-                                                zonesItem] ??= true,
-                                            onChanged: (newValue) async {
-                                              safeSetState(() =>
-                                                  _model.checkboxValueMap1[
-                                                      zonesItem] = newValue!);
-                                            },
-                                            side: (Colors.black != null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: Colors.black,
-                                                  )
-                                                : null,
-                                            activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
-                                          ),
-                                        ),
-                                        Theme(
-                                          data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(4.0),
-                                              ),
-                                            ),
-                                            unselectedWidgetColor: Colors.black,
-                                          ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValueMap2[
-                                                zonesItem] ??= true,
-                                            onChanged: (newValue) async {
-                                              safeSetState(() =>
-                                                  _model.checkboxValueMap2[
-                                                      zonesItem] = newValue!);
-                                            },
-                                            side: (Colors.black != null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: Colors.black,
-                                                  )
-                                                : null,
-                                            activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondaryBackground,
-                                          ),
-                                        ),
-                                      ].map((c) => DataCell(c)).toList(),
-                                    ),
-                                    paginated: true,
-                                    selectable: false,
-                                    hidePaginator: false,
-                                    showFirstLastButtons: false,
-                                    headingRowHeight: 56.0,
-                                    dataRowHeight: 48.0,
-                                    columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    addHorizontalDivider: true,
-                                    addTopAndBottomDivider: false,
-                                    hideDefaultHorizontalDivider: true,
-                                    horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                    horizontalDividerThickness: 1.0,
-                                    addVerticalDivider: false,
-                                  );
-                                },
-                              ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context).secondaryBackground,
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          ],
+                            alignment: AlignmentDirectional(0.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Builder(
+                                    builder: (context) {
+                                      final rows = [
+                                        ..._model.propagationTypeRows,
+                                        PropagationTypeRow(
+                                          id: -1,
+                                          propagationType: '',
+                                          needsTwoParents: _newNeedsTwoParents,
+                                          canCrossGenera: _newCanCrossGenera,
+                                        ),
+                                      ];
+
+                                      return FlutterFlowDataTable<PropagationTypeRow>(
+                                        controller: _model.propagationTypeTableController,
+                                        data: rows,
+                                        columnsBuilder: (onSortChanged) => [
+                                          DataColumn2(
+                                            label: Text(
+                                              'Propagation type',
+                                              style: FlutterFlowTheme.of(context).labelLarge,
+                                            ),
+                                          ),
+                                          DataColumn2(
+                                            label: Text(
+                                              'Needs two parents',
+                                              style: FlutterFlowTheme.of(context).labelLarge,
+                                            ),
+                                          ),
+                                          DataColumn2(
+                                            label: Text(
+                                              'Can cross genera?',
+                                              style: FlutterFlowTheme.of(context).labelLarge,
+                                            ),
+                                          ),
+                                        ],
+                                        dataRowBuilder: (row, rowIndex, selected, onSelectChanged) {
+                                          final isNew = row.id == -1;
+
+                                          return DataRow(
+                                            selected: _dirtyIds.contains(row.id),
+                                            onSelectChanged: (val) {
+                                              if (!isNew && val == true) {
+                                                setState(() => _dirtyIds.add(row.id));
+                                              } else {
+                                                setState(() => _dirtyIds.remove(row.id));
+                                              }
+                                            },
+                                            color: WidgetStateProperty.all(
+                                              rowIndex % 2 == 0
+                                                  ? FlutterFlowTheme.of(context).secondaryBackground
+                                                  : FlutterFlowTheme.of(context).primaryBackground,
+                                            ),
+                                            cells: [
+                                              // propagation_type 名字
+                                              DataCell(
+                                                TextFormField(
+                                                  controller: isNew
+                                                      ? _newController
+                                                      : _controllers[row.id],
+                                                  decoration: const InputDecoration(
+                                                    hintText: 'Propagation type',
+                                                    border: InputBorder.none,
+                                                  ),
+                                                  onChanged: (_) => _markDirty(row.id),
+                                                ),
+                                              ),
+                                              // needs_two_parents 复选框
+                                              DataCell(
+                                                Checkbox(
+                                                  value: isNew
+                                                      ? _newNeedsTwoParents
+                                                      : _needsTwoParents[row.id] ?? false,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (isNew) {
+                                                        _newNeedsTwoParents = val ?? false;
+                                                      } else {
+                                                        _needsTwoParents[row.id] = val ?? false;
+                                                        _markDirty(row.id);
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              // can_cross_genera 复选框
+                                              DataCell(
+                                                Checkbox(
+                                                  value: isNew
+                                                      ? _newCanCrossGenera
+                                                      : _canCrossGenera[row.id] ?? false,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (isNew) {
+                                                        _newCanCrossGenera = val ?? false;
+                                                      } else {
+                                                        _canCrossGenera[row.id] = val ?? false;
+                                                        _markDirty(row.id);
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                        paginated: true,
+                                        selectable: false,
+                                        hidePaginator: false,
+                                        showFirstLastButtons: false,
+                                        headingRowHeight: 56.0,
+                                        dataRowHeight: 48.0,
+                                        columnSpacing: 20.0,
+                                        headingRowColor: FlutterFlowTheme.of(context).secondary,
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        addHorizontalDivider: true,
+                                        addTopAndBottomDivider: false,
+                                        hideDefaultHorizontalDivider: true,
+                                        horizontalDividerColor:
+                                            FlutterFlowTheme.of(context).secondaryBackground,
+                                        horizontalDividerThickness: 1.0,
+                                        addVerticalDivider: false,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+
                 ],
               ),
             ),

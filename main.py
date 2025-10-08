@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload, joinedload
 from sqlalchemy.exc import IntegrityError
 import uvicorn
 from typing import List, Optional
-
+from fastapi.middleware.cors import CORSMiddleware
 from App.database import engine, get_db
 from App.config import settings
 from App import models
@@ -21,12 +21,30 @@ from App.routes.View_Routes import view_plantings
 from App.routes.View_Routes import view_provenances
 from App.routes.View_Routes import view_zone
 from App.routes.View_Routes import view_subzones
-from App.routes.Other_Routes import form_update_species
+from App.routes.Manage_Lookup_Routes import manage_lookup_conservation_status
+from App.routes.Manage_Lookup_Routes import manage_lookup_container_type
+from App.routes.Manage_Lookup_Routes import manage_plant_utility
+from App.routes.Manage_Lookup_Routes import manage_removal_cause
+from App.routes.Manage_Lookup_Routes import manage_lookup_provenance
+from App.routes.Manage_Lookup_Routes import manage_lookup_propagation
+from App.routes.Manage_Lookup_Routes import manage_lookup_species_utility
+from App.routes.Manage_Lookup_Routes import manage_zone_aspect
+from App.routes.Manage_Lookup_Routes import manage_zone_aspect
+from App.routes.Add_Routes import add_acquisitions
+from App.routes.Add_Routes import add_provenances
 
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
+    
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -39,7 +57,18 @@ app.include_router(view_plantings.router)
 app.include_router(view_provenances.router)
 app.include_router(view_zone.router)
 app.include_router(view_subzones.router)
-app.include_router(form_update_species.router)  
+app.include_router(manage_lookup_conservation_status.router)
+app.include_router(manage_lookup_container_type.router)
+app.include_router(manage_plant_utility.router)
+app.include_router(manage_removal_cause.router)
+app.include_router(manage_lookup_provenance.router)
+app.include_router(manage_lookup_propagation.router)
+app.include_router(manage_lookup_species_utility.router_su) 
+app.include_router(manage_lookup_species_utility.router_s)
+app.include_router(manage_zone_aspect.router)
+app.include_router(add_acquisitions.router)
+app.include_router(add_provenances.router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -74,13 +103,6 @@ def get_plantings(skip: int = 0, limit: int = None, db: Session = Depends(get_db
 def get_families(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
     return crud.family.get_multi(db=db, skip=skip, limit=limit)
 
-# -------------------- Species --------------------
-@app.get("/species/", response_model=List[schemas.SpeciesResponse])
-def get_species(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
-    q = db.query(models.Species).order_by(models.Species.species.asc())
-    q = apply_pagination(q, skip=skip, limit=limit)
-    return q.all()
-
 # -------------------- Varieties --------------------
 @app.get("/varieties/", response_model=List[schemas.VarietyResponse])
 def get_varieties(skip: int = 0, limit: int = None, db: Session = Depends(get_db)):
@@ -107,115 +129,6 @@ def create_planting(planting_in: schemas.PlantingCreate, db: Session = Depends(g
 
 
 # -------------------- Add Screens --------------------------
-# -------------------- API for Acquistion Source Page --------------------------
-# For Old Species + Variety - It requires "genus" and "species"
-# Creation of a genus dropdown
-@app.get("/acquisition/genus", response_model=List[schemas.GenusResponse])
-def get_genus_dropdown(db: Session = Depends(get_db)):
-    """Get all genus names for dropdown (A→Z)."""
-    genus_list = db.query(models.Genus).order_by(models.Genus.genus.asc()).all()
-    return [schemas.GenusResponse.model_validate(g).model_dump() for g in genus_list]
-
-# Creation of a species dropdown
-@app.get("/acquisition/species", response_model=List[schemas.SpeciesResponse])
-def get_species_dropdown(db: Session = Depends(get_db)):
-    """Get all species names for dropdown (A→Z)."""
-    species = db.query(models.Species).order_by(models.Species.species.asc()).all()
-    return [schemas.SpeciesResponse.model_validate(s).model_dump() for s in species]
-
-# Creation of a supplier dropdown
-@app.get("/acquisition/suppliers", response_model=List[schemas.SupplierResponse])
-def get_supplier_dropdown(db: Session = Depends(get_db)):
-    """Get all supplier names for dropdown (A→Z)."""
-    suppliers = db.query(models.Supplier).order_by(models.Supplier.supplier_name.asc()).all()
-    return [schemas.SupplierResponse.model_validate(s).model_dump() for s in suppliers]
-
-# Creation of a provenance dropdown
-@app.get("/acquisition/provenance_locations", response_model=List[schemas.ProvenanceResponse])
-def get_provenance_location_dropdown(db: Session = Depends(get_db)):
-    """Get all provenance locations for dropdown (A→Z)."""
-    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
-    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
-
-@app.get("/acquisition/bioregion_code", response_model=List[schemas.BioregionResponse])
-def get_bioregion_dropdown(db: Session = Depends(get_db)):
-    """Get all bioregion codes for dropdown (A→Z)."""
-    bioregions = db.query(models.Bioregion).order_by(models.Bioregion.bioregion_code.asc()).all()
-    return [schemas.BioregionResponse.model_validate(b).model_dump() for b in bioregions]
-
-# TODO: Family name dropdown - Missing due to data model changes [left as placeholder]
-
-# TODO: Generation number dropdown - Missing due to data model changes [left as placeholder]
-
-# TODO: Fix POST Request on Acquisition model
-@app.post("/acquisition/", response_model=List[schemas.GeneticSourceResponse])
-def create_acquisition(
-    acquisition: schemas.AcquisitionCreate = Body(...),
-    db: Session = Depends(get_db)
-):
-    genetic_source = acquisition.genetic_source
-    supplier = acquisition.supplier
-    provenance = acquisition.provenance
-
-    # Lookup or create supplier
-    supplier_obj = crud.supplier.get_by_name(db, name=supplier.supplier_name)
-    if not supplier_obj:
-        supplier_obj = crud.supplier.create(db, obj_in=supplier)
-    supplier_id = supplier_obj.supplier_id
-
-    # Lookup or create provenance
-    provenance_obj = crud.provenance.get_by_location(db, location=provenance.location)
-    if not provenance_obj:
-        provenance_obj = crud.provenance.create(db, obj_in=provenance)
-    provenance_id = provenance_obj.provenance_id
-
-    # Lookup or create variety (if needed)
-    variety_id = getattr(genetic_source, "variety_id", None)
-    if not variety_id:
-        variety_name = getattr(genetic_source, "variety", None)
-        species_name = getattr(genetic_source, "species", None)
-        if variety_name and species_name:
-            # Lookup species by name
-            species_obj = crud.species.get_by_name(db, name=species_name)
-            if not species_obj:
-                # Create species if not found
-                species_obj = crud.species.create(db, obj_in={"species": species_name})
-            species_id = species_obj.species_id
-            # Lookup variety by name and species_id
-            variety_obj = crud.variety.get_by_name_and_species(db, name=variety_name, species_id=species_id)
-            if not variety_obj:
-                variety_obj = crud.variety.create(db, obj_in={"variety": variety_name, "species_id": species_id})
-            variety_id = variety_obj.variety_id
-        elif variety_name:
-            # Fallback: create variety without species
-            variety_obj = crud.variety.get_by_name(db, name=variety_name)
-            if not variety_obj:
-                variety_obj = crud.variety.create(db, obj_in={"variety": variety_name})
-            variety_id = variety_obj.variety_id
-        else:
-            raise HTTPException(status_code=400, detail="Variety info required (provide variety and species names if new)")
-
-    # Lookup or create family (if needed)
-    family_id = None
-    if hasattr(genetic_source, "family_name") and genetic_source.family_name:
-        family_obj = crud.family.get_by_name(db, name=genetic_source.family_name)
-        if not family_obj:
-            family_obj = crud.family.create(db, obj_in={"famiy_name": genetic_source.family_name})
-        family_id = family_obj.family_id
-
-    gs_data = genetic_source.model_dump()
-    gs_data["supplier_id"] = supplier_id
-    gs_data["provenance_id"] = provenance_id
-    gs_data["variety_id"] = variety_id
-    if family_id:
-        gs_data["family_id"] = family_id
-
-    try:
-        gs_obj = crud.genetic_source.create(db, obj_in=schemas.GeneticSourceCreate(**gs_data))
-    except IntegrityError:
-        raise HTTPException(status_code=400, detail="Failed to create Acquisition")
-    return gs_obj
-
 # -------------------- API for Planting Source Page --------------------------
 # TODO: Creation of Genetic Source dropdown (To be done - currently missing data 25/09/25)
 

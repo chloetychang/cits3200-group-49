@@ -65,56 +65,116 @@ def test_create_and_fetch_planting(client, db_engine):
 		conn.execute(text("DELETE FROM planting WHERE comments=:comments"), {"comments": payload["comments"]})
 		conn.commit()
 
-# --- Acquisitions: Add/Update ---
-def test_create_and_update_acquisition(client, db_engine):
-	# Create acquisition via API
+# --- Acquisitions: Database Creation Tests ---
+def test_create_acquisition(client, db_engine):
+	"""Test basic acquisition creation and database insertion"""
+	import time
+	timestamp = str(int(time.time() * 1000))  # milliseconds for uniqueness
 	payload = {
 		"acquisition_date": "2025-09-17T12:00:00",
 		"variety_id": 1,
 		"supplier_id": 1,
+		"supplier_lot_number": f"INTEGRATION-TEST-{timestamp}",
 		"generation_number": 1,
 		"landscape_only": True
 	}
+	
+	# Create acquisition via API
 	start = time.time()
-	response = client.post("/acquisitions/", json=payload)
+	response = client.post("/acquisition/", json=payload)
 	duration = time.time() - start
 	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	if response.status_code not in (200, 201):
+		print(f"Error response: {response.status_code} - {response.text}")
 	assert response.status_code in (200, 201)
+	
+	# Verify API response
 	data = response.json()
 	for key in payload:
 		assert data[key] == payload[key]
 	acquisition_id = data.get("genetic_source_id")
-	# Check DB for inserted acquisition
-	with db_engine.connect() as conn:
-		result = conn.execute(text("SELECT * FROM genetic_source WHERE generation_number=:generation_number AND variety_id=:variety_id AND supplier_id=:supplier_id"), {
-			"generation_number": payload["generation_number"],
-			"variety_id": payload["variety_id"],
-			"supplier_id": payload["supplier_id"]
-		})
-		row = result.mappings().fetchone()
-		assert row is not None, "Acquisition not found in DB after API creation"
-		assert row["generation_number"] == payload["generation_number"]
-	# Update acquisition
-	update_payload = payload.copy()
-	update_payload["generation_number"] = 2
+	assert acquisition_id is not None, "Created acquisition should have an ID"
+	
+	# Verify data exists in database
+	try:
+		with db_engine.connect() as conn:
+			result = conn.execute(text("SELECT * FROM genetic_source WHERE supplier_lot_number=:lot_number"), {
+				"lot_number": payload["supplier_lot_number"]
+			})
+			row = result.mappings().fetchone()
+			assert row is not None, "Acquisition not found in DB after API creation"
+			assert row["generation_number"] == payload["generation_number"]
+			assert row["supplier_lot_number"] == payload["supplier_lot_number"]
+			assert row["variety_id"] == payload["variety_id"]
+			assert row["supplier_id"] == payload["supplier_id"]
+			assert row["landscape_only"] == payload["landscape_only"]
+	finally:
+		# Cleanup - delete the test record
+		if acquisition_id:
+			with db_engine.connect() as conn:
+				conn.execute(text("DELETE FROM genetic_source WHERE genetic_source_id=:id"), 
+							{"id": acquisition_id})
+				conn.commit()
+
+def test_create_acquisition_with_optional_fields(client, db_engine):
+	"""Test acquisition creation with all optional fields in database"""
+	import time
+	
+	payload = {
+		"acquisition_date": "2025-10-01T10:00:00",
+		"variety_id": 1,  # Hardcoded test data
+		"supplier_id": 1,  # Hardcoded test data
+		"supplier_lot_number": f"INTEGRATION-FULL-{int(time.time())}",
+		"price": 35.75,
+		"gram_weight": 150,
+		"viability": 90,
+		"generation_number": 2,
+		"landscape_only": False,
+		"research_notes": "Integration test with all optional fields"
+	}
+	
+	# Create acquisition via API
 	start = time.time()
-	response = client.put(f"/acquisitions/{acquisition_id}", json=update_payload)
+	response = client.post("/acquisition/", json=payload)
 	duration = time.time() - start
-	assert duration < 3.0, f"API interaction took too long: {duration:.2f} seconds"
+	assert duration < 3.0, f"Full acquisition creation took too long: {duration:.2f} seconds"
 	assert response.status_code in (200, 201)
-	updated = response.json()
-	assert updated["generation_number"] == 2
-	# Check DB for update
-	with db_engine.connect() as conn:
-		result = conn.execute(text("SELECT * FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
-		row = result.mappings().fetchone()
-		assert row is not None
-		assert row["generation_number"] == 2
-	# Teardown: remove the test acquisition
-	with db_engine.connect() as conn:
-		conn.execute(text("DELETE FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
-		conn.commit()
-		assert row["generation_number"] == 2
+	
+	# Verify API response contains all fields
+	data = response.json()
+	acquisition_id = data.get("genetic_source_id")
+	assert acquisition_id is not None, "Created acquisition should have an ID"
+	assert data["variety_id"] == payload["variety_id"]
+	assert data["supplier_id"] == payload["supplier_id"]
+	assert data["supplier_lot_number"] == payload["supplier_lot_number"]
+	assert data["price"] == payload["price"]
+	assert data["gram_weight"] == payload["gram_weight"]
+	assert data["viability"] == payload["viability"]
+	assert data["generation_number"] == payload["generation_number"]
+	assert data["landscape_only"] == payload["landscape_only"]
+	assert data["research_notes"] == payload["research_notes"]
+	
+	# Verify all data persisted correctly in database
+	try:
+		with db_engine.connect() as conn:
+			result = conn.execute(text("SELECT * FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
+			row = result.mappings().fetchone()
+			assert row is not None, "Acquisition not found in DB after creation"
+			assert row["price"] == payload["price"]
+			assert row["gram_weight"] == payload["gram_weight"]
+			assert row["viability"] == payload["viability"]
+			assert row["research_notes"] == payload["research_notes"]
+			assert row["supplier_lot_number"] == payload["supplier_lot_number"]
+			assert row["variety_id"] == payload["variety_id"]
+			assert row["supplier_id"] == payload["supplier_id"]
+			assert row["generation_number"] == payload["generation_number"]
+			assert row["landscape_only"] == payload["landscape_only"]
+	finally:
+		# Cleanup - delete the test record
+		if acquisition_id:
+			with db_engine.connect() as conn:
+				conn.execute(text("DELETE FROM genetic_source WHERE genetic_source_id=:id"), {"id": acquisition_id})
+				conn.commit()
 
 # --- Conservation Status ---
 def test_create_conservation_status(client, db_engine):

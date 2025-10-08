@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'manage_container_type_model.dart';
 export 'manage_container_type_model.dart';
+import '/backend/api_service.dart';
+
 
 class ManageContainerTypeWidget extends StatefulWidget {
   const ManageContainerTypeWidget({super.key});
@@ -22,20 +24,92 @@ class ManageContainerTypeWidget extends StatefulWidget {
 
 class _ManageContainerTypeWidgetState extends State<ManageContainerTypeWidget> {
   late ManageContainerTypeModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // 每行编辑控制器
+  final Map<int, TextEditingController> _controllers = {};
+  // 新增行控制器
+  final TextEditingController _newController = TextEditingController();
+
+  // 追踪修改行
+  final Set<int> _dirtyIds = <int>{};
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManageContainerTypeModel());
+    _load();
   }
 
   @override
   void dispose() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    _newController.dispose();
     _model.dispose();
-
     super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() => _loading = true);
+    try {
+      final list = await ApiService.getContainerTypes();
+      _model.containerTypeRows =
+          list.map((e) => ContainerTypeRow.fromJson(e)).toList();
+
+      for (final r in _model.containerTypeRows) {
+        _controllers.putIfAbsent(
+            r.id, () => TextEditingController(text: r.containerType));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _markDirty(int id) {
+    if (id != -1) _dirtyIds.add(id);
+  }
+
+  Future<void> _onCancel() async {
+    await _load();
+    _newController.clear();
+    _dirtyIds.clear();
+  }
+
+  Future<void> _onSave() async {
+    try {
+      // 新增
+      final newValue = _newController.text.trim();
+      if (newValue.isNotEmpty) {
+        await ApiService.createContainerType(containerType: newValue);
+        _newController.clear();
+      }
+
+      // 更新
+      for (final id in _dirtyIds) {
+        final ctrl = _controllers[id];
+        if (ctrl != null) {
+          await ApiService.updateContainerType(
+            id: id,
+            containerType: ctrl.text,
+          );
+        }
+      }
+
+      _dirtyIds.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Saved")));
+      }
+      await _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Save failed: $e")));
+      }
+    }
   }
 
   @override
@@ -646,101 +720,121 @@ class _ManageContainerTypeWidgetState extends State<ManageContainerTypeWidget> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
+                          color: FlutterFlowTheme.of(context)
+                              .secondaryBackground,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        alignment: AlignmentDirectional(0.0, 0.0),
                         child: Column(
-                          mainAxisSize: MainAxisSize.max,
                           children: [
                             Expanded(
-                              child: Builder(
-                                builder: (context) {
-                                  final subZone =
-                                      FFAppState().mockSubZones.toList();
+                              child: Builder(builder: (context) {
+                                final rows = [
+                                  ..._model.containerTypeRows,
+                                  ContainerTypeRow(id: -1, containerType: ''),
+                                ];
 
-                                  return FlutterFlowDataTable<SubZonesStruct>(
-                                    controller:
-                                        _model.paginatedDataTableController,
-                                    data: subZone,
-                                    columnsBuilder: (onSortChanged) => [
-                                      DataColumn2(
-                                        label: DefaultTextStyle.merge(
-                                          softWrap: true,
-                                          child: Text(
-                                            'Container type',
-                                            style: FlutterFlowTheme.of(context)
-                                                .labelLarge
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeFamily,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .labelLargeIsCustom,
-                                                ),
-                                          ),
-                                        ),
+                                return FlutterFlowDataTable<ContainerTypeRow>(
+                                  controller: _model.containerTypeTableController,
+                                  data: rows,
+                                  columnsBuilder: (_) => [
+                                    DataColumn2(
+                                      label: Text(
+                                        'Container type',
+                                        style: FlutterFlowTheme.of(context).labelLarge,
                                       ),
-                                    ],
-                                    dataRowBuilder: (subZoneItem, subZoneIndex,
-                                            selected, onSelectChanged) =>
-                                        DataRow(
+                                    ),
+                                  ],
+                                  dataRowBuilder: (row, rowIndex, selected, onSelectChanged) {
+                                    final isNew = row.id == -1;
+                                    return DataRow(
+                                      selected: _dirtyIds.contains(row.id),
+                                      onSelectChanged: (val) {
+                                        if (!isNew && val == true) {
+                                          setState(() => _dirtyIds.add(row.id));
+                                        } else {
+                                          setState(() => _dirtyIds.remove(row.id));
+                                        }
+                                      },
                                       color: WidgetStateProperty.all(
-                                        subZoneIndex % 2 == 0
-                                            ? FlutterFlowTheme.of(context)
-                                                .secondaryBackground
-                                            : FlutterFlowTheme.of(context)
-                                                .primaryBackground,
+                                        rowIndex % 2 == 0
+                                            ? FlutterFlowTheme.of(context).secondaryBackground
+                                            : FlutterFlowTheme.of(context).primaryBackground,
                                       ),
                                       cells: [
-                                        Text(
-                                          'Edit Column 1',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
+                                        DataCell(
+                                          TextFormField(
+                                            controller: isNew ? _newController : _controllers[row.id],
+                                            decoration: const InputDecoration(
+                                              hintText: 'Container type',
+                                              border: InputBorder.none,
+                                            ),
+                                            onChanged: (_) => _markDirty(row.id),
+                                          ),
                                         ),
-                                      ].map((c) => DataCell(c)).toList(),
-                                    ),
-                                    paginated: true,
-                                    selectable: false,
-                                    hidePaginator: false,
-                                    showFirstLastButtons: false,
-                                    headingRowHeight: 56.0,
-                                    dataRowHeight: 48.0,
-                                    columnSpacing: 20.0,
-                                    headingRowColor:
-                                        FlutterFlowTheme.of(context).secondary,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    addHorizontalDivider: true,
-                                    addTopAndBottomDivider: false,
-                                    hideDefaultHorizontalDivider: true,
-                                    horizontalDividerColor:
-                                        FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                    horizontalDividerThickness: 1.0,
-                                    addVerticalDivider: false,
-                                  );
-                                },
-                              ),
+                                      ],
+                                    );
+                                  },
+                                  paginated: true,
+                                  selectable: false,
+                                  headingRowColor: FlutterFlowTheme.of(context).secondary,
+                                  hidePaginator: false,
+                                  dataRowHeight: 48.0,
+                                  headingRowHeight: 56.0,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  addHorizontalDivider: false,
+                                  addTopAndBottomDivider: false,
+                                  hideDefaultHorizontalDivider: true,
+                                  horizontalDividerColor: Colors.transparent,
+                                  horizontalDividerThickness: 0.0,
+                                );
+                              }),
                             ),
+                            const SizedBox(height: 12.0),
+                            Row(
+                              children: [
+                                const Spacer(),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onCancel,
+                                  text: 'Cancel',
+                                  options: FFButtonOptions(
+                                    width: 100,
+                                    height: 48,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .override(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText),
+                                    borderSide: const BorderSide(
+                                        color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                FFButtonWidget(
+                                  onPressed: _loading ? null : _onSave,
+                                  text: 'Save',
+                                  options: FFButtonOptions(
+                                    width: 100,
+                                    height: 48,
+                                    color: Colors.white,
+                                    textStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .override(
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText),
+                                    borderSide: const BorderSide(
+                                        color: Colors.black),
+                                    borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ],
+                          ),
+
                           ],
                         ),
                       ),

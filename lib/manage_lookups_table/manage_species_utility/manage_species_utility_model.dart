@@ -1,23 +1,60 @@
-import '/backend/schema/structs/index.dart';
 import '/flutter_flow/flutter_flow_data_table.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/index.dart';
-import 'manage_species_utility_widget.dart' show ManageSpeciesUtilityWidget;
 import 'package:flutter/material.dart';
+import 'manage_species_utility_widget.dart'
+    show ManageSpeciesUtilityWidget;
 
 class ManageSpeciesUtilityModel
     extends FlutterFlowModel<ManageSpeciesUtilityWidget> {
-  ///  State fields for stateful widgets in this page.
+  /// State for species_utility_link table
+  final speciesUtilityTableController =
+      FlutterFlowDataTableController<SpeciesUtilityLinkRow>();
 
-  // State field(s) for PaginatedDataTable widget.
-  final paginatedDataTableController =
-      FlutterFlowDataTableController<ZonesStruct>();
+  List<SpeciesUtilityLinkRow> rows = [];
+  bool isLoading = false;
+  String? errorMessage;
 
   @override
   void initState(BuildContext context) {}
 
   @override
   void dispose() {
-    paginatedDataTableController.dispose();
+    speciesUtilityTableController.dispose();
   }
 }
+
+// ---------- Data model for species_utility_link ----------
+class SpeciesUtilityLinkRow {
+  final String localKey; 
+  int speciesId;
+  int plantUtilityId;
+  String? speciesName;
+  String? utilityName; 
+
+  SpeciesUtilityLinkRow({
+    required this.localKey,
+    required this.speciesId,
+    required this.plantUtilityId,
+    this.speciesName,
+    this.utilityName,
+  });
+
+  factory SpeciesUtilityLinkRow.fromJson(Map<String, dynamic> json) {
+    final speciesData = json['species'] as Map<String, dynamic>?;
+    final utilityData = json['plant_utility'] as Map<String, dynamic>?;
+
+    return SpeciesUtilityLinkRow(
+      localKey: "${json['species_id']}_${json['plant_utility_id']}",
+      speciesId: json['species_id'] as int,
+      plantUtilityId: json['plant_utility_id'] as int,
+      speciesName: speciesData?['species'] as String?,
+      utilityName: utilityData?['utility'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'species_id': speciesId,
+        'plant_utility_id': plantUtilityId,
+      };
+}
+

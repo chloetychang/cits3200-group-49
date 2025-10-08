@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'manage_planting_removal_model.dart';
 export 'manage_planting_removal_model.dart';
 
+import '/backend/api_service.dart'; // REST calls for Removal Cause (added)
+
 class ManagePlantingRemovalWidget extends StatefulWidget {
   const ManagePlantingRemovalWidget({super.key});
 
@@ -26,17 +28,88 @@ class _ManagePlantingRemovalWidgetState
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // Controllers for editing
+  final Map<int, TextEditingController> _causeCtrls = {};
+  final TextEditingController _newCauseCtrl = TextEditingController();
+  final Set<int> _dirtyIds = <int>{};
+
+  bool _loading = false;
+  String? _error;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ManagePlantingRemovalModel());
+    _load();
   }
 
   @override
   void dispose() {
+    for (final c in _causeCtrls.values) {
+      c.dispose();
+    }
+    _newCauseCtrl.dispose();
     _model.dispose();
-
     super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final list = await ApiService.getRemovalCauses();
+      _model.removalCauseRows = list
+          .map<RemovalCauseRow>(
+              (e) => RemovalCauseRow.fromJson(e as Map<String, dynamic>))
+          .toList();
+      for (final r in _model.removalCauseRows) {
+        _causeCtrls.putIfAbsent(
+            r.id, () => TextEditingController(text: r.cause));
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _markDirty(int id) {
+    if (id != -1) _dirtyIds.add(id);
+  }
+
+  Future<void> _onCancel() async {
+    await _load();
+    _newCauseCtrl.clear();
+    _dirtyIds.clear();
+  }
+
+  Future<void> _onSave() async {
+    try {
+      final newCause = _newCauseCtrl.text.trim();
+      if (newCause.isNotEmpty) {
+        await ApiService.createRemovalCause(cause: newCause);
+        _newCauseCtrl.clear();
+      }
+      for (final id in _dirtyIds) {
+        await ApiService.updateRemovalCause(
+          id: id,
+          cause: _causeCtrls[id]?.text ?? '',
+        );
+      }
+      _dirtyIds.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Saved')));
+      }
+      await _load();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Save failed: $e')));
+      }
+    }
   }
 
   @override
@@ -603,7 +676,7 @@ class _ManagePlantingRemovalWidgetState
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -617,57 +690,56 @@ class _ManagePlantingRemovalWidgetState
                         Expanded(
                           child: Builder(
                             builder: (context) {
-                              final subZone =
-                                  FFAppState().mockSubZones.toList();
+                              final rows = [
+                                ..._model.removalCauseRows,
+                                RemovalCauseRow(id: -1, cause: ''),
+                              ];
 
-                              return FlutterFlowDataTable<SubZonesStruct>(
-                                controller: _model.paginatedDataTableController,
-                                data: subZone,
+                              return FlutterFlowDataTable<RemovalCauseRow>(
+                                controller: _model.removalCauseTableController,
+                                data: rows,
                                 columnsBuilder: (onSortChanged) => [
                                   DataColumn2(
                                     label: DefaultTextStyle.merge(
                                       softWrap: true,
                                       child: Text(
                                         'Planting removal causes',
-                                        style: FlutterFlowTheme.of(context)
-                                            .labelLarge
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelLargeFamily,
+                                        style: FlutterFlowTheme.of(context).labelLarge.override(
+                                              fontFamily: FlutterFlowTheme.of(context)
+                                                  .labelLargeFamily,
                                               letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .labelLargeIsCustom,
+                                              useGoogleFonts: !FlutterFlowTheme.of(context)
+                                                  .labelLargeIsCustom,
                                             ),
                                       ),
                                     ),
                                   ),
                                 ],
-                                dataRowBuilder: (subZoneItem, subZoneIndex,
-                                        selected, onSelectChanged) =>
+                                dataRowBuilder: (row, rowIndex, selected, onSelectChanged) =>
                                     DataRow(
                                   color: WidgetStateProperty.all(
-                                    subZoneIndex % 2 == 0
-                                        ? FlutterFlowTheme.of(context)
-                                            .secondaryBackground
-                                        : FlutterFlowTheme.of(context)
-                                            .primaryBackground,
+                                    rowIndex % 2 == 0
+                                        ? FlutterFlowTheme.of(context).secondaryBackground
+                                        : FlutterFlowTheme.of(context).primaryBackground,
                                   ),
                                   cells: [
-                                    Text(
-                                      'Edit Column 1',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
-                                            letterSpacing: 0.0,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
+                                    Builder(
+                                      builder: (context) {
+                                        final isNew = row.id == -1;
+                                        final ctrl = isNew
+                                            ? _newCauseCtrl
+                                            : (_causeCtrls[row.id] ??=
+                                                TextEditingController(text: row.cause));
+                                        return TextFormField(
+                                          controller: ctrl,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Cause',
+                                            border: InputBorder.none,
+                                            isDense: true,
                                           ),
+                                          onChanged: (_) => _markDirty(row.id),
+                                        );
+                                      },
                                     ),
                                   ].map((c) => DataCell(c)).toList(),
                                 ),
@@ -678,26 +750,72 @@ class _ManagePlantingRemovalWidgetState
                                 headingRowHeight: 56.0,
                                 dataRowHeight: 48.0,
                                 columnSpacing: 20.0,
-                                headingRowColor:
-                                    FlutterFlowTheme.of(context).secondary,
+                                headingRowColor: FlutterFlowTheme.of(context).secondary,
                                 borderRadius: BorderRadius.circular(8.0),
                                 addHorizontalDivider: true,
                                 addTopAndBottomDivider: false,
                                 hideDefaultHorizontalDivider: true,
                                 horizontalDividerColor:
-                                    FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
+                                    FlutterFlowTheme.of(context).secondaryBackground,
                                 horizontalDividerThickness: 1.0,
                                 addVerticalDivider: false,
                               );
                             },
                           ),
                         ),
+                        const SizedBox(height: 12.0),
+                        Row(
+                          children: [
+                            const Spacer(),
+                            FFButtonWidget(
+                              onPressed: _loading ? null : _onCancel,
+                              text: 'Cancel',
+                              options: FFButtonOptions(
+                                width: 100.0,
+                                height: 48.0,
+                                color: Colors.white,
+                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                      fontFamily:
+                                          FlutterFlowTheme.of(context).titleSmallFamily,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: !FlutterFlowTheme.of(context)
+                                          .titleSmallIsCustom,
+                                    ),
+                                elevation: 0.0,
+                                borderSide: const BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            const SizedBox(width: 12.0),
+                            FFButtonWidget(
+                              onPressed: _loading ? null : _onSave,
+                              text: 'Save',
+                              options: FFButtonOptions(
+                                width: 100.0,
+                                height: 48.0,
+                                color: Colors.white,
+                                textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                                      fontFamily:
+                                          FlutterFlowTheme.of(context).titleSmallFamily,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      letterSpacing: 0.0,
+                                      useGoogleFonts: !FlutterFlowTheme.of(context)
+                                          .titleSmallIsCustom,
+                                    ),
+                                elevation: 0.0,
+                                borderSide: const BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                 ),
-              ),
+              )
+
             ],
           ),
         ),

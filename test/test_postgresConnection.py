@@ -46,6 +46,12 @@ def engine():
 def inspector(engine):
     return inspect(engine)
 
+@pytest.fixture(scope="module") 
+def connection(engine):
+    """Provide a database connection for the test session"""
+    with engine.connect() as conn:
+        yield conn
+
 def test_postgres_tables_exist(inspector):
     actual_tables = set(inspector.get_table_names())
     missing_tables = []
@@ -384,15 +390,73 @@ def test_no_extra_foreign_keys(table, expected_fks, inspector):
 
 # --- Row count and first 5 row tests ---
 @pytest.mark.parametrize("table", list(expected_schema.keys()))
-def test_row_counts_and_first_rows(table, inspector, engine):
+def test_row_counts_and_first_rows(table, inspector, connection):
     if table not in inspector.get_table_names():
         pytest.skip(f"Table {table} missing")
-    with engine.connect() as conn:
-        pg_count = conn.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
-        assert pg_count >= 0, f"Row count negative in table {table}: {pg_count}"
-        # Get column names in order
-        pg_desc = [col['name'] for col in inspector.get_columns(table)]
-        pg_rows = conn.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
-        # Just check that rows can be fetched and have correct columns
-        for row in pg_rows:
-            assert len(row) == len(pg_desc), f"Row column count mismatch in table {table}: {row}"
+    pg_count = connection.execute(text(f'SELECT COUNT(*) FROM "{table}"')).fetchone()[0]
+    assert pg_count >= 0, f"Row count negative in table {table}: {pg_count}"
+    # Get column names in order
+    pg_desc = [col['name'] for col in inspector.get_columns(table)]
+    pg_rows = connection.execute(text(f'SELECT * FROM "{table}" LIMIT 5')).fetchall()
+    # Just check that rows can be fetched and have correct columns
+    for row in pg_rows:
+        assert len(row) == len(pg_desc), f"Row column count mismatch in table {table}: {row}"
+
+def test_sequence_values(connection):
+    """Test that sequences for identity columns are properly set above existing data"""
+    tables_with_sequence_issues = []
+    errors = []
+    
+    # Get the list of sequences
+    try:
+        sequences_result = connection.execute(text("""
+            SELECT 
+                c.table_name,
+                c.column_name,
+                pg_get_serial_sequence(c.table_name, c.column_name) as sequence_name
+            FROM information_schema.columns c
+            WHERE c.table_schema = 'public' 
+            AND c.is_identity = 'YES'
+            AND pg_get_serial_sequence(c.table_name, c.column_name) IS NOT NULL
+        """))
+        
+        sequences = sequences_result.fetchall()
+    except Exception as e:
+        pytest.fail(f"Failed to query identity columns and sequences: {e}")
+    
+    # Check each sequence
+    for table_name, column_name, sequence_name in sequences:
+        try:
+            # Get max value from table
+            max_result = connection.execute(text(f'SELECT COALESCE(MAX("{column_name}"), 0) FROM "{table_name}"'))
+            max_existing_value = max_result.scalar()
+            
+            # Get current sequence info using the sequence name without quotes
+            # The sequence_name already includes the schema prefix if needed
+            seq_info_result = connection.execute(text(f"""
+                SELECT last_value, is_called 
+                FROM {sequence_name}
+            """))
+            seq_info = seq_info_result.fetchone()
+            seq_last_value = seq_info[0]
+            seq_is_called = seq_info[1]
+            
+            # Calculate what the next value will be
+            next_value = seq_last_value + 1 if seq_is_called else seq_last_value
+            
+            # The next value should be > max existing value to avoid conflicts
+            if next_value <= max_existing_value:
+                tables_with_sequence_issues.append(table_name)
+                
+        except Exception as e:
+            errors.append(f"{table_name}: {e}")
+    
+    # Report results
+    failure_messages = []
+    if tables_with_sequence_issues:
+        failure_messages.append(f"Tables with incorrectly set sequences: {sorted(tables_with_sequence_issues)}")
+    if errors:
+        failure_messages.append(f"Tables with sequence check errors: {errors}")
+    
+    if failure_messages:
+        pytest.fail(" | ".join(failure_messages))

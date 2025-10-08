@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, TIMESTAMP, ForeignKey, Float, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Boolean, Text, TIMESTAMP, ForeignKey, Float, Sequence
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -182,6 +182,7 @@ class Provenance(Base):
     bioregion = relationship("Bioregion", back_populates="provenances")
     location_type = relationship("LocationType", back_populates="provenances")
     genetic_sources = relationship("GeneticSource", back_populates="provenance")
+
 
 class RemovalCause(Base):
     __tablename__ = "removal_cause"
