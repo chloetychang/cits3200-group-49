@@ -24,31 +24,15 @@ def get_zones_dropdown(db: Session = Depends(get_db)):
 
 # Creation of varieties with full species names dropdown (consistent with acquisitions)
 @router.get("/varieties_with_species")
-def get_varieties_with_species_dropdown(
-    skip: int = 0, 
-    limit: int = 100, 
-    search: Optional[str] = None,
-    db: Session = Depends(get_db)
-):
-    """Get varieties with their full species names for dropdown (A→Z) with pagination and search."""
-    query = (
+def get_varieties_with_species_dropdown(db: Session = Depends(get_db)):
+    """Get varieties with their full species names for dropdown (A→Z)."""
+    varieties = (
         db.query(models.Variety)
         .join(models.Species)
         .join(models.Genus)
         .order_by(models.Genus.genus.asc(), models.Species.species.asc(), models.Variety.variety.asc())
+        .all()
     )
-    
-    # Add search functionality if search term is provided
-    if search:
-        search_term = f"%{search}%"
-        query = query.filter(
-            models.Genus.genus.ilike(search_term) |
-            models.Species.species.ilike(search_term) |
-            models.Variety.variety.ilike(search_term)
-        )
-    
-    # Apply pagination
-    varieties = query.offset(skip).limit(limit).all()
     
     result = []
     for variety in varieties:
@@ -60,26 +44,6 @@ def get_varieties_with_species_dropdown(
         })
     
     return result
-
-# Get total count of varieties for pagination
-@router.get("/varieties_with_species/count")
-def get_varieties_count(search: Optional[str] = None, db: Session = Depends(get_db)):
-    """Get total count of varieties for pagination."""
-    query = (
-        db.query(models.Variety)
-        .join(models.Species)
-        .join(models.Genus)
-    )
-    
-    if search:
-        search_term = f"%{search}%"
-        query = query.filter(
-            models.Genus.genus.ilike(search_term) |
-            models.Species.species.ilike(search_term) |
-            models.Variety.variety.ilike(search_term)
-        )
-    
-    return {"total": query.count()}
 
 # Creation of a containers dropdown
 @router.get("/containers", response_model=List[schemas.ContainerResponse])

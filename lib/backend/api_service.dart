@@ -236,24 +236,8 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
   // GET Varieties with species names dropdown (with pagination and search)
-  static Future<List<Map<String, dynamic>>> getPlantingVarietiesWithSpeciesDropdown({
-    int skip = 0,
-    int limit = 100,
-    String? search,
-  }) async {
-    var uri = Uri.parse('$baseUrl/planting/varieties_with_species');
-    var queryParams = <String, String>{
-      'skip': skip.toString(),
-      'limit': limit.toString(),
-    };
-    
-    if (search != null && search.isNotEmpty) {
-      queryParams['search'] = search;
-    }
-    
-    uri = uri.replace(queryParameters: queryParams);
-    
-    final res = await http.get(uri);
+  static Future<List<Map<String, dynamic>>> getPlantingVarietiesWithSpeciesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/varieties_with_species'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.cast<Map<String, dynamic>>();
@@ -261,21 +245,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load varieties with species dropdown: ${res.statusCode}');
   }
 
-  // GET Varieties count for pagination
-  static Future<int> getPlantingVarietiesCount({String? search}) async {
-    var uri = Uri.parse('$baseUrl/planting/varieties_with_species/count');
-    
-    if (search != null && search.isNotEmpty) {
-      uri = uri.replace(queryParameters: {'search': search});
-    }
-    
-    final res = await http.get(uri);
-    if (res.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(res.body);
-      return data['total'] as int;
-    }
-    throw Exception('Failed to load varieties count: ${res.statusCode}');
-  }
+
 
   // GET Containers dropdown
   static Future<List<Map<String, dynamic>>> getContainersDropdown() async {
@@ -299,7 +269,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // GET Genetic Sources dropdown
   static Future<List<Map<String, dynamic>>> getGeneticSourcesDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/planting/genetic_sources'));
+    final res = await http.get(Uri.parse('$baseUrl/genetic_sources/View_GeneticSources'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.cast<Map<String, dynamic>>();

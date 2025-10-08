@@ -40,22 +40,39 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   String? selectedGeneticSource;
   FormFieldController<String>? geneticSourcesDropdownController;
 
-  // Fetch Genetic Sources dropdown 
+  // Fetch Genetic Sources dropdown (simplified - no pagination)
   Future<void> loadGeneticSourcesDropdown() async {
     GeneticSourcesData = await ApiService.getGeneticSourcesDropdown();
-    // Create display names with genetic_source_id for now (you can customize this format)
-    GeneticSourcesDropdown = GeneticSourcesData.map((gs) => "Genetic Source #${gs['genetic_source_id']}").toList();
+    // Create display names in format: [Species] [Variety] from [location] Lot: [supplier_lot_number] Gen: {generation_number}
+    GeneticSourcesDropdown = GeneticSourcesData.map((gs) {
+      String species = gs['species']?['species'] ?? 'Unknown Species';  
+      String variety = gs['variety']?['variety'] ?? 'Unknown Variety';
+      String location = gs['provenance']?['location'] ?? 'Unknown Location';
+      String lotNumber = gs['supplier_lot_number']?.toString() ?? 'N/A';
+      String generation = gs['generation_number']?.toString() ?? '0';
+      
+      return "$species $variety from $location Lot: $lotNumber Gen: $generation";
+    }).toList()..sort();
   }
 
   // Get genetic source ID by display name
   int? getGeneticSourceId(String? displayName) {
     if (displayName == null) return null;
-    // Extract ID from display name format "Genetic Source #123"
-    final match = RegExp(r'#(\d+)').firstMatch(displayName);
-    if (match != null) {
-      return int.tryParse(match.group(1)!);
-    }
-    return null;
+    // Find the genetic source data that matches the formatted display name
+    final found = GeneticSourcesData.firstWhere(
+      (gs) {
+        String species = gs['species']?['species'] ?? 'Unknown Species';  
+        String variety = gs['variety']?['variety'] ?? 'Unknown Variety';
+        String location = gs['provenance']?['location'] ?? 'Unknown Location';
+        String lotNumber = gs['supplier_lot_number']?.toString() ?? 'N/A';
+        String generation = gs['generation_number']?.toString() ?? '0';
+        
+        String formatted = "$species $variety from $location Lot: $lotNumber Gen: $generation";
+        return formatted == displayName;
+      },
+      orElse: () => <String, dynamic>{},
+    );
+    return found['genetic_source_id'] as int?;
   }
 
   // Varieties with Species
@@ -63,75 +80,15 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   List<Map<String, dynamic>> VarietiesData = []; // Full data for ID lookup
   String? selectedVariety;
   FormFieldController<String>? varietiesDropdownController;
-  
-  // Pagination state for varieties
-  int _varietiesSkip = 0;
-  final int _varietiesLimit = 50; // Load 50 at a time for better performance
-  bool _varietiesHasMore = true;
-  bool _varietiesLoading = false;
 
-  // Fetch Varieties with Species dropdown (with pagination)
-  Future<void> loadVarietiesDropdown({bool reset = false}) async {
-    if (_varietiesLoading) return;
-    
-    if (reset) {
-      _varietiesSkip = 0;
-      VarietiesData.clear();
-      VarietiesDropdown.clear();
-      _varietiesHasMore = true;
-    }
-    
-    if (!_varietiesHasMore) return;
-    
-    _varietiesLoading = true;
-    
-    try {
-      final rawList = await ApiService.getPlantingVarietiesWithSpeciesDropdown(
-        skip: _varietiesSkip,
-        limit: _varietiesLimit,
-      );
-      
-      VarietiesData.addAll(rawList);
-      // Create display names combining full species name and variety
-      final newNames = rawList.map((variety) => 
-        "${variety['full_species_name']} - ${variety['variety']}"
-      ).toList();
-      VarietiesDropdown.addAll(newNames);
-      
-      _varietiesSkip += rawList.length;
-      _varietiesHasMore = rawList.length == _varietiesLimit;
-      
-      // Sort only the new additions to maintain performance
-      if (reset) {
-        VarietiesDropdown.sort();
-      }
-    } finally {
-      _varietiesLoading = false;
-    }
-  }
-
-  // Search varieties
-  Future<void> searchVarieties(String search) async {
-    if (search.isEmpty) {
-      await loadVarietiesDropdown(reset: true);
-      return;
-    }
-    
-    _varietiesLoading = true;
-    try {
-      final rawList = await ApiService.getPlantingVarietiesWithSpeciesDropdown(
-        skip: 0,
-        limit: 100, // Show more results for search
-        search: search,
-      );
-      
-      VarietiesData = rawList;
-      VarietiesDropdown = rawList.map((variety) => 
-        "${variety['full_species_name']} - ${variety['variety']}"
-      ).toList()..sort();
-    } finally {
-      _varietiesLoading = false;
-    }
+  // Fetch Varieties with Species dropdown (simplified - no pagination)
+  Future<void> loadVarietiesDropdown() async {
+    final rawList = await ApiService.getPlantingVarietiesWithSpeciesDropdown();
+    VarietiesData = rawList;
+    // Create display names combining full species name and variety
+    VarietiesDropdown = rawList.map((variety) => 
+      "${variety['full_species_name']} - ${variety['variety']}"
+    ).toList()..sort();
   }
 
   // Get variety ID by display name

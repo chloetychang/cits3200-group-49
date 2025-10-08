@@ -1,8 +1,6 @@
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
@@ -1660,50 +1658,39 @@ Future<void> submitPlanting() async {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Expanded(
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController1 ??=
-                                            FormFieldController<String>(null),
-                                        options: _model.GeneticSourcesDropdown,
-                                        onChanged: (val) => safeSetState(() {
-                                          _model.dropDownValue1 = val;
-                                          _model.selectedGeneticSource = val;
-                                        }),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                    Flexible(
+                                      child: Container(
+                                      constraints: BoxConstraints(maxWidth: 400),
+                                      child: DropDownTextField(
+                                        controller: _model.GeneticSourcesComboController,
+                                        clearOption: true,
+                                        enableSearch: true,
+                                        searchAutofocus: false,
+                                        searchDecoration: InputDecoration(
+                                          hintText: 'Search genetic sources...',
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        searchKeyboardType: TextInputType.text,
+                                        textFieldDecoration: InputDecoration(
+                                        labelText: 'Genetic Source',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        ),
+                                        dropDownItemCount: 6,
+                                        dropDownList: _model.GeneticSourcesDropdown
+                                          .map((s) => DropDownValueModel(name: s, value: s))
+                                          .toList(),
+                                        onChanged: (val) {
+                                        setState(() {
+                                          if (val is DropDownValueModel) {
+                                            _model.selectedGeneticSource = val.name;
+                                            if (!_model.GeneticSourcesDropdown.contains(val.name)) {
+                                              _model.GeneticSourcesDropdown.add(val.name);
+                                            }
+                                          }
+                                        });
+                                        },
+                                      ),
                                       ),
                                     ),
                                   ]
@@ -1748,50 +1735,39 @@ Future<void> submitPlanting() async {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Expanded(
-                                      child: FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController2 ??=
-                                            FormFieldController<String>(null),
-                                        options: _model.VarietiesDropdown,
-                                        onChanged: (val) => safeSetState(() {
-                                          _model.dropDownValue2 = val;
-                                          _model.selectedVariety = val;
-                                        }),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                    Flexible(
+                                      child: Container(
+                                      constraints: BoxConstraints(maxWidth: 400),
+                                      child: DropDownTextField(
+                                        controller: _model.VarietiesComboController,
+                                        clearOption: true,
+                                        enableSearch: true,
+                                        searchAutofocus: false,
+                                        searchDecoration: InputDecoration(
+                                          hintText: 'Search species + varieties...',
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
+                                        searchKeyboardType: TextInputType.text,
+                                        textFieldDecoration: InputDecoration(
+                                        labelText: 'Species + Variety',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        ),
+                                        dropDownItemCount: 6,
+                                        dropDownList: _model.VarietiesDropdown
+                                          .map((s) => DropDownValueModel(name: s, value: s))
+                                          .toList(),
+                                        onChanged: (val) {
+                                        setState(() {
+                                          if (val is DropDownValueModel) {
+                                            _model.selectedVariety = val.name;
+                                            if (!_model.VarietiesDropdown.contains(val.name)) {
+                                              _model.VarietiesDropdown.add(val.name);
+                                            }
+                                          }
+                                        });
+                                        },
+                                      ),
                                       ),
                                     ),
                                   ]

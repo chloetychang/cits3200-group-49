@@ -445,6 +445,7 @@ class GeneticSourceFullResponse(BaseModel):
     research_notes: Optional[str] = None
     
     species: Optional[SpeciesSimpleResponse] = None
+    variety: Optional[VarietyResponse] = None
     provenance: Optional[ProvenanceOut] = None
     supplier: Optional[SupplierResponse] = None
     propagation_type: Optional[PropagationTypeResponse] = None
