@@ -104,6 +104,6 @@ Kevin: Explaining rotating log and its function
  - 
 <br>
 
-## Meeting Closed:
+## Meeting Closed: 11:00
 
-## Next Scheduled Meeting:
+## Next Scheduled Meeting: 11:00 (ICRAR) 8/10/2025
