@@ -12,17 +12,16 @@ class FormUpdateSpeciesModel extends FlutterFlowModel<FormUpdateSpeciesWidget> {
   ///  State fields for stateful widgets in this page.
   late final SingleValueDropDownController genusComboController;
 
-  // Genus Dropdown Widget (as featured in AddAcquisitions)
+  // Genus DropDown widget.
   List<String> genusDropdown = []; // Holds list of genus to show in dropdown
   String? selectedGenus; // Stores the current selected genus
   FormFieldController<String>? genusDropdownController; // Manage state of genus dropdown form field
 
   // Fetch Genus Dropdown 
   Future<void> loadGenusDropdown() async {
-    final rawList = await ApiService.getOtherGenusDropdown();
+    final rawList = await ApiService.getGenusDropdown();
     genusDropdown = rawList.toSet().toList()..sort();
   }
-
 
   // State field(s) for PaginatedDataTable widget.
   final paginatedDataTableController =

@@ -17,7 +17,7 @@ router = APIRouter(
 
 # Creation of a genus dropdown
 @router.get("/genus", response_model=List[schemas.GenusResponse])
-def get_other_genus_dropdown(db: Session = Depends(get_db)):
+def get_genus_dropdown(db: Session = Depends(get_db)):
     """Get all genus names for dropdown (A→Z)."""
     genus_list = db.query(models.Genus).order_by(models.Genus.genus.asc()).all()
     return genus_list

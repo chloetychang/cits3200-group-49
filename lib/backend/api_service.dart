@@ -731,4 +731,18 @@ static Future<Map<String, dynamic>> updateZoneAspect(int id, String aspect) asyn
     }
     throw Exception('Failed to create provenance: ${res.statusCode}, error: ${res.body}');
   }
+
+
+// ------------------------------- Form Update Species --------------------------------
+// GET genus dropdown
+
+  static Future<List<String>> getGenusDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/acquisition/genus'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item['genus'] as String).toList();
+    }
+    throw Exception('Failed to load genus dropdown: ${res.statusCode}');
+  }
+
 }
