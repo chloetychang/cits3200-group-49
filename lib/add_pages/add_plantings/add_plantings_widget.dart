@@ -8,8 +8,8 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'add_plantings_model.dart';
 export 'add_plantings_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+import '/backend/api_service.dart';
 
 class AddPlantingsWidget extends StatefulWidget {
   const AddPlantingsWidget({
@@ -47,17 +47,35 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
     setState(() {});
   }
 
+  Future<void> _loadVarietiesDropdown() async {
+    await _model.loadVarietiesDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadGeneticSourcesDropdown() async {
+    await _model.loadGeneticSourcesDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadRemovalCausesDropdown() async {
+    await _model.loadRemovalCausesDropdown();
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AddPlantingsModel());
 
     _model.textController1 ??= TextEditingController(
-        text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
+        text: dateTimeFormat("yyyy-MM-dd HH:mm:ss", getCurrentTimestamp));
 
     _loadPlantedByDropdown();
     _loadZoneNumberDropdown();
     _loadContainerTypeDropdown();
+    _loadVarietiesDropdown();
+    _loadGeneticSourcesDropdown();
+    _loadRemovalCausesDropdown();
 
     _model.textFieldFocusNode1 ??= FocusNode();
 
@@ -76,42 +94,82 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
   }
 
 Future<void> submitPlanting() async {
-  final url = Uri.parse('http://localhost:8000/plantings');
-
-  final body = {
-    'date_planted': _model.textController1.text,
-    'number_planted': _model.textController2.text,
-    'genetic_source': _model.dropDownValue1,
-    'species_variety': _model.dropDownValue2,
-    'planted_by': _model.selectedPlantedBy,
-    'zone': _model.selectedZone,
-    'container_type': _model.selectedContainerType,
-    'comments': _model.textController3.text,
-    'genetic_sources_checkbox': _model.checkboxValue1,
-    'existing_plantings_checkbox': _model.checkboxValue2,
-    'wa_species_checkbox': _model.checkboxValue3,
-  };
-
   try {
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
-    );
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Success: show a message or navigate
+    // Validate required fields
+    if (_model.textController1.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Planting saved successfully!')),
+        SnackBar(content: Text('Date planted is required')),
       );
-    } else {
-      // Error: show a message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save planting.')),
-      );
+      return;
     }
-  } catch (e) {
+
+    if (_model.textController2.text.isEmpty || int.tryParse(_model.textController2.text) == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Number planted must be a valid number')),
+      );
+      return;
+    }
+
+    final zoneId = _model.getZoneId(_model.selectedZone);
+    if (zoneId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Zone is required')),
+      );
+      return;
+    }
+
+    final varietyId = _model.getVarietyId(_model.selectedVariety);
+    if (varietyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Variety is required')),
+      );
+      return;
+    }
+
+    final containerTypeId = _model.getContainerTypeId(_model.selectedContainerType);
+    if (containerTypeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Container type is required')),
+      );
+      return;
+    }
+
+    final plantedById = _model.getPlantedByUserId(_model.selectedPlantedBy);
+    final geneticSourceId = _model.getGeneticSourceId(_model.selectedGeneticSource);
+
+    await ApiService.createPlanting(
+      datePlanted: _model.textController1.text,
+      numberPlanted: int.parse(_model.textController2.text),
+      zoneId: zoneId,
+      varietyId: varietyId,
+      containerTypeId: containerTypeId,
+      plantedBy: plantedById,
+      geneticSourceId: geneticSourceId,
+      comments: _model.textController3.text.isNotEmpty ? _model.textController3.text : null,
+    );
+
+    // Success: show a message or navigate
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $e')),
+      SnackBar(content: Text('Planting saved successfully!')),
+    );
+    
+    // Clear form after successful submission
+    _model.textController1?.clear();
+    _model.textController2?.clear();
+    _model.textController3?.clear();
+    setState(() {
+      _model.selectedZone = null;
+      _model.selectedVariety = null;
+      _model.selectedContainerType = null;
+      _model.selectedPlantedBy = null;
+      _model.selectedGeneticSource = null;
+      _model.selectedRemovalCause = null;
+    });
+
+  } catch (e) {
+    // Error: show a message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to save planting: $e')),
     );
   }
 }
@@ -1607,13 +1665,11 @@ Future<void> submitPlanting() async {
                                         controller: _model
                                                 .dropDownValueController1 ??=
                                             FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue1 = val),
+                                        options: _model.GeneticSourcesDropdown,
+                                        onChanged: (val) => safeSetState(() {
+                                          _model.dropDownValue1 = val;
+                                          _model.selectedGeneticSource = val;
+                                        }),
                                         width: 400.0,
                                         height: 50.0,
                                         textStyle: FlutterFlowTheme.of(context)
@@ -1697,13 +1753,11 @@ Future<void> submitPlanting() async {
                                         controller: _model
                                                 .dropDownValueController2 ??=
                                             FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue2 = val),
+                                        options: _model.VarietiesDropdown,
+                                        onChanged: (val) => safeSetState(() {
+                                          _model.dropDownValue2 = val;
+                                          _model.selectedVariety = val;
+                                        }),
                                         width: 400.0,
                                         height: 50.0,
                                         textStyle: FlutterFlowTheme.of(context)
@@ -1802,13 +1856,8 @@ Future<void> submitPlanting() async {
                                         onChanged: (val) {
                                         setState(() {
                                           if (val is DropDownValueModel) {
-                                          _model.selectedPlantedBy = val.value;
-                                          } else if (val is String) {
-                                          _model.selectedPlantedBy = val;
-                                          if (!_model.PlantedByDropdown.contains(val)) {
-                                            _model.PlantedByDropdown.add(val);
-                                          }
-                                          _model.PlantedByComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                            _model.selectedPlantedBy = val.name;
+                                            _model.PlantedByDropdown.add(val.name);
                                           }
                                         });
                                         },
@@ -1877,13 +1926,8 @@ Future<void> submitPlanting() async {
                                         onChanged: (val) {
                                         setState(() {
                                           if (val is DropDownValueModel) {
-                                          _model.selectedZone = val.value;
-                                          } else if (val is String) {
-                                          _model.selectedZone = val;
-                                          if (!_model.ZoneDropdown.contains(val)) {
-                                            _model.ZoneDropdown.add(val);
-                                          }
-                                          _model.ZoneComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                            _model.selectedZone = val.name;
+                                            _model.ZoneDropdown.add(val.name);
                                           }
                                         });
                                         },
@@ -1952,13 +1996,8 @@ Future<void> submitPlanting() async {
                                         onChanged: (val) {
                                         setState(() {
                                           if (val is DropDownValueModel) {
-                                          _model.selectedContainerType = val.value;
-                                          } else if (val is String) {
-                                          _model.selectedContainerType = val;
-                                          if (!_model.ContainerTypeDropdown.contains(val)) {
-                                            _model.ContainerTypeDropdown.add(val);
-                                          }
-                                          _model.ContainerTypeComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                            _model.selectedContainerType = val.name;
+                                            _model.ContainerTypeDropdown.add(val.name);
                                           }
                                         });
                                         },
