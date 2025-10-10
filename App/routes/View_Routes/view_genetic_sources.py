@@ -55,6 +55,10 @@ def get_genetic_sources_full(
                         schemas.SpeciesSimpleResponse.model_validate(gs.variety.species)
                         if gs.variety and gs.variety.species else None
                     ),
+                    variety=(
+                        schemas.VarietyResponse.model_validate(gs.variety)
+                        if gs.variety else None
+                    ),
                     provenance=(
                         schemas.ProvenanceOut.model_validate(gs.provenance)
                         if gs.provenance else None
