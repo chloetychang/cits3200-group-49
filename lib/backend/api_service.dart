@@ -292,7 +292,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     required String datePlanted,
     required int numberPlanted,
     required int zoneId,
-    required int varietyId,
+    int? varietyId,  // Optional when genetic_source_id is provided
     required int containerTypeId,
     int? plantedBy,
     int? geneticSourceId,
@@ -305,7 +305,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
       'date_planted': datePlanted,
       'number_planted': numberPlanted,
       'zone_id': zoneId,
-      'variety_id': varietyId,
+      if (varietyId != null) 'variety_id': varietyId,
       'container_type_id': containerTypeId,
       if (plantedBy != null) 'planted_by': plantedBy,
       if (geneticSourceId != null) 'genetic_source_id': geneticSourceId,

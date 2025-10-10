@@ -15,14 +15,8 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   late final SingleValueDropDownController GeneticSourcesComboController;
   late final SingleValueDropDownController RemovalCausesComboController;
 
-  // Genetic Sources Checkbox
-  bool? checkboxValue1;
-  
-  // Existing plantings checkbox
-  bool? checkboxValue2;
-
-  // All WA Species Checkbox
-  bool? checkboxValue3;
+  // Species Selection Radio Button Group
+  String? speciesSelectionRadioValue;
 
   // Date Planted 
   FocusNode? textFieldFocusNode1;
@@ -185,6 +179,41 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   TextEditingController? textController3;
   String? Function(BuildContext, String?)? textController3Validator;
 
+  // Helper methods for controlling dropdown visibility and behavior
+  bool get isGeneticSourcesSelected => speciesSelectionRadioValue == 'genetic_sources';
+  bool get isExistingPlantingsSelected => speciesSelectionRadioValue == 'existing_plantings';
+  bool get isAllSpeciesSelected => speciesSelectionRadioValue == 'all_species';
+
+  // Method to auto-fill species+variety from selected genetic source
+  void autoFillSpeciesVarietyFromGeneticSource(String? geneticSourceDisplayName) {
+    if (geneticSourceDisplayName == null) {
+      selectedVariety = null;
+      return;
+    }
+
+    // Find the genetic source data
+    final geneticSourceData = GeneticSourcesData.firstWhere(
+      (gs) => gs['display_text']?.toString() == geneticSourceDisplayName,
+      orElse: () => <String, dynamic>{},
+    );
+
+    if (geneticSourceData.isNotEmpty) {
+      final speciesName = geneticSourceData['species_name']?.toString() ?? '';
+      final varietyName = geneticSourceData['variety_name']?.toString() ?? '';
+      
+      if (speciesName.isNotEmpty && varietyName.isNotEmpty) {
+        // Set the species+variety dropdown to match the genetic source
+        final combinedName = '$speciesName - $varietyName';
+        selectedVariety = combinedName;
+        
+        // Make sure this value exists in the varieties dropdown
+        if (!VarietiesDropdown.contains(combinedName)) {
+          VarietiesDropdown.insert(0, combinedName);
+        }
+      }
+    }
+  }
+
   @override
   void initState(BuildContext context) {
     PlantedByComboController = SingleValueDropDownController();
@@ -193,6 +222,9 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
     VarietiesComboController = SingleValueDropDownController();
     GeneticSourcesComboController = SingleValueDropDownController();
     RemovalCausesComboController = SingleValueDropDownController();
+    
+    // Initialize radio button selection to genetic sources by default
+    speciesSelectionRadioValue = 'genetic_sources';
   }
 
   @override

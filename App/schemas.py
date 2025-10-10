@@ -390,7 +390,7 @@ class PlantingBase(BaseSchema):
     date_planted: datetime
     planted_by: Optional[int] = None
     zone_id: int
-    variety_id: int
+    variety_id: Optional[int] = None  # Optional when genetic_source_id is provided
     number_planted: int
     genetic_source_id: Optional[int] = None
     container_type_id: int

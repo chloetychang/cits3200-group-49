@@ -116,14 +116,6 @@ Future<void> submitPlanting() async {
       return;
     }
 
-    final varietyId = _model.getVarietyId(_model.selectedVariety);
-    if (varietyId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Variety is required')),
-      );
-      return;
-    }
-
     final containerTypeId = _model.getContainerTypeId(_model.selectedContainerType);
     if (containerTypeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -134,6 +126,31 @@ Future<void> submitPlanting() async {
 
     final plantedById = _model.getPlantedByUserId(_model.selectedPlantedBy);
     final geneticSourceId = _model.getGeneticSourceId(_model.selectedGeneticSource);
+    final varietyId = _model.getVarietyId(_model.selectedVariety);
+
+    // Validate species selection: either genetic source or variety must be provided
+    if (geneticSourceId == null && varietyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Either genetic source or variety is required')),
+      );
+      return;
+    }
+
+    // When using genetic sources, variety is not required (it will be derived from genetic source)
+    // When not using genetic sources, variety is required
+    if (!_model.isGeneticSourcesSelected && varietyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Variety is required when not using genetic sources')),
+      );
+      return;
+    }
+
+    if (_model.isGeneticSourcesSelected && geneticSourceId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Genetic source is required when genetic sources mode is selected')),
+      );
+      return;
+    }
 
     await ApiService.createPlanting(
       datePlanted: _model.textController1.text,
@@ -1091,42 +1108,18 @@ Future<void> submitPlanting() async {
                                         ),
                                         Theme(
                                           data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(24.0),
-                                              ),
-                                            ),
                                             unselectedWidgetColor:
                                                 FlutterFlowTheme.of(context)
                                                     .primaryText,
                                           ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValue1 ??=
-                                                false,
-                                            onChanged: (newValue) async {
+                                          child: Radio<String>(
+                                            value: 'genetic_sources',
+                                            groupValue: _model.speciesSelectionRadioValue,
+                                            onChanged: (value) async {
                                               safeSetState(() => _model
-                                                  .checkboxValue1 = newValue!);
+                                                  .speciesSelectionRadioValue = value);
                                             },
-                                            side: (FlutterFlowTheme.of(context)
-                                                        .primaryText !=
-                                                    null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryText,
-                                                  )
-                                                : null,
                                             activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .info,
                                           ),
                                         ),
                                       ],
@@ -1182,42 +1175,18 @@ Future<void> submitPlanting() async {
                                         ),
                                         Theme(
                                           data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(24.0),
-                                              ),
-                                            ),
                                             unselectedWidgetColor:
                                                 FlutterFlowTheme.of(context)
                                                     .primaryText,
                                           ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValue2 ??=
-                                                false,
-                                            onChanged: (newValue) async {
+                                          child: Radio<String>(
+                                            value: 'existing_plantings',
+                                            groupValue: _model.speciesSelectionRadioValue,
+                                            onChanged: (value) async {
                                               safeSetState(() => _model
-                                                  .checkboxValue2 = newValue!);
+                                                  .speciesSelectionRadioValue = value);
                                             },
-                                            side: (FlutterFlowTheme.of(context)
-                                                        .primaryText !=
-                                                    null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryText,
-                                                  )
-                                                : null,
                                             activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .info,
                                           ),
                                         ),
                                       ],
@@ -1273,42 +1242,18 @@ Future<void> submitPlanting() async {
                                         ),
                                         Theme(
                                           data: ThemeData(
-                                            checkboxTheme: CheckboxThemeData(
-                                              visualDensity:
-                                                  VisualDensity.compact,
-                                              materialTapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(24.0),
-                                              ),
-                                            ),
                                             unselectedWidgetColor:
                                                 FlutterFlowTheme.of(context)
                                                     .primaryText,
                                           ),
-                                          child: Checkbox(
-                                            value: _model.checkboxValue3 ??=
-                                                false,
-                                            onChanged: (newValue) async {
+                                          child: Radio<String>(
+                                            value: 'all_species',
+                                            groupValue: _model.speciesSelectionRadioValue,
+                                            onChanged: (value) async {
                                               safeSetState(() => _model
-                                                  .checkboxValue3 = newValue!);
+                                                  .speciesSelectionRadioValue = value);
                                             },
-                                            side: (FlutterFlowTheme.of(context)
-                                                        .primaryText !=
-                                                    null)
-                                                ? BorderSide(
-                                                    width: 2,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryText,
-                                                  )
-                                                : null,
                                             activeColor: Color(0xFF0000FF),
-                                            checkColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .info,
                                           ),
                                         ),
                                       ],
@@ -1631,7 +1576,7 @@ Future<void> submitPlanting() async {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFFFF0000),
+                                            color: _model.isGeneticSourcesSelected ? Color(0xFFFF0000) : Colors.grey,
                                             fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
@@ -1661,35 +1606,43 @@ Future<void> submitPlanting() async {
                                     Flexible(
                                       child: Container(
                                       constraints: BoxConstraints(maxWidth: 600),
-                                      child: DropDownTextField(
-                                        controller: _model.GeneticSourcesComboController,
-                                        clearOption: true,
-                                        enableSearch: true,
-                                        searchAutofocus: false,
-                                        searchDecoration: InputDecoration(
-                                          hintText: 'Search genetic sources...',
+                                      child: IgnorePointer(
+                                        ignoring: !_model.isGeneticSourcesSelected,
+                                        child: Opacity(
+                                          opacity: _model.isGeneticSourcesSelected ? 1.0 : 0.5,
+                                          child: DropDownTextField(
+                                            controller: _model.GeneticSourcesComboController,
+                                            clearOption: true,
+                                            enableSearch: true,
+                                            searchAutofocus: false,
+                                            searchDecoration: InputDecoration(
+                                              hintText: 'Search genetic sources...',
+                                            ),
+                                            searchKeyboardType: TextInputType.text,
+                                            textFieldDecoration: InputDecoration(
+                                            labelText: 'Genetic Source',
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                            ),
+                                            dropDownItemCount: 6,
+                                            dropDownList: _model.GeneticSourcesDropdown
+                                              .map((s) => DropDownValueModel(name: s, value: s))
+                                              .toList(),
+                                            onChanged: (val) {
+                                            setState(() {
+                                              if (val is DropDownValueModel) {
+                                                _model.selectedGeneticSource = val.name;
+                                                if (!_model.GeneticSourcesDropdown.contains(val.name)) {
+                                                  _model.GeneticSourcesDropdown.add(val.name);
+                                                }
+                                                // Auto-fill species+variety when genetic source is selected
+                                                _model.autoFillSpeciesVarietyFromGeneticSource(val.name);
+                                              }
+                                            });
+                                            },
+                                          ),
                                         ),
-                                        searchKeyboardType: TextInputType.text,
-                                        textFieldDecoration: InputDecoration(
-                                        labelText: 'Genetic Source',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        ),
-                                        dropDownItemCount: 6,
-                                        dropDownList: _model.GeneticSourcesDropdown
-                                          .map((s) => DropDownValueModel(name: s, value: s))
-                                          .toList(),
-                                        onChanged: (val) {
-                                        setState(() {
-                                          if (val is DropDownValueModel) {
-                                            _model.selectedGeneticSource = val.name;
-                                            if (!_model.GeneticSourcesDropdown.contains(val.name)) {
-                                              _model.GeneticSourcesDropdown.add(val.name);
-                                            }
-                                          }
-                                        });
-                                        },
                                       ),
                                       ),
                                     ),
@@ -1708,7 +1661,7 @@ Future<void> submitPlanting() async {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Colors.black,
+                                            color: !_model.isGeneticSourcesSelected ? Colors.black : Colors.grey,
                                             fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
@@ -1738,35 +1691,41 @@ Future<void> submitPlanting() async {
                                     Flexible(
                                       child: Container(
                                       constraints: BoxConstraints(maxWidth: 400),
-                                      child: DropDownTextField(
-                                        controller: _model.VarietiesComboController,
-                                        clearOption: true,
-                                        enableSearch: true,
-                                        searchAutofocus: false,
-                                        searchDecoration: InputDecoration(
-                                          hintText: 'Search species + varieties...',
+                                      child: IgnorePointer(
+                                        ignoring: _model.isGeneticSourcesSelected,
+                                        child: Opacity(
+                                          opacity: !_model.isGeneticSourcesSelected ? 1.0 : 0.5,
+                                          child: DropDownTextField(
+                                            controller: _model.VarietiesComboController,
+                                            clearOption: true,
+                                            enableSearch: true,
+                                            searchAutofocus: false,
+                                            searchDecoration: InputDecoration(
+                                              hintText: 'Search species + varieties...',
+                                            ),
+                                            searchKeyboardType: TextInputType.text,
+                                            textFieldDecoration: InputDecoration(
+                                            labelText: 'Species + Variety',
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                            ),
+                                            dropDownItemCount: 6,
+                                            dropDownList: _model.VarietiesDropdown
+                                              .map((s) => DropDownValueModel(name: s, value: s))
+                                              .toList(),
+                                            onChanged: (val) {
+                                            setState(() {
+                                              if (val is DropDownValueModel) {
+                                                _model.selectedVariety = val.name;
+                                                if (!_model.VarietiesDropdown.contains(val.name)) {
+                                                  _model.VarietiesDropdown.add(val.name);
+                                                }
+                                              }
+                                            });
+                                            },
+                                          ),
                                         ),
-                                        searchKeyboardType: TextInputType.text,
-                                        textFieldDecoration: InputDecoration(
-                                        labelText: 'Species + Variety',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                        ),
-                                        ),
-                                        dropDownItemCount: 6,
-                                        dropDownList: _model.VarietiesDropdown
-                                          .map((s) => DropDownValueModel(name: s, value: s))
-                                          .toList(),
-                                        onChanged: (val) {
-                                        setState(() {
-                                          if (val is DropDownValueModel) {
-                                            _model.selectedVariety = val.name;
-                                            if (!_model.VarietiesDropdown.contains(val.name)) {
-                                              _model.VarietiesDropdown.add(val.name);
-                                            }
-                                          }
-                                        });
-                                        },
                                       ),
                                       ),
                                     ),
@@ -1786,7 +1745,7 @@ Future<void> submitPlanting() async {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Color(0xFFFF0000),
-                                            fontSize: () {F
+                                            fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
                                                   kBreakpointSmall) {

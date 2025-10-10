@@ -130,14 +130,16 @@ def create_planting(
     # Validate required fields
     if not planting_data.zone_id:
         raise HTTPException(status_code=400, detail="zone_id is required")
-    if not planting_data.variety_id:
-        raise HTTPException(status_code=400, detail="variety_id is required")
     if not planting_data.container_type_id:
         raise HTTPException(status_code=400, detail="container_type_id is required")
     if not planting_data.number_planted or planting_data.number_planted <= 0:
         raise HTTPException(status_code=400, detail="number_planted must be greater than 0")
     if not planting_data.date_planted:
         raise HTTPException(status_code=400, detail="date_planted is required")
+    
+    # Validate species selection: either genetic_source_id OR variety_id must be provided
+    if not planting_data.genetic_source_id and not planting_data.variety_id:
+        raise HTTPException(status_code=400, detail="Either genetic_source_id or variety_id is required")
     
     # Validate foreign key references
     
@@ -146,10 +148,32 @@ def create_planting(
     if not zone:
         raise HTTPException(status_code=400, detail=f"Zone with ID {planting_data.zone_id} does not exist")
     
-    # Check if variety exists
-    variety = db.query(models.Variety).filter(models.Variety.variety_id == planting_data.variety_id).first()
-    if not variety:
-        raise HTTPException(status_code=400, detail=f"Variety with ID {planting_data.variety_id} does not exist")
+    # Handle variety validation based on whether genetic source is used
+    variety = None
+    if planting_data.genetic_source_id:
+        # If genetic source is provided, get variety from genetic source
+        genetic_source = db.query(models.GeneticSource).filter(
+            models.GeneticSource.genetic_source_id == planting_data.genetic_source_id
+        ).first()
+        if not genetic_source:
+            raise HTTPException(status_code=400, detail=f"Genetic source with ID {planting_data.genetic_source_id} does not exist")
+        
+        # Get variety from genetic source
+        variety = genetic_source.variety
+        if not variety:
+            raise HTTPException(status_code=400, detail=f"Genetic source with ID {planting_data.genetic_source_id} does not have an associated variety")
+        
+        # Set the variety_id in planting_data for record creation
+        planting_data.variety_id = variety.variety_id
+        
+    else:
+        # If genetic source is not provided, variety_id must be provided and valid
+        if not planting_data.variety_id:
+            raise HTTPException(status_code=400, detail="variety_id is required when genetic_source_id is not provided")
+        
+        variety = db.query(models.Variety).filter(models.Variety.variety_id == planting_data.variety_id).first()
+        if not variety:
+            raise HTTPException(status_code=400, detail=f"Variety with ID {planting_data.variety_id} does not exist")
     
     # Check if container type exists
     container = db.query(models.Container).filter(models.Container.container_type_id == planting_data.container_type_id).first()
@@ -162,13 +186,7 @@ def create_planting(
         if not user:
             raise HTTPException(status_code=400, detail=f"User with ID {planting_data.planted_by} does not exist")
     
-    # Check if genetic source exists (if provided)
-    if planting_data.genetic_source_id:
-        genetic_source = db.query(models.GeneticSource).filter(
-            models.GeneticSource.genetic_source_id == planting_data.genetic_source_id
-        ).first()
-        if not genetic_source:
-            raise HTTPException(status_code=400, detail=f"Genetic source with ID {planting_data.genetic_source_id} does not exist")
+    # Genetic source validation is handled above in the main validation section
     
     # Check if removal cause exists (if provided)
     if planting_data.removal_cause_id:
