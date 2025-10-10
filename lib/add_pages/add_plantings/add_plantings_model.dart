@@ -26,6 +26,33 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
     selectedDatePlanted = DateTime.now();
   }
 
+  // Method to clear all form fields
+  void clearAllFields() {
+    // Clear dropdown controllers
+    PlantedByComboController.clearDropDown();
+    ZoneComboController.clearDropDown();
+    ContainerTypeComboController.clearDropDown();
+    VarietiesComboController.clearDropDown();
+    GeneticSourcesComboController.clearDropDown();
+    RemovalCausesComboController.clearDropDown();
+
+    // Clear selected values
+    selectedDatePlanted = DateTime.now(); // Reset to today
+    selectedZone = null;
+    selectedVariety = null;
+    selectedContainerType = null;
+    selectedPlantedBy = null;
+    selectedGeneticSource = null;
+    selectedRemovalCause = null;
+
+    // Clear text controllers
+    textController2?.clear();
+    textController3?.clear();
+
+    // Reset radio button to default
+    speciesSelectionRadioValue = 'genetic_sources';
+  }
+
   // Number Planted
   FocusNode? textFieldFocusNode2;
   TextEditingController? textController2;
@@ -209,10 +236,8 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
         final combinedName = '$speciesName - $varietyName';
         selectedVariety = combinedName;
         
-        // Make sure this value exists in the varieties dropdown
-        if (!VarietiesDropdown.contains(combinedName)) {
-          VarietiesDropdown.insert(0, combinedName);
-        }
+        // DON'T modify the original dropdown list - the dropdown should handle this
+        // The DropDownTextField widget can accept values that aren't in the dropdown list
       }
     }
   }

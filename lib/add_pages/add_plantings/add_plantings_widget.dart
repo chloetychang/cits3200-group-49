@@ -164,16 +164,8 @@ Future<void> submitPlanting() async {
     );
     
     // Clear form after successful submission
-    _model.textController2?.clear();
-    _model.textController3?.clear();
     setState(() {
-      _model.selectedDatePlanted = DateTime.now(); // Reset to today
-      _model.selectedZone = null;
-      _model.selectedVariety = null;
-      _model.selectedContainerType = null;
-      _model.selectedPlantedBy = null;
-      _model.selectedGeneticSource = null;
-      _model.selectedRemovalCause = null;
+      _model.clearAllFields();
     });
 
   } catch (e) {
@@ -1588,9 +1580,6 @@ Future<void> submitPlanting() async {
                                             setState(() {
                                               if (val is DropDownValueModel) {
                                                 _model.selectedGeneticSource = val.name;
-                                                if (!_model.GeneticSourcesDropdown.contains(val.name)) {
-                                                  _model.GeneticSourcesDropdown.add(val.name);
-                                                }
                                                 // Auto-fill species+variety when genetic source is selected
                                                 _model.autoFillSpeciesVarietyFromGeneticSource(val.name);
                                               }
@@ -1616,7 +1605,7 @@ Future<void> submitPlanting() async {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: !_model.isGeneticSourcesSelected ? Colors.black : Colors.grey,
+                                            color: !_model.isGeneticSourcesSelected ? Color(0xFFFF0000) : Colors.grey,
                                             fontSize: () {
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
@@ -1673,9 +1662,6 @@ Future<void> submitPlanting() async {
                                             setState(() {
                                               if (val is DropDownValueModel) {
                                                 _model.selectedVariety = val.name;
-                                                if (!_model.VarietiesDropdown.contains(val.name)) {
-                                                  _model.VarietiesDropdown.add(val.name);
-                                                }
                                               }
                                             });
                                             },
@@ -1747,7 +1733,6 @@ Future<void> submitPlanting() async {
                                         setState(() {
                                           if (val is DropDownValueModel) {
                                             _model.selectedPlantedBy = val.name;
-                                            _model.PlantedByDropdown.add(val.name);
                                           }
                                         });
                                         },
@@ -1817,7 +1802,6 @@ Future<void> submitPlanting() async {
                                         setState(() {
                                           if (val is DropDownValueModel) {
                                             _model.selectedZone = val.name;
-                                            _model.ZoneDropdown.add(val.name);
                                           }
                                         });
                                         },
@@ -1887,7 +1871,6 @@ Future<void> submitPlanting() async {
                                         setState(() {
                                           if (val is DropDownValueModel) {
                                             _model.selectedContainerType = val.name;
-                                            _model.ContainerTypeDropdown.add(val.name);
                                           }
                                         });
                                         },
@@ -2048,7 +2031,12 @@ Future<void> submitPlanting() async {
                       children: [
                         FFButtonWidget(
                           onPressed: () {
-                            print('Button pressed ...');
+                            setState(() {
+                              _model.clearAllFields();
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Form cleared')),
+                            );
                           },
                           text: 'Cancel',
                           options: FFButtonOptions(
