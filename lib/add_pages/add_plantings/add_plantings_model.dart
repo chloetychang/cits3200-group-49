@@ -18,10 +18,13 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   // Species Selection Radio Button Group
   String? speciesSelectionRadioValue;
 
-  // Date Planted 
-  FocusNode? textFieldFocusNode1;
-  TextEditingController? textController1;
-  String? Function(BuildContext, String?)? textController1Validator;
+  // Date Planted
+  DateTime? selectedDatePlanted;
+  
+  // Initialize date to today
+  void initializeDatePlanted() {
+    selectedDatePlanted = DateTime.now();
+  }
 
   // Number Planted
   FocusNode? textFieldFocusNode2;
@@ -225,13 +228,13 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
     
     // Initialize radio button selection to genetic sources by default
     speciesSelectionRadioValue = 'genetic_sources';
+    
+    // Initialize date to today
+    initializeDatePlanted();
   }
 
   @override
   void dispose() {
-    textFieldFocusNode1?.dispose();
-    textController1?.dispose();
-
     textFieldFocusNode2?.dispose();
     textController2?.dispose();
 

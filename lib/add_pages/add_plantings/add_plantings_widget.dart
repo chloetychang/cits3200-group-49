@@ -65,17 +65,12 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
     super.initState();
     _model = createModel(context, () => AddPlantingsModel());
 
-    _model.textController1 ??= TextEditingController(
-        text: dateTimeFormat("yyyy-MM-dd HH:mm:ss", getCurrentTimestamp));
-
     _loadPlantedByDropdown();
     _loadZoneNumberDropdown();
     _loadContainerTypeDropdown();
     _loadVarietiesDropdown();
     _loadGeneticSourcesDropdown();
     _loadRemovalCausesDropdown();
-
-    _model.textFieldFocusNode1 ??= FocusNode();
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
@@ -94,7 +89,7 @@ class _AddPlantingsWidgetState extends State<AddPlantingsWidget> {
 Future<void> submitPlanting() async {
   try {
     // Validate required fields
-    if (_model.textController1.text.isEmpty) {
+    if (_model.selectedDatePlanted == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Date planted is required')),
       );
@@ -153,7 +148,7 @@ Future<void> submitPlanting() async {
     }
 
     await ApiService.createPlanting(
-      datePlanted: _model.textController1.text,
+      datePlanted: "${_model.selectedDatePlanted!.year}-${_model.selectedDatePlanted!.month.toString().padLeft(2, '0')}-${_model.selectedDatePlanted!.day.toString().padLeft(2, '0')}",
       numberPlanted: int.parse(_model.textController2.text),
       zoneId: zoneId,
       varietyId: varietyId,
@@ -169,10 +164,10 @@ Future<void> submitPlanting() async {
     );
     
     // Clear form after successful submission
-    _model.textController1?.clear();
     _model.textController2?.clear();
     _model.textController3?.clear();
     setState(() {
+      _model.selectedDatePlanted = DateTime.now(); // Reset to today
       _model.selectedZone = null;
       _model.selectedVariety = null;
       _model.selectedContainerType = null;
@@ -1319,108 +1314,68 @@ Future<void> submitPlanting() async {
                                         ),
                                         Container(
                                           width: 400.0,
-                                          child: TextFormField(
-                                            controller: _model.textController1,
-                                            focusNode:
-                                                _model.textFieldFocusNode1,
-                                            autofocus: false,
-                                            obscureText: false,
-                                            decoration: InputDecoration(
-                                              isDense: true,
-                                              labelStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .labelMediumIsCustom,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              DateTime? pickedDate = await showDatePicker(
+                                                context: context,
+                                                initialDate: _model.selectedDatePlanted ?? DateTime.now(),
+                                                firstDate: DateTime(2000),
+                                                lastDate: DateTime.now().add(Duration(days: 365)),
+                                                builder: (context, child) {
+                                                  return Theme(
+                                                    data: Theme.of(context).copyWith(
+                                                      colorScheme: ColorScheme.light(
+                                                        primary: Color(0xFF0000FF),
+                                                        onPrimary: Colors.white,
+                                                        surface: Colors.white,
+                                                        onSurface: Colors.black,
                                                       ),
-                                              hintText: 'TextField',
-                                              hintStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .labelMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .labelMediumFamily,
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .labelMediumIsCustom,
-                                                      ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
+                                              if (pickedDate != null) {
+                                                setState(() {
+                                                  _model.selectedDatePlanted = pickedDate;
+                                                });
+                                              }
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: FlutterFlowTheme.of(context).primaryText,
                                                   width: 1.0,
                                                 ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                color: FlutterFlowTheme.of(context).secondaryBackground,
                                               ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0x00000000),
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
+                                              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      _model.selectedDatePlanted != null
+                                                          ? "${_model.selectedDatePlanted!.year}-${_model.selectedDatePlanted!.month.toString().padLeft(2, '0')}-${_model.selectedDatePlanted!.day.toString().padLeft(2, '0')}"
+                                                          : 'Select Date',
+                                                      style: FlutterFlowTheme.of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                    size: 20.0,
+                                                  ),
+                                                ],
                                               ),
-                                              errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .error,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                              focusedErrorBorder:
-                                                  OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .error,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                              filled: true,
-                                              fillColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
                                             ),
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily,
-                                                  fontSize: 16.0,
-                                                  letterSpacing: 0.0,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumIsCustom,
-                                                ),
-                                            cursorColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .primaryText,
-                                            enableInteractiveSelection: true,
-                                            validator: _model
-                                                .textController1Validator
-                                                .asValidator(context),
                                           ),
                                         ),
                                       ],
