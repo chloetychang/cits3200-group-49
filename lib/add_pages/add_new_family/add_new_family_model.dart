@@ -6,102 +6,189 @@ import 'package:flutter/material.dart';
 import '/backend/api_service.dart'; 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
-class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
-  ///  Dropdown combo contoller state
-  late final SingleValueDropDownController PropagationTypeComboController;
-  /// late final SingleValueDropDownController BreedingTeamComboController; To be implemnted
-  late final SingleValueDropDownController ProvenanceLocationComboController;
 
-  // Creation Date
-  FocusNode? textFieldFocusNode1;
-  TextEditingController? textController1;
-  String? Function(BuildContext, String?)? textController1Validator;
-  
-  // Family ID 
+
+
+
+class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
+  // Additional dropdowns and checkboxes for error fixes
+  FormFieldController<String>? dropDownValueController3;
+  String? dropDownValue3;
+  FormFieldController<String>? dropDownValueController4;
+  String? dropDownValue4;
+  FormFieldController<String>? dropDownValueController5;
+  String? dropDownValue5;
+  FormFieldController<String>? dropDownValueController6;
+  String? dropDownValue6;
+  FormFieldController<String>? dropDownValueController7;
+  String? dropDownValue7;
+  bool? checkboxValue1;
+  bool? checkboxValue2;
+  // Provenance Location Dropdown
+  late final SingleValueDropDownController provenanceLocationComboController;
+  List<Map<String, dynamic>> provenanceLocationDropdown = [];
+  Map<String, dynamic>? selectedProvenanceLocation;
+  // Dropdown controllers
+  late final SingleValueDropDownController speciesVarietyComboController;
+  late final SingleValueDropDownController propagationTypeComboController;
+  late final SingleValueDropDownController generationNumberComboController;
+  late final SingleValueDropDownController femaleParentComboController;
+  late final SingleValueDropDownController maleParentComboController;
+  late final SingleValueDropDownController breedingTeamComboController;
+
+  // Dropdown data
+
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
 
-  // Propagation Type
-  List<String> PropagationTypeDropdown = []; // Holds list of propagation types to show in dropdown
-  String? selectedPropagationType; // Stores currently selected propagation type
-  FormFieldController<String>? PropagationTypeDropdownController; // Manage state of propagation type dropdown
+  List<Map<String, dynamic>> speciesVarietyDropdown = [];
+  Map<String, dynamic>? selectedSpeciesVariety;
+  String? selectedSpeciesVarietyDisplay;
+  FormFieldController<String>? speciesVarietyDropdownController;
 
-  // Fetch Propagation Type dropdown 
-  Future<void> loadPropagationTypeDropdown() async {
-    final rawList = await ApiService.getPropagationTypeDropdown();
-    PropagationTypeDropdown = rawList.toSet().toList()..sort();
-  }
+  List<Map<String, dynamic>> propagationTypeDropdown = [];
+  Map<String, dynamic>? selectedPropagationType;
+  String? selectedPropagationTypeDisplay;
+  FormFieldController<String>? propagationTypeDropdownController;
 
-  // Generation Number 
-  String? dropDownValue3;
-  FormFieldController<String>? dropDownValueController3;
+  List<Map<String, dynamic>> generationNumberDropdown = [];
+  Map<String, dynamic>? selectedGenerationNumber;
+  String? selectedGenerationNumberDisplay;
+  FormFieldController<String>? generationNumberDropdownController;
 
-  // Female Parent
-  String? dropDownValue4;
-  FormFieldController<String>? dropDownValueController4;
+  List<Map<String, dynamic>> femaleParentDropdown = [];
+  Map<String, dynamic>? selectedFemaleParent;
+  String? selectedFemaleParentDisplay;
+  FormFieldController<String>? femaleParentDropdownController;
 
-  // Male Parent
-  String? dropDownValue5;
-  FormFieldController<String>? dropDownValueController5;
+  List<Map<String, dynamic>> maleParentDropdown = [];
+  Map<String, dynamic>? selectedMaleParent;
+  String? selectedMaleParentDisplay;
+  FormFieldController<String>? maleParentDropdownController;
 
-  // Species + variety
-  String? dropDownValue6;
-  FormFieldController<String>? dropDownValueController6;
+  List<Map<String, dynamic>> breedingTeamDropdown = [];
+  Map<String, dynamic>? selectedBreedingTeam;
+  String? selectedBreedingTeamDisplay;
+  FormFieldController<String>? breedingTeamDropdownController;
 
-  // Breeding Team - Missing data (implementation unable to be implemented yet)
-  String? dropDownValue7;
-  FormFieldController<String>? dropDownValueController7;
+  // Text fields
+  FocusNode? textFieldFocusNode1;
+  TextEditingController? textController1; // Creation date
+  String? Function(BuildContext, String?)? textController1Validator;
 
-  // Lot number
   FocusNode? textFieldFocusNode2;
-  TextEditingController? textController2;
+  TextEditingController? textController2; // Family ID (optional)
   String? Function(BuildContext, String?)? textController2Validator;
 
-  // Weight
   FocusNode? textFieldFocusNode3;
-  TextEditingController? textController3;
+  TextEditingController? textController3; // Lot number
   String? Function(BuildContext, String?)? textController3Validator;
 
-  // Viability
+  // Optional fields
   FocusNode? textFieldFocusNode4;
-  TextEditingController? textController4;
+  TextEditingController? textController4; // Weight (optional)
   String? Function(BuildContext, String?)? textController4Validator;
 
-  // Show research notes
-  bool? checkboxValue1;
+  FocusNode? textFieldFocusNode5;
+  TextEditingController? textController5; // Viability (optional)
+  String? Function(BuildContext, String?)? textController5Validator;
 
-  // Provenances 
-  List<String> ProvenanceLocationDropdown = []; // Holds list of provenances to show in dropdown
-  String? selectedProvenanceLocation; // Stores currently selected provenance
-  FormFieldController<String>? ProvenanceLocationDropdownController; // Manage state of provenance dropdown
 
-  // Fetch Provenance Location dropdown 
-  Future<void> loadProvenanceLocationDropdown() async {
-    final rawList = await ApiService.getProvenanceLocationDropdown();
-    ProvenanceLocationDropdown = rawList.toSet().toList()..sort();
+  // Loaders for dropdowns (all dynamic)
+  Future<void> loadSpeciesVarietyDropdown() async {
+    final rawList = await ApiService.getVarietiesWithSpeciesDropdown();
+    speciesVarietyDropdown = rawList;
   }
 
-  // Landscape only
-  bool? checkboxValue2;
+  Future<void> loadPropagationTypeDropdown() async {
+    final rawList = await ApiService.getPropagationTypeDropdown();
+    propagationTypeDropdown = rawList.map((e) => {'propagation_type': e}).toList();
+  }
+
+  Future<void> loadGenerationNumberDropdown() async {
+    final rawList = await ApiService.getGenerationNumberDropdown();
+    generationNumberDropdown = rawList.map((e) => {'generation_number': e}).toList();
+  }
+
+  Future<void> loadFemaleParentDropdown() async {
+    final rawList = await ApiService.getFemaleParentDropdown();
+    femaleParentDropdown = rawList.map((e) => {'female_parent': e}).toList();
+  }
+
+  Future<void> loadMaleParentDropdown() async {
+    final rawList = await ApiService.getMaleParentDropdown();
+    maleParentDropdown = rawList.map((e) => {'male_parent': e}).toList();
+  }
+
+  Future<void> loadBreedingTeamDropdown() async {
+    final rawList = await ApiService.getBreedingTeamDropdown();
+    breedingTeamDropdown = rawList.map((e) => {'breeding_team': e}).toList();
+  }
+
+  // Save method for POST request
+  Future<void> saveFamily() async {
+    // Validate required fields
+    if (textController1?.text == null || textController1!.text.isEmpty) {
+      throw Exception('Please enter a creation date');
+    }
+    if (selectedPropagationType == null) {
+      throw Exception('Please select a propagation type');
+    }
+    if (selectedFemaleParent == null) {
+      throw Exception('Please select a female parent');
+    }
+    if (selectedBreedingTeam == null) {
+      throw Exception('Please select a breeding team');
+    }
+    if (textController3?.text == null || textController3!.text.isEmpty) {
+      throw Exception('Please enter a lot number');
+    }
+
+    await ApiService.createFamily(
+      creationDate: textController1!.text,
+      familyId: textController2?.text,
+      propagationType: selectedPropagationType?['propagation_type'],
+      generationNumber: selectedGenerationNumber?['generation_number'],
+      femaleParent: selectedFemaleParent?['female_parent'],
+      maleParent: selectedMaleParent?['male_parent'],
+      speciesVariety: selectedSpeciesVariety != null ? selectedSpeciesVariety!['variety_id']?.toString() : null,
+      breedingTeam: selectedBreedingTeam?['breeding_team'],
+      lotNumber: textController3!.text,
+      weight: textController4?.text,
+      viability: textController5?.text,
+    );
+  }
+
 
   @override
   void initState(BuildContext context) {
-    PropagationTypeComboController = SingleValueDropDownController();
-    ProvenanceLocationComboController = SingleValueDropDownController();
+    speciesVarietyComboController = SingleValueDropDownController();
+    propagationTypeComboController = SingleValueDropDownController();
+    generationNumberComboController = SingleValueDropDownController();
+    femaleParentComboController = SingleValueDropDownController();
+    maleParentComboController = SingleValueDropDownController();
+    breedingTeamComboController = SingleValueDropDownController();
+  provenanceLocationComboController = SingleValueDropDownController();
   }
 
   @override
   void dispose() {
     textFieldFocusNode1?.dispose();
     textController1?.dispose();
-
     textFieldFocusNode2?.dispose();
     textController2?.dispose();
-
     textFieldFocusNode3?.dispose();
     textController3?.dispose();
-
     textFieldFocusNode4?.dispose();
     textController4?.dispose();
+    textFieldFocusNode5?.dispose();
+    textController5?.dispose();
+    speciesVarietyComboController.dispose();
+    propagationTypeComboController.dispose();
+    generationNumberComboController.dispose();
+    femaleParentComboController.dispose();
+    maleParentComboController.dispose();
+    breedingTeamComboController.dispose();
+  provenanceLocationComboController.dispose();
   }
 }

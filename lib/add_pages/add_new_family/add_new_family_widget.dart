@@ -35,11 +35,6 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
     setState(() {});
   }
 
-  Future<void> _loadProvenanceLocationDropdown() async {
-    await _model.loadProvenanceLocationDropdown();
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +45,6 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
     _model.textFieldFocusNode1 ??= FocusNode();
 
     _loadPropagationTypeDropdown();
-    _loadProvenanceLocationDropdown();
 
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
@@ -1357,7 +1351,7 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                 child: Container(
                                                   constraints: BoxConstraints(maxWidth: 400),
                                                   child: DropDownTextField(
-                                                    controller: _model.PropagationTypeComboController,
+                                                    controller: _model.propagationTypeComboController,
                                                     clearOption: true,
                                                     enableSearch: true,
                                                     textFieldDecoration: InputDecoration(
@@ -1369,19 +1363,21 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                       filled: true,
                                                     ),
                                                     dropDownItemCount: 6,
-                                                    dropDownList: _model.PropagationTypeDropdown
-                                                        .map((s) => DropDownValueModel(name: s, value: s))
-                                                        .toList(),
+                                                    dropDownList: _model.propagationTypeDropdown
+                                                    .map((s) => DropDownValueModel(name: s['propagation_type'], value: s['id'].toString()))
+                                                    .toList(),
                                                     onChanged: (val) {
                                                       setState(() {
                                                         if (val is DropDownValueModel) {
-                                                          _model.selectedPropagationType = val.value;
+                                                          final selected = _model.propagationTypeDropdown.firstWhere((e) => e['id'].toString() == val.value.toString(), orElse: () => {});
+                                                          _model.selectedPropagationType = selected;
                                                         } else if (val is String) {
-                                                          _model.selectedPropagationType = val;
-                                                          if (!_model.PropagationTypeDropdown.contains(val)) {
-                                                            _model.PropagationTypeDropdown.add(val);
+                                                          final selected = _model.propagationTypeDropdown.firstWhere((e) => e['id'].toString() == val, orElse: () => {});
+                                                          _model.selectedPropagationType = selected;
+                                                          if (selected.isEmpty) {
+                                                            _model.propagationTypeDropdown.add({'id': val, 'propagation_type': val});
                                                           }
-                                                          _model.PropagationTypeComboController.setDropDown(
+                                                          _model.propagationTypeComboController.setDropDown(
                                                             DropDownValueModel(name: val, value: val),
                                                           );
                                                         }
@@ -2402,12 +2398,10 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                             safeSetState(() => _model
                                                 .checkboxValue1 = newValue!);
                                           },
-                                          side: (Colors.black != null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: Colors.black,
-                                                )
-                                              : null,
+                                          side: BorderSide(
+                                            width: 2,
+                                            color: Colors.black,
+                                          ),
                                           activeColor: Color(0xFF0000FF),
                                           checkColor:
                                               FlutterFlowTheme.of(context)
@@ -2472,7 +2466,7 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                         child: Container(
                                           constraints: BoxConstraints(maxWidth: 400),
                                           child: DropDownTextField(
-                                          controller: _model.ProvenanceLocationComboController,
+                                          controller: _model.provenanceLocationComboController,
                                           clearOption: true,
                                           enableSearch: true,
                                           textFieldDecoration: InputDecoration(
@@ -2482,20 +2476,20 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                             ),
                                           ),
                                           dropDownItemCount: 6,
-                                          dropDownList: _model.ProvenanceLocationDropdown
-                                            .map((s) => DropDownValueModel(name: s, value: s))
+                                          dropDownList: _model.provenanceLocationDropdown
+                                            .map((s) => DropDownValueModel(name: s['provenance_location'], value: s['provenance_location']))
                                             .toList(),
                                           onChanged: (val) {
                                             setState(() {
                                             if (val is DropDownValueModel) {
-                                              _model.selectedProvenanceLocation = val.value;
+                                              _model.selectedProvenanceLocation = { 'provenance_location': val.value };
                                             } else if (val is String) {
-                                              _model.selectedProvenanceLocation = val;
-                                              if (!_model.ProvenanceLocationDropdown.contains(val)) {
-                                              _model.ProvenanceLocationDropdown.add(val);
+                                              _model.selectedProvenanceLocation = { 'provenance_location': val };
+                                              if (!_model.provenanceLocationDropdown.any((e) => e['provenance_location'] == val)) {
+                                                _model.provenanceLocationDropdown.add({ 'provenance_location': val });
                                               }
-                                              _model.ProvenanceLocationComboController.setDropDown(
-                                              DropDownValueModel(name: val, value: val),
+                                              _model.provenanceLocationComboController.setDropDown(
+                                                DropDownValueModel(name: val, value: val),
                                               );
                                             }
                                             });
@@ -2561,12 +2555,10 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                             safeSetState(() => _model
                                                 .checkboxValue2 = newValue!);
                                           },
-                                          side: (Colors.black != null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: Colors.black,
-                                                )
-                                              : null,
+                                          side: BorderSide(
+                                            width: 2,
+                                            color: Colors.black,
+                                          ),
                                           activeColor: Color(0xFF0000FF),
                                           checkColor:
                                               FlutterFlowTheme.of(context)

@@ -268,16 +268,62 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load propagation type dropdown: ${res.statusCode}');
   }
 
-  // GET breeding team dropdown - missing data 25/09/25, to be implemented
+  // GET female parent dropdown
+  static Future<List<String>> getFemaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/family/female_parents'));
+    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    throw Exception('Failed to load female parent dropdown: ${res.statusCode}');
+  }
 
-  // GET provenance location dropdown
-  static Future<List<String>> getProvenanceLocationDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/newfamily/provenance_locations'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['location'] as String).toList();
+  // GET male parent dropdown
+  static Future<List<String>> getMaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/family/male_parents'));
+    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    throw Exception('Failed to load male parent dropdown: ${res.statusCode}');
+  }
+
+  // GET breeding team dropdown
+  static Future<List<String>> getBreedingTeamDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/family/breeding_teams'));
+    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    throw Exception('Failed to load breeding team dropdown: ${res.statusCode}');
+  }
+
+  // POST Save button - Create new family
+  static Future<Map<String, dynamic>> createFamily({
+    required String creationDate,
+    String? familyId,
+    required String propagationType,
+    int? generationNumber,
+    required String femaleParent,
+    String? maleParent,
+    String? speciesVariety,
+    required String breedingTeam,
+    required String lotNumber,
+    String? weight,
+    String? viability,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/family/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'creation_date': creationDate,
+        if (familyId != null) 'family_id': familyId,
+        'propagation_type': propagationType,
+        if (generationNumber != null) 'generation_number': generationNumber,
+        'female_parent': femaleParent,
+        if (maleParent != null) 'male_parent': maleParent,
+        if (speciesVariety != null) 'species_variety': speciesVariety,
+        'breeding_team': breedingTeam,
+        'lot_number': lotNumber,
+        if (weight != null) 'weight': weight,
+        if (viability != null) 'viability': viability,
+      }),
+    );
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
     }
-    throw Exception('Failed to load provenance location dropdown: ${res.statusCode}');
+    throw Exception('Failed to create family: ${res.statusCode} ${res.body}');
   }
 
   // ------------------------------- Progeny --------------------------------
