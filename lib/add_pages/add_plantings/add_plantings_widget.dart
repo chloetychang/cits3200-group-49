@@ -1528,7 +1528,7 @@ Future<void> submitPlanting() async {
                                               ),
                                         ),
                                         Container(
-                                          width: 400.0,
+                                          width: 300.0,
                                           child: TextFormField(
                                             controller: _model.textController2,
                                             focusNode:
@@ -1660,7 +1660,7 @@ Future<void> submitPlanting() async {
                                     ),
                                     Flexible(
                                       child: Container(
-                                      constraints: BoxConstraints(maxWidth: 400),
+                                      constraints: BoxConstraints(maxWidth: 600),
                                       child: DropDownTextField(
                                         controller: _model.GeneticSourcesComboController,
                                         clearOption: true,
@@ -1786,7 +1786,7 @@ Future<void> submitPlanting() async {
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
                                             color: Color(0xFFFF0000),
-                                            fontSize: () {
+                                            fontSize: () {F
                                               if (MediaQuery.sizeOf(context)
                                                       .width <
                                                   kBreakpointSmall) {

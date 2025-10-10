@@ -8,25 +8,33 @@ from App import models, schemas
 router = APIRouter(prefix="/genetic_sources", tags=["genetic_sources"])
 
 @router.get("/View_GeneticSources", response_model=List[schemas.GeneticSourceFullResponse])
-def get_genetic_sources_full(db: Session = Depends(get_db)):
+def get_genetic_sources_full(
+    skip: int = 0,
+    limit: Optional[int] = 100,
+    db: Session = Depends(get_db),
+):
     try:
-        rows = (
-            db.query(models.GeneticSource)
-            .options(
-                # genetic_source -> variety -> species
-                joinedload(models.GeneticSource.variety)
-                    .joinedload(models.Variety.species),
-                joinedload(models.GeneticSource.provenance)
-                    .joinedload(models.Provenance.location_type_rel),
+        q = (
+    db.query(models.GeneticSource)
+    .options(
+        # genetic_source -> variety -> species
+        joinedload(models.GeneticSource.variety)
+            .joinedload(models.Variety.species),
+        joinedload(models.GeneticSource.provenance)
+            .joinedload(models.Provenance.location_type_rel),
 
-                joinedload(models.GeneticSource.provenance)
-                    .joinedload(models.Provenance.bioregion),
+        joinedload(models.GeneticSource.provenance)
+            .joinedload(models.Provenance.bioregion),
 
-                joinedload(models.GeneticSource.supplier),
-                joinedload(models.GeneticSource.propagation_type_rel),
-            )
-            .all()
+        joinedload(models.GeneticSource.supplier),
+        joinedload(models.GeneticSource.propagation_type_rel),
+    )
+    .offset(skip)
         )
+        if limit is not None:
+            q = q.limit(limit)
+
+        rows = q.all()
 
         results: List[schemas.GeneticSourceFullResponse] = []
         for gs in rows:

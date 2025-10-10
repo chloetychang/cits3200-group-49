@@ -60,11 +60,55 @@ def get_users_dropdown(db: Session = Depends(get_db)):
     return [schemas.UserResponse.model_validate(u).model_dump() for u in users]
 
 # Creation of genetic sources dropdown
-@router.get("/genetic_sources", response_model=List[schemas.GeneticSourceResponse])
+@router.get("/genetic_sources")
 def get_genetic_sources_dropdown(db: Session = Depends(get_db)):
-    """Get all genetic sources for dropdown (ordered by genetic_source_id)."""
-    genetic_sources = db.query(models.GeneticSource).order_by(models.GeneticSource.genetic_source_id.asc()).all()
-    return [schemas.GeneticSourceResponse.model_validate(gs).model_dump() for gs in genetic_sources]
+    """Get all genetic sources for dropdown with species and variety information."""
+    from sqlalchemy.orm import joinedload
+    
+    genetic_sources = (
+        db.query(models.GeneticSource)
+        .options(
+            joinedload(models.GeneticSource.variety)
+                .joinedload(models.Variety.species)
+                .joinedload(models.Species.genus),
+            joinedload(models.GeneticSource.provenance)
+                .joinedload(models.Provenance.location_type_rel),
+            joinedload(models.GeneticSource.supplier)
+        )
+        .order_by(models.GeneticSource.genetic_source_id.asc())
+        .all()
+    )
+    
+    result = []
+    for gs in genetic_sources:
+        # Format the display text: "[Species] [Variety] from [supplier short name] Lot: [supplier_lot_number] Gen: {generation_number}"
+        species_name = ""
+        variety_name = ""
+        supplier_short_name = ""
+
+        if gs.variety and gs.variety.species and gs.variety.species.genus:
+            species_name = f"{gs.variety.species.genus.genus} {gs.variety.species.species}"
+            variety_name = gs.variety.variety or ""
+        
+        if gs.supplier:
+            supplier_short_name = gs.supplier.short_name or ""
+        
+        lot_text = f"Lot: {gs.supplier_lot_number}" if gs.supplier_lot_number is not None else "Lot: N/A"
+        gen_text = f"Gen: {gs.generation_number}" if gs.generation_number is not None else "Gen: 0"
+        
+        display_text = f"{species_name} {variety_name} from {supplier_short_name} {lot_text} {gen_text}".strip()
+        
+        result.append({
+            "genetic_source_id": gs.genetic_source_id,
+            "display_text": display_text,
+            "species_name": species_name,
+            "variety_name": variety_name,
+            "supplier_short_name": supplier_short_name,
+            "supplier_lot_number": gs.supplier_lot_number,
+            "generation_number": gs.generation_number
+        })
+    
+    return result
 
 # Creation of removal causes dropdown
 @router.get("/removal_causes", response_model=List[schemas.RemovalCauseResponse])

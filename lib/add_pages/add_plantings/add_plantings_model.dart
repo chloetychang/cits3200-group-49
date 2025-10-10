@@ -43,33 +43,18 @@ class AddPlantingsModel extends FlutterFlowModel<AddPlantingsWidget> {
   // Fetch Genetic Sources dropdown (simplified - no pagination)
   Future<void> loadGeneticSourcesDropdown() async {
     GeneticSourcesData = await ApiService.getGeneticSourcesDropdown();
-    // Create display names in format: [Species] [Variety] from [location] Lot: [supplier_lot_number] Gen: {generation_number}
+    // Use the pre-formatted display text from the API
     GeneticSourcesDropdown = GeneticSourcesData.map((gs) {
-      String species = gs['species']?['species'] ?? 'Unknown Species';  
-      String variety = gs['variety']?['variety'] ?? 'Unknown Variety';
-      String location = gs['provenance']?['location'] ?? 'Unknown Location';
-      String lotNumber = gs['supplier_lot_number']?.toString() ?? 'N/A';
-      String generation = gs['generation_number']?.toString() ?? '0';
-      
-      return "$species $variety from $location Lot: $lotNumber Gen: $generation";
+      return gs['display_text']?.toString() ?? 'Unknown Genetic Source';
     }).toList()..sort();
   }
 
   // Get genetic source ID by display name
   int? getGeneticSourceId(String? displayName) {
     if (displayName == null) return null;
-    // Find the genetic source data that matches the formatted display name
+    // Find the genetic source data that matches the display text
     final found = GeneticSourcesData.firstWhere(
-      (gs) {
-        String species = gs['species']?['species'] ?? 'Unknown Species';  
-        String variety = gs['variety']?['variety'] ?? 'Unknown Variety';
-        String location = gs['provenance']?['location'] ?? 'Unknown Location';
-        String lotNumber = gs['supplier_lot_number']?.toString() ?? 'N/A';
-        String generation = gs['generation_number']?.toString() ?? '0';
-        
-        String formatted = "$species $variety from $location Lot: $lotNumber Gen: $generation";
-        return formatted == displayName;
-      },
+      (gs) => gs['display_text']?.toString() == displayName,
       orElse: () => <String, dynamic>{},
     );
     return found['genetic_source_id'] as int?;

@@ -269,7 +269,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // GET Genetic Sources dropdown
   static Future<List<Map<String, dynamic>>> getGeneticSourcesDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/genetic_sources/View_GeneticSources'));
+    final res = await http.get(Uri.parse('$baseUrl/planting/genetic_sources'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.cast<Map<String, dynamic>>();
