@@ -9,8 +9,8 @@ from App import models, schemas, crud
 # ================== ROUTER ==================
 
 router = APIRouter(
-	prefix="/family",
-	tags=["families"]
+	prefix="/newFamily",
+	tags=["newFamily"]
 )
 
 # ================== ROUTES ==================

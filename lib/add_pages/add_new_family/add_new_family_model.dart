@@ -11,23 +11,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 
 
 class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
-  // Additional dropdowns and checkboxes for error fixes
-  FormFieldController<String>? dropDownValueController3;
-  String? dropDownValue3;
-  FormFieldController<String>? dropDownValueController4;
-  String? dropDownValue4;
-  FormFieldController<String>? dropDownValueController5;
-  String? dropDownValue5;
-  FormFieldController<String>? dropDownValueController6;
-  String? dropDownValue6;
-  FormFieldController<String>? dropDownValueController7;
-  String? dropDownValue7;
-  bool? checkboxValue1;
-  bool? checkboxValue2;
-  // Provenance Location Dropdown
-  late final SingleValueDropDownController provenanceLocationComboController;
-  List<Map<String, dynamic>> provenanceLocationDropdown = [];
-  Map<String, dynamic>? selectedProvenanceLocation;
+  
   // Dropdown controllers
   late final SingleValueDropDownController speciesVarietyComboController;
   late final SingleValueDropDownController propagationTypeComboController;
@@ -40,35 +24,35 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
 
   String? dropDownValue1;
   FormFieldController<String>? dropDownValueController1;
+  bool? checkboxValue1;
 
   List<Map<String, dynamic>> speciesVarietyDropdown = [];
-  Map<String, dynamic>? selectedSpeciesVariety;
-  String? selectedSpeciesVarietyDisplay;
+  int? selectedSpeciesVarietyId;
+  String? selectedSpeciesVarietyName;
   FormFieldController<String>? speciesVarietyDropdownController;
 
   List<Map<String, dynamic>> propagationTypeDropdown = [];
-  Map<String, dynamic>? selectedPropagationType;
-  String? selectedPropagationTypeDisplay;
+  int? selectedPropagationTypeId;
+  String? selectedPropagationTypeName;
   FormFieldController<String>? propagationTypeDropdownController;
 
   List<Map<String, dynamic>> generationNumberDropdown = [];
-  Map<String, dynamic>? selectedGenerationNumber;
-  String? selectedGenerationNumberDisplay;
+  int? selectedGenerationNumber;
   FormFieldController<String>? generationNumberDropdownController;
 
   List<Map<String, dynamic>> femaleParentDropdown = [];
-  Map<String, dynamic>? selectedFemaleParent;
-  String? selectedFemaleParentDisplay;
+  int? selectedFemaleParentId;
+  String? selectedFemaleParentName;
   FormFieldController<String>? femaleParentDropdownController;
 
   List<Map<String, dynamic>> maleParentDropdown = [];
-  Map<String, dynamic>? selectedMaleParent;
-  String? selectedMaleParentDisplay;
+  int? selectedMaleParentId;
+  String? selectedMaleParentName;
   FormFieldController<String>? maleParentDropdownController;
 
   List<Map<String, dynamic>> breedingTeamDropdown = [];
-  Map<String, dynamic>? selectedBreedingTeam;
-  String? selectedBreedingTeamDisplay;
+  int? selectedBreedingTeamId;
+  String? selectedBreedingTeamName;
   FormFieldController<String>? breedingTeamDropdownController;
 
   // Text fields
@@ -96,66 +80,60 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
 
   // Loaders for dropdowns (all dynamic)
   Future<void> loadSpeciesVarietyDropdown() async {
-    final rawList = await ApiService.getVarietiesWithSpeciesDropdown();
-    speciesVarietyDropdown = rawList;
+  final rawList = await ApiService.getVarietiesWithSpeciesDropdown();
+  speciesVarietyDropdown = rawList;
   }
 
   Future<void> loadPropagationTypeDropdown() async {
     final rawList = await ApiService.getPropagationTypeDropdown();
-    propagationTypeDropdown = rawList.map((e) => {'propagation_type': e}).toList();
+    propagationTypeDropdown = rawList;
   }
 
   Future<void> loadGenerationNumberDropdown() async {
     final rawList = await ApiService.getGenerationNumberDropdown();
-    generationNumberDropdown = rawList.map((e) => {'generation_number': e}).toList();
+    generationNumberDropdown = rawList;
   }
 
   Future<void> loadFemaleParentDropdown() async {
     final rawList = await ApiService.getFemaleParentDropdown();
-    femaleParentDropdown = rawList.map((e) => {'female_parent': e}).toList();
+    femaleParentDropdown = rawList;
   }
 
   Future<void> loadMaleParentDropdown() async {
     final rawList = await ApiService.getMaleParentDropdown();
-    maleParentDropdown = rawList.map((e) => {'male_parent': e}).toList();
+    maleParentDropdown = rawList;
   }
 
   Future<void> loadBreedingTeamDropdown() async {
     final rawList = await ApiService.getBreedingTeamDropdown();
-    breedingTeamDropdown = rawList.map((e) => {'breeding_team': e}).toList();
+    breedingTeamDropdown = rawList;
   }
-
+ 
   // Save method for POST request
   Future<void> saveFamily() async {
     // Validate required fields
-    if (textController1?.text == null || textController1!.text.isEmpty) {
-      throw Exception('Please enter a creation date');
-    }
-    if (selectedPropagationType == null) {
+    if (selectedPropagationTypeId == null) {
       throw Exception('Please select a propagation type');
     }
-    if (selectedFemaleParent == null) {
+    if (selectedFemaleParentId == null) {
       throw Exception('Please select a female parent');
     }
-    if (selectedBreedingTeam == null) {
+    if (selectedBreedingTeamId == null) {
       throw Exception('Please select a breeding team');
-    }
-    if (textController3?.text == null || textController3!.text.isEmpty) {
-      throw Exception('Please enter a lot number');
     }
 
     await ApiService.createFamily(
       creationDate: textController1!.text,
       familyId: textController2?.text,
-      propagationType: selectedPropagationType?['propagation_type'],
-      generationNumber: selectedGenerationNumber?['generation_number'],
-      femaleParent: selectedFemaleParent?['female_parent'],
-      maleParent: selectedMaleParent?['male_parent'],
-      speciesVariety: selectedSpeciesVariety != null ? selectedSpeciesVariety!['variety_id']?.toString() : null,
-      breedingTeam: selectedBreedingTeam?['breeding_team'],
+      propagationTypeId: selectedPropagationTypeId,
+      generationNumber: selectedGenerationNumber ?? 0,
+      femaleParentId: selectedFemaleParentId,
+      maleParentId: selectedMaleParentId,
+      varietyId: selectedSpeciesVarietyId,
+      breedingTeamId: selectedBreedingTeamId,
       lotNumber: textController3!.text,
-      weight: textController4?.text,
-      viability: textController5?.text,
+      weight: int.tryParse(textController4?.text ?? ''),
+      viability: int.tryParse(textController5?.text ?? ''),
     );
   }
 
@@ -168,7 +146,7 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     femaleParentComboController = SingleValueDropDownController();
     maleParentComboController = SingleValueDropDownController();
     breedingTeamComboController = SingleValueDropDownController();
-  provenanceLocationComboController = SingleValueDropDownController();
+  // provenanceLocationComboController removed
   }
 
   @override
@@ -189,6 +167,6 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     femaleParentComboController.dispose();
     maleParentComboController.dispose();
     breedingTeamComboController.dispose();
-  provenanceLocationComboController.dispose();
+  // provenanceLocationComboController.dispose() removed
   }
 }

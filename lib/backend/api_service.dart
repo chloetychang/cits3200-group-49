@@ -260,10 +260,10 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // GET propagation type dropdown  
   static Future<List<String>> getPropagationTypeDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/newfamily/propagation_type'));
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/propagation_types'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['propagation_type'] as String).toList();
+      return data.map((item) => item as Map<String, dynamic>).toList();
     }
     throw Exception('Failed to load propagation type dropdown: ${res.statusCode}');
   }
@@ -271,59 +271,77 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   // GET female parent dropdown
   static Future<List<String>> getFemaleParentDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/family/female_parents'));
-    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
     throw Exception('Failed to load female parent dropdown: ${res.statusCode}');
   }
 
   // GET male parent dropdown
   static Future<List<String>> getMaleParentDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/family/male_parents'));
-    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
     throw Exception('Failed to load male parent dropdown: ${res.statusCode}');
   }
 
   // GET breeding team dropdown
   static Future<List<String>> getBreedingTeamDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/family/breeding_teams'));
-    if (res.statusCode == 200) return List<String>.from(jsonDecode(res.body));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
     throw Exception('Failed to load breeding team dropdown: ${res.statusCode}');
   }
 
   // POST Save button - Create new family
   static Future<Map<String, dynamic>> createFamily({
     required String creationDate,
-    String? familyId,
-    required String propagationType,
+    int? familyId,
+    required int propagationTypeId,
     int? generationNumber,
-    required String femaleParent,
-    String? maleParent,
-    String? speciesVariety,
-    required String breedingTeam,
+    required int femaleParentId,
+    int? maleParentId,
+    int? varietyId,
+    required int breedingTeamId,
     required String lotNumber,
-    String? weight,
-    String? viability,
+    double? weight,
+    int? viability,
+    String? researchNotes,
   }) async {
+    final Map<String, dynamic> requestBody = {
+      'creation_date': creationDate,
+      if (familyId != null) 'family_id': familyId,
+      'propagation_type_id': propagationTypeId,
+      'female_parent_id': femaleParentId,
+      'breeding_team_id': breedingTeamId,
+      'lot_number': lotNumber,
+      'generation_number': generationNumber ?? 0,
+    };
+
+    // Add optional fields only if they have values
+    if (maleParentId != null) requestBody['male_parent_id'] = maleParentId;
+    if (varietyId != null) requestBody['species_variety_id'] = varietyId;
+    if (weight != null) requestBody['weight'] = weight;
+    if (viability != null) requestBody['viability'] = viability;
+    if (researchNotes != null && researchNotes.isNotEmpty) requestBody['research_notes'] = researchNotes;
+
     final res = await http.post(
       Uri.parse('$baseUrl/family/'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'creation_date': creationDate,
-        if (familyId != null) 'family_id': familyId,
-        'propagation_type': propagationType,
-        if (generationNumber != null) 'generation_number': generationNumber,
-        'female_parent': femaleParent,
-        if (maleParent != null) 'male_parent': maleParent,
-        if (speciesVariety != null) 'species_variety': speciesVariety,
-        'breeding_team': breedingTeam,
-        'lot_number': lotNumber,
-        if (weight != null) 'weight': weight,
-        if (viability != null) 'viability': viability,
-      }),
+      body: jsonEncode(requestBody),
     );
+
     if (res.statusCode == 200 || res.statusCode == 201) {
       return jsonDecode(res.body);
     }
-    throw Exception('Failed to create family: ${res.statusCode} ${res.body}');
+
+    print('Request body: \\${jsonEncode(requestBody)}');
+    throw Exception('Failed to create family: \\${res.statusCode}, error: \\${res.body}');
   }
 
   // ------------------------------- Progeny --------------------------------
