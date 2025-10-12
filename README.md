@@ -56,7 +56,7 @@ Create a `.env` file based on the template in `.env.example`.
 cp .env.example .env
 ```
 
-For security, actual credentials shall be sent separately. 
+For security, actual credentials shall be sent separately. After entering the credentials into the created `.env` file, save the document.
 
 ### 4. **Set up Database**
 Connecting to Dockerized PostgreSQL
