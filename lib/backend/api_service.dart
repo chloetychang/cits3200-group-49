@@ -250,36 +250,123 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
   // ------------------------------- Planting  --------------------------------
-  // GET Genetic Source dropdown - missing data 25/09/25, to be implemented
-
-  // GET Planted by (full name) dropdown
-  static Future<List<String>> getPlantedByDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/plantings/planted_by'));
+  
+  // GET Zones dropdown
+  static Future<List<Map<String, dynamic>>> getZonesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/zones'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['full_name'] as String).toList();
+      return data.cast<Map<String, dynamic>>();
     }
-    throw Exception('Failed to load planted by (full name) dropdown: ${res.statusCode}');
+    throw Exception('Failed to load zones dropdown: ${res.statusCode}');
+  }
+
+  // GET Varieties with species names dropdown (with pagination and search)
+  static Future<List<Map<String, dynamic>>> getPlantingVarietiesWithSpeciesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/varieties_with_species'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load varieties with species dropdown: ${res.statusCode}');
+  }
+
+
+
+  // GET Containers dropdown
+  static Future<List<Map<String, dynamic>>> getContainersDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/containers'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load containers dropdown: ${res.statusCode}');
+  }
+
+  // GET Users dropdown (for planted by)
+  static Future<List<Map<String, dynamic>>> getUsersDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/users'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load users dropdown: ${res.statusCode}');
+  }
+
+  // GET Genetic Sources dropdown
+  static Future<List<Map<String, dynamic>>> getGeneticSourcesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/genetic_sources'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load genetic sources dropdown: ${res.statusCode}');
+  }
+
+  // GET Removal Causes dropdown
+  static Future<List<Map<String, dynamic>>> getRemovalCausesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/planting/removal_causes'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.cast<Map<String, dynamic>>();
+    }
+    throw Exception('Failed to load removal causes dropdown: ${res.statusCode}');
+  }
+
+  // POST Create planting
+  static Future<Map<String, dynamic>> createPlanting({
+    required String datePlanted,
+    required int numberPlanted,
+    required int zoneId,
+    int? varietyId,  // Optional when genetic_source_id is provided
+    required int containerTypeId,
+    int? plantedBy,
+    int? geneticSourceId,
+    String? comments,
+    String? removalDate,
+    int? numberRemoved,
+    int? removalCauseId,
+  }) async {
+    final body = {
+      'date_planted': datePlanted,
+      'number_planted': numberPlanted,
+      'zone_id': zoneId,
+      if (varietyId != null) 'variety_id': varietyId,
+      'container_type_id': containerTypeId,
+      if (plantedBy != null) 'planted_by': plantedBy,
+      if (geneticSourceId != null) 'genetic_source_id': geneticSourceId,
+      if (comments != null) 'comments': comments,
+      if (removalDate != null) 'removal_date': removalDate,
+      if (numberRemoved != null) 'number_removed': numberRemoved,
+      if (removalCauseId != null) 'removal_cause_id': removalCauseId,
+    };
+
+    final res = await http.post(
+      Uri.parse('$baseUrl/planting/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
+    }
+    throw Exception('Failed to create planting: ${res.statusCode} ${res.body}');
+  }
+
+  // Legacy methods for backward compatibility - these now call the new endpoints
+  static Future<List<String>> getPlantedByDropdown() async {
+    final users = await getUsersDropdown();
+    return users.map((user) => user['full_name'] as String).toList();
   }
     
-  // GET Zone Number dropdown
   static Future<List<String>> getZoneNumberDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/plantings/zone_number'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['zone_number'] as String).toList();
-    }
-    throw Exception('Failed to load zone number dropdown: ${res.statusCode}');
+    final zones = await getZonesDropdown();
+    return zones.map((zone) => zone['zone_number'] as String).toList();
   }
 
-  // GET Container Type dropdown
   static Future<List<String>> getContainerTypeDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/plantings/container_type'));
-    if (res.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['container_type'] as String).toList();
-    }
-    throw Exception('Failed to load container type dropdown: ${res.statusCode}');
+    final containers = await getContainersDropdown();
+    return containers.map((container) => container['container_type'] as String).toList();
   }
 
   // ------------------------------- New Family  --------------------------------
