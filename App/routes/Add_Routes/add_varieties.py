@@ -22,7 +22,7 @@ def get_genus_dropdown(db: Session = Depends(get_db)):
     return [schemas.GenusResponse.model_validate(g).model_dump() for g in genus_list]
 
 # Creation of species dropdown
-# The format will be genus + species 
+
 @router.get("/species", response_model=List[str])
 def get_species_dropdown(db: Session = Depends(get_db)):
     """Get all species names with their genus for dropdown (A→Z)."""
@@ -33,6 +33,37 @@ def get_species_dropdown(db: Session = Depends(get_db)):
         .all()
     )
     return [f"{genus} {species}" for genus, species in species_list]
+
+@router.get("/species/by_genus/{genus_id}")
+def get_species_by_genus(genus_id: int, db: Session = Depends(get_db)):
+    """Return species for a given genus id, including species_id and full display name.
+
+    Response shape: [{ 'species_id': int, 'species': str, 'full_species_name': 'Genus species' }]
+    """
+    # Fetch genus name
+    genus_name = (
+        db.query(models.Genus.genus)
+        .filter(models.Genus.genus_id == genus_id)
+        .scalar()
+    )
+    if not genus_name:
+        # Return empty list if genus not found
+        return []
+
+    rows = (
+        db.query(models.Species)
+        .filter(models.Species.genus_id == genus_id)
+        .order_by(models.Species.species.asc())
+        .all()
+    )
+    return [
+        {
+            'species_id': s.species_id,
+            'species': s.species,
+            'full_species_name': f"{genus_name} {s.species}",
+        }
+        for s in rows
+    ]
 
 @router.post("/", response_model=schemas.VarietyNestedResponse)
 def create_variety(variety_in: schemas.VarietyCreate, db: Session = Depends(get_db)):

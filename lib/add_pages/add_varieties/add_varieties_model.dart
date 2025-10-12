@@ -143,7 +143,7 @@ class AddVarietiesModel extends FlutterFlowModel<AddVarietiesWidget> {
           return {
             'species_id': r['species_id'],
             'species': speciesName,
-            'full_species_name': genusName.isNotEmpty ? '\$genusName $speciesName' : speciesName,
+            'full_species_name': genusName.isNotEmpty ? '$genusName $speciesName' : speciesName,
           };
         }).toList();
         speciesData = list;

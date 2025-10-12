@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl = 'http://localhost:8000';
+  // Tiny in-memory cache for species by genus id to make repeated selections snappy
+  static final Map<int, List<Map<String, dynamic>>> _speciesByGenusCache = {};
 
   // get users
   static Future<List<dynamic>> getView_Users() async {
@@ -171,6 +173,30 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
       return data.map((item) => item as Map<String, dynamic>).toList();
     }
     throw Exception('Failed to load varieties with species: ${res.statusCode}');
+  }
+
+  // Fast: Get species by genus id directly from varieties route (server-side filtered)
+  static Future<List<Map<String, dynamic>>> getSpeciesByGenusFast(int genusId) async {
+    // serve from cache if available
+    if (_speciesByGenusCache.containsKey(genusId)) {
+      return _speciesByGenusCache[genusId]!
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    final uri = Uri.parse('$baseUrl/varieties/species/by_genus/$genusId');
+    try {
+      final res = await http.get(uri).timeout(const Duration(seconds: 6));
+      if (res.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(res.body);
+        final list = data.cast<Map<String, dynamic>>();
+        _speciesByGenusCache[genusId] = list;
+        return list.map((e) => Map<String, dynamic>.from(e)).toList();
+      }
+      throw Exception('Failed to load species by genus: ${res.statusCode} ${res.body}');
+    } catch (e) {
+      // don't cache errors
+      rethrow;
+    }
   }
 
   // POST Save button - Create new genetic source (acquisition)
@@ -783,16 +809,22 @@ static Future<Map<String, dynamic>> updateZoneAspect(int id, String aspect) asyn
   // Get species for a given genus id by filtering the /species endpoint
   // (backend provides species rows with a genus_id field)
   static Future<List<Map<String, dynamic>>> getSpeciesByGenus(int genusId) async {
+    // Prefer fast server-side filtered route; fall back to client-side filtering if needed
     try {
-      // Use the preloading endpoint with a large limit so we get all species for client-side filtering.
-      // This avoids paging/truncation problems that can make the dropdown appear empty.
-      final allSpecies = await getSpeciesForPreloading(limit: 1000);
-      final filtered = allSpecies.where((s) => (s['genus_id'] as int?) == genusId).toList();
-      print('ApiService.getSpeciesByGenus: genusId=$genusId found=${filtered.length}');
-      return filtered;
-    } catch (e) {
-      print('ApiService.getSpeciesByGenus: error for genusId=$genusId -> $e');
-      rethrow;
+      final fast = await getSpeciesByGenusFast(genusId);
+      print('ApiService.getSpeciesByGenus: [fast] genusId=$genusId found=${fast.length}');
+      return fast;
+    } catch (fastErr) {
+      print('ApiService.getSpeciesByGenus: fast route failed -> $fastErr; falling back to preload');
+      try {
+        final allSpecies = await getSpeciesForPreloading(limit: 1000);
+        final filtered = allSpecies.where((s) => (s['genus_id'] as int?) == genusId).toList();
+        print('ApiService.getSpeciesByGenus: [fallback] genusId=$genusId found=${filtered.length}');
+        return filtered;
+      } catch (e) {
+        print('ApiService.getSpeciesByGenus: error for genusId=$genusId -> $e');
+        rethrow;
+      }
     }
   }
 
