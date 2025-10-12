@@ -76,14 +76,13 @@ class ContainerUpdate(ContainerBase):
 
 # Family schemas
 class FamilyBase(BaseSchema):
-    pass
+    famiy_name: str
 
 class FamilyCreate(FamilyBase):
     pass
 
 class FamilyResponse(FamilyBase):
-    pass
-
+    family_id: int
 # Genus schemas
 class GenusBase(BaseSchema):
     genus: str
@@ -288,12 +287,19 @@ class UserRoleLinkResponse(UserRoleLinkBase):
 
 # Variety schemas
 class VarietyBase(BaseSchema):
+    # Client must provide the genus for UI convenience/validation; the DB stores species_id on Variety
+    genus_id: Optional[int] = None
     species_id: Optional[int] = None
     common_name: Optional[str] = None
     variety: Optional[str] = None
-    genetic_source_id: Optional[int] = None
+
 
 class VarietyCreate(VarietyBase):
+    genus_id: Optional[int] = None
+    species_id: Optional[int] = None
+    variety_id: Optional[int] = None
+    variety: Optional[str] = None
+    common_name: Optional[str] = None
     pass
 
 class VarietyResponse(VarietyBase):
@@ -422,7 +428,7 @@ class PlantingBase(BaseSchema):
     date_planted: datetime
     planted_by: Optional[int] = None
     zone_id: int
-    variety_id: int
+    variety_id: Optional[int] = None  # Optional when genetic_source_id is provided
     number_planted: int
     genetic_source_id: Optional[int] = None
     container_type_id: int
@@ -477,6 +483,7 @@ class GeneticSourceFullResponse(BaseModel):
     research_notes: Optional[str] = None
     
     species: Optional[SpeciesSimpleResponse] = None
+    variety: Optional[VarietyResponse] = None
     provenance: Optional[ProvenanceOut] = None
     supplier: Optional[SupplierResponse] = None
     propagation_type: Optional[PropagationTypeResponse] = None
