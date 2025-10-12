@@ -54,7 +54,7 @@ Tricky part of implementing these pages: Dropdowns, not the POST requests.
 
 <br>
 
-## Item 3 - What we should try to implement by tomorrow
+## Item 3 - What we should try to implement by tomorrow(?)
 > **<Description>**
 
 ### Discussion
@@ -63,11 +63,32 @@ Tricky part of implementing these pages: Dropdowns, not the POST requests.
  - User Stories - Data Manager (View Planting Records), View and Update Records on Seed Lot details (Genetic Source), Botanist (Genetic Information for plants), Select genus and update species name, custom planting and breeding reports.
  - Tri's Goal: Update Acquisitions, Update Planting, and Update New Family completed. Varieties Dropdown, Update Species, Simple POST request.
  - Ryan: Not sure if it's fair to try to add new things right before Chloe has to submit everything to ICRAR. 
+ - Discussion between team. Majority believes that it would be best to wrap everything up by today when everyone is present and has the capacity to review the deliverable. 
+ - Final Decision: Next Hour - Tri to try to implement update pages, all others tidy up repo and final testing of deliverable.
 
 ### Actions
  - 
 <br>
 
-## Meeting Closed:
+## Item 4 - Repository Tidying Up and Final Testing of Application
+> **<Description>**
+- Tidying up of Repo
+- Documentation writing - `README.md`
+- Creating Issue for `Assumptions, Bugs & Incomplete Pages` - refer to the issue for more details.
 
-## Next Scheduled Meeting:
+### Discussion
+- Dennis tested on Macbook, Naren tested on Windows. Both worked successfully. 
+- Tri later tested all functionality as well. Successful run.
+
+### Actions
+ - Chloe: Transfer repo ownership to ICRAR
+ - Chloe: Upload minutes to GitHub
+
+<br>
+
+## Meeting Closed: 23:30 
+
+## Digressions: 
+- Chloe doing action items as part of the meeting, Tri doing timesheets.
+
+## Next Scheduled Meeting: Wednesday 3-4pm (Client Meeting).
