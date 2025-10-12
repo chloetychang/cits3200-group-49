@@ -15,12 +15,6 @@ router = APIRouter(
 
 # ================== ROUTES ==================
 
-# Family name dropdown
-@router.get("/family_names", response_model=List[schemas.FamilyResponse])
-def get_family_name_dropdown(db: Session = Depends(get_db)):
-	"""Get all family names for dropdown (A→Z)."""
-	families = db.query(models.Family).order_by(models.Family.famiy_name.asc()).all()
-	return [schemas.FamilyResponse.model_validate(f).model_dump() for f in families]
 
 # Genus dropdown (families have genera)
 @router.get("/genus", response_model=List[schemas.GenusResponse])
@@ -120,19 +114,16 @@ def get_breeding_team_dropdown(db: Session = Depends(get_db)):
 	users = db.query(models.User).order_by(models.User.surname.asc()).all()
 	return [schemas.UserResponse.model_validate(u).model_dump() for u in users]
 
-# Create new family record
-@router.post("/", response_model=schemas.FamilyResponse)
-def create_family(
-	family_data: schemas.FamilyCreate = Body(...),
+# Create new genetic source record (used for new family)
+@router.post("/", response_model=schemas.GeneticSourceResponse)
+def create_genetic_source(
+	genetic_source_data: schemas.NewFamilyCreate = Body(...),
 	db: Session = Depends(get_db)
 ):
-	# Validate required fields
-	if not family_data.famiy_name:
-		raise HTTPException(status_code=400, detail="famiy_name is required")
 	try:
-		family_obj = crud.family.create(db, obj_in=family_data)
-		return family_obj
+		genetic_source_obj = crud.genetic_source.create(db, obj_in=genetic_source_data)
+		return genetic_source_obj
 	except IntegrityError as e:
-		raise HTTPException(status_code=400, detail=f"Failed to create family: {str(e)}")
+		raise HTTPException(status_code=400, detail=f"Failed to create new family: {str(e)}")
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

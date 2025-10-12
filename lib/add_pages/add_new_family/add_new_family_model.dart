@@ -67,13 +67,18 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   String? Function(BuildContext, String?)? textController3Validator;
 
   // Optional fields
+
   FocusNode? textFieldFocusNode4;
-  TextEditingController? textController4; // Weight (optional)
+  TextEditingController? textController4; // Weight (optional, double)
   String? Function(BuildContext, String?)? textController4Validator;
 
   FocusNode? textFieldFocusNode5;
-  TextEditingController? textController5; // Viability (optional)
+  TextEditingController? textController5; // Viability (optional, int)
   String? Function(BuildContext, String?)? textController5Validator;
+
+  FocusNode? textFieldFocusNode6;
+  TextEditingController? textController6; // Research Notes (optional, String)
+  String? Function(BuildContext, String?)? textController6Validator;
 
 
   // Loaders for dropdowns (all dynamic)
@@ -120,15 +125,17 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     }
 
     await ApiService.createFamily(
-      creationDate: textController1!.text,
-      //familyId: textController2?.text ?? '',
-      propagationTypeId: selectedPropagationTypeId!,
+      acquisitionDate: textController1!.text,
+      supplierLotNumber: textController2 != null ? textController2!.text : '',
+      supplierId: 1, // TODO: Set to 1 for now; update to dynamic value when supplier selection is implemented
+      femaleGeneticSource: selectedFemaleParentId!,
+      propagationType: selectedPropagationTypeId!,
       generationNumber: selectedGenerationNumber ?? 0,
-      femaleParentId: selectedFemaleParentId!,
-      maleParentId: selectedMaleParentId,
-      varietyId: selectedSpeciesVarietyId,
-      breedingTeamId: selectedBreedingTeamId!,
-      lotNumber: textController3!.text,
+      maleGeneticSource: selectedMaleParentId,
+      varietyId: selectedSpeciesVarietyId ?? 1,
+      landscapeOnly: false,
+      gramWeight: textController3 != null && textController3!.text.isNotEmpty ? int.tryParse(textController3!.text) : null,
+      viability: textController4 != null && textController4!.text.isNotEmpty ? int.tryParse(textController4!.text) : null,
     );
   }
 
@@ -143,9 +150,12 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     breedingTeamComboController = SingleValueDropDownController();
     // provenanceLocationComboController removed
 
-    final now = DateTime.now();
-    final formatted = DateFormat('yyyy-MM-dd HH:mm').format(now);
-    textController1 = TextEditingController(text: formatted);
+  final now = DateTime.now();
+  final formatted = DateFormat('yyyy-MM-dd HH:mm').format(now);
+  textController1 = TextEditingController(text: formatted);
+  textController4 = TextEditingController();
+  textController5 = TextEditingController();
+  textController6 = TextEditingController();
   }
 
   @override
@@ -160,6 +170,8 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     textController4?.dispose();
     textFieldFocusNode5?.dispose();
     textController5?.dispose();
+    textFieldFocusNode6?.dispose();
+    textController6?.dispose();
     speciesVarietyComboController.dispose();
     propagationTypeComboController.dispose();
     generationNumberComboController.dispose();

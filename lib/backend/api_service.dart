@@ -300,38 +300,40 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
 
   // POST Save button - Create new family
   static Future<Map<String, dynamic>> createFamily({
-    required String creationDate,
-    int? familyId,
-    required int propagationTypeId,
+    required String acquisitionDate,
+    required int femaleGeneticSource,
+    required int propagationType,
+    required String supplierLotNumber,
+    required int supplierId, //supplierId is non-nullable
     int? generationNumber,
-    required int femaleParentId,
-    int? maleParentId,
+    int? maleGeneticSource,
     int? varietyId,
-    required int breedingTeamId,
-    required String lotNumber,
-    double? weight,
+    double? price,
+    int? gramWeight,
+    int? provenanceId,
     int? viability,
+    bool? landscapeOnly,
     String? researchNotes,
   }) async {
     final Map<String, dynamic> requestBody = {
-      'creation_date': creationDate,
-      if (familyId != null) 'family_id': familyId,
-      'propagation_type_id': propagationTypeId,
-      'female_parent_id': femaleParentId,
-      'breeding_team_id': breedingTeamId,
-      'lot_number': lotNumber,
-      'generation_number': generationNumber ?? 0,
+      'acquisition_date': acquisitionDate,
+      'female_genetic_source': femaleGeneticSource,
+      'propagation_type': propagationType,
+      'supplier_lot_number': supplierLotNumber,
+      'supplier_id': supplierId,
+      if (generationNumber != null) 'generation_number': generationNumber,
+      if (maleGeneticSource != null) 'male_genetic_source': maleGeneticSource,
+      if (varietyId != null) 'variety_id': varietyId,
+      if (price != null) 'price': price,
+      if (gramWeight != null) 'gram_weight': gramWeight,
+      if (provenanceId != null) 'provenance_id': provenanceId,
+      if (viability != null) 'viability': viability,
+      if (landscapeOnly != null) 'landscape_only': landscapeOnly,
+      if (researchNotes != null && researchNotes.isNotEmpty) 'research_notes': researchNotes,
     };
 
-    // Add optional fields only if they have values
-    if (maleParentId != null) requestBody['male_parent_id'] = maleParentId;
-    if (varietyId != null) requestBody['species_variety_id'] = varietyId;
-    if (weight != null) requestBody['weight'] = weight;
-    if (viability != null) requestBody['viability'] = viability;
-    if (researchNotes != null && researchNotes.isNotEmpty) requestBody['research_notes'] = researchNotes;
-
     final res = await http.post(
-      Uri.parse('$baseUrl/family/'),
+      Uri.parse('$baseUrl/newFamily/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(requestBody),
     );
