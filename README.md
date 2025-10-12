@@ -14,21 +14,6 @@ This project consists of:
 - Python 3.8+
 - PostgreSQL database
 
-### Backend Project Structure
-A FastAPI application for managing plant genetic sources, plantings, and related botanical data.
-
-```
-# Add potential backend project structure, with routes defined
-
-```
-
-### Database Structure
-
-```
-# Add potential database structure, with directories
-
-```
-
 ### 1. **Create Python Virtual Environment**
 First, set up a Python virtual environment to isolate project dependencies:
 
