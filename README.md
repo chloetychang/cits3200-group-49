@@ -1,5 +1,4 @@
-# cits3200-group-49
-Botanic Guide: A Tool for Garden Planters
+# Botanic Guide: A Tool for Garden Planters
 
 ## Project Overview
 
@@ -7,6 +6,14 @@ This project consists of:
 - **Frontend**: Flutter web application
 - **Backend**: FastAPI Python application
 - **Database**: PostgreSQL
+
+## Important Documentation
+- [Backend API and Database Setup](#backend-api-and-database-setup)
+- [README.md Documentation for Migration](Migration/README_Migration.md)
+- [README.md Documentation for Testing](test/README_tests.md)
+
+## ERD Diagram
+![ERD Diagram](assets/ERD/Yanchep_V2_ERD.jpg)
 
 ## Backend API and Database Setup
 
