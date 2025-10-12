@@ -401,6 +401,16 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to load male parent dropdown: ${res.statusCode}');
   }
 
+  // GET provenance dropdown
+  static Future<List<Map<String, dynamic>>> getProvenancesDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/provenances'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
+    throw Exception('Failed to load provenance dropdown: ${res.statusCode}');
+  }
+
   // GET breeding team dropdown
   static Future<List<Map<String, dynamic>>> getBreedingTeamDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/newFamily/breeding_teams'));

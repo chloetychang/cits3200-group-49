@@ -56,10 +56,36 @@ def get_generation_number_dropdown(db: Session = Depends(get_db)):
     """Get generation numbers for dropdown (0-4)."""
     return [0, 1, 2, 3, 4]
 
+
 # Female parent dropdown (existing genetic sources with full species name and provenance)
 @router.get("/female_parents")
 def get_female_parent_dropdown(db: Session = Depends(get_db)):
     """Get all genetic sources for female parent dropdown (A→Z by id), with full species name and provenance location."""
+    sources = (
+        db.query(models.GeneticSource)
+        .join(models.Variety, models.GeneticSource.variety_id == models.Variety.variety_id)
+        .join(models.Species, models.Variety.species_id == models.Species.species_id)
+        .join(models.Genus, models.Species.genus_id == models.Genus.genus_id)
+        .outerjoin(models.Provenance, models.GeneticSource.provenance_id == models.Provenance.provenance_id)
+        .order_by(models.GeneticSource.genetic_source_id.asc())
+        .all()
+    )
+    result = []
+    for s in sources:
+        result.append({
+            "genetic_source_id": s.genetic_source_id,
+            "full_species_name": f"{s.variety.species.genus.genus} {s.variety.species.species}",
+            "variety": s.variety.variety if s.variety else None,
+            "provenance_location": s.provenance.location if s.provenance else None,
+            "supplier_lot_number": s.supplier_lot_number,
+            "generation_number": s.generation_number,
+        })
+    return result
+
+# Genetic source dropdown for update (same as female parent)
+@router.get("/genetic_sources_dropdown")
+def get_genetic_sources_dropdown(db: Session = Depends(get_db)):
+    """Get all genetic sources for update dropdown (A→Z by id), with full species name and provenance location."""
     sources = (
         db.query(models.GeneticSource)
         .join(models.Variety, models.GeneticSource.variety_id == models.Variety.variety_id)
@@ -113,11 +139,18 @@ def get_breeding_team_dropdown(db: Session = Depends(get_db)):
     users = db.query(models.User).order_by(models.User.surname.asc()).all()
     return [schemas.UserResponse.model_validate(u).model_dump() for u in users]
 
+# Provenance dropdown (users with breeder role)
+@router.get("/provenance", response_model=List[schemas.UserResponse])
+def get_provenance_team_dropdown(db: Session = Depends(get_db)):
+    """Get all provenances for provenance dropdown."""
+    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc()).all()
+    return [schemas.UserResponse.model_validate(p).model_dump() for p in provenances]
+
 # Update genetic source record (used for updating a family)
 @router.put("/{genetic_source_id}", response_model=schemas.GeneticSourceResponse)
 def update_genetic_source(
     genetic_source_id: int,
-    genetic_source_data: schemas.NewFamilyUpdate = Body(...),
+    genetic_source_data: schemas.NewFamilyCreate = Body(...),
     db: Session = Depends(get_db)
 ):
     try:

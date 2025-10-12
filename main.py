@@ -34,8 +34,8 @@ from App.routes.Add_Routes import add_acquisitions
 from App.routes.Add_Routes import add_new_family
 from App.routes.Add_Routes import add_provenances
 from App.routes.Add_Routes import add_plantings
-
 from App.routes.Add_Routes import add_varieties
+from App.routes.Update_Routes import update_new_family
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -67,6 +67,7 @@ app.include_router(add_new_family.router)
 app.include_router(add_provenances.router)
 app.include_router(add_plantings.router)
 app.include_router(add_varieties.router)
+app.include_router(update_new_family.router)
 
 
 app.add_middleware(
