@@ -76,14 +76,13 @@ class ContainerUpdate(ContainerBase):
 
 # Family schemas
 class FamilyBase(BaseSchema):
-    famiy_name: str  # Note: typo preserved from schema
+    famiy_name: str
 
 class FamilyCreate(FamilyBase):
     pass
 
 class FamilyResponse(FamilyBase):
     family_id: int
-
 # Genus schemas
 class GenusBase(BaseSchema):
     genus: str
@@ -144,8 +143,7 @@ class PropagationTypeUpdate(PropagationTypeBase):
 class PropagationTypeResponse(PropagationTypeBase):
     propagation_type_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Provenance schemas
 class ProvenanceBase(BaseSchema):
@@ -289,12 +287,19 @@ class UserRoleLinkResponse(UserRoleLinkBase):
 
 # Variety schemas
 class VarietyBase(BaseSchema):
+    # Client must provide the genus for UI convenience/validation; the DB stores species_id on Variety
+    genus_id: Optional[int] = None
     species_id: Optional[int] = None
     common_name: Optional[str] = None
     variety: Optional[str] = None
-    genetic_source_id: Optional[int] = None
+
 
 class VarietyCreate(VarietyBase):
+    genus_id: Optional[int] = None
+    species_id: Optional[int] = None
+    variety_id: Optional[int] = None
+    variety: Optional[str] = None
+    common_name: Optional[str] = None
     pass
 
 class VarietyResponse(VarietyBase):
@@ -382,6 +387,39 @@ class GeneticSourceCreate(GeneticSourceBase):
     landscape_only: bool
     research_notes: Optional[str] = None
 
+# NewFamily schemas
+class NewFamilyBase(BaseSchema):
+    acquisition_date: datetime
+    supplier_lot_number: str
+    supplier_id: int = 1  # TODO: Supplier is not a field in new family form but is non-nullable on genetic source
+    female_genetic_source: int
+    propagation_type: int
+    generation_number: int
+    male_genetic_source: Optional[int] = None
+    variety_id: Optional[int] = None
+    price: Optional[float] = None
+    gram_weight: Optional[int] = None
+    provenance_id: Optional[int] = None
+    viability: Optional[int] = None
+    landscape_only: Optional[bool] = None
+    research_notes: Optional[str] = None
+
+class NewFamilyCreate(NewFamilyBase):
+    acquisition_date: datetime
+    variety_id: Optional[int] = None
+    supplier_id: Optional[int] = None
+    supplier_lot_number: str
+    price: Optional[float] = None
+    gram_weight: Optional[int] = None
+    provenance_id: Optional[int] = None
+    viability: Optional[int] = None
+    propagation_type: int
+    female_genetic_source: int
+    male_genetic_source: Optional[int] = None
+    generation_number: int
+    landscape_only: Optional[bool] = None
+    research_notes: Optional[str] = None
+
 class GeneticSourceResponse(GeneticSourceBase):
     genetic_source_id: int
 
@@ -390,7 +428,7 @@ class PlantingBase(BaseSchema):
     date_planted: datetime
     planted_by: Optional[int] = None
     zone_id: int
-    variety_id: int
+    variety_id: Optional[int] = None  # Optional when genetic_source_id is provided
     number_planted: int
     genetic_source_id: Optional[int] = None
     container_type_id: int
@@ -445,6 +483,7 @@ class GeneticSourceFullResponse(BaseModel):
     research_notes: Optional[str] = None
     
     species: Optional[SpeciesSimpleResponse] = None
+    variety: Optional[VarietyResponse] = None
     provenance: Optional[ProvenanceOut] = None
     supplier: Optional[SupplierResponse] = None
     propagation_type: Optional[PropagationTypeResponse] = None

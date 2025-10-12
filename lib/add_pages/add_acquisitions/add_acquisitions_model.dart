@@ -143,6 +143,9 @@ class AddAcquisitionsModel extends FlutterFlowModel<AddAcquisitionsWidget> {
     locationComboController = SingleValueDropDownController();
     bioregionComboController = SingleValueDropDownController();
     generationNumberComboController = SingleValueDropDownController();
+    final now = DateTime.now();
+    final formatted = DateFormat('yyyy-MM-dd HH:mm').format(now);
+    textController1 = TextEditingController(text: formatted);
   }
 
   @override
