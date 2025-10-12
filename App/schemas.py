@@ -76,14 +76,13 @@ class ContainerUpdate(ContainerBase):
 
 # Family schemas
 class FamilyBase(BaseSchema):
-    pass
+    famiy_name: str
 
 class FamilyCreate(FamilyBase):
     pass
 
 class FamilyResponse(FamilyBase):
-    pass
-
+    family_id: int
 # Genus schemas
 class GenusBase(BaseSchema):
     genus: str
