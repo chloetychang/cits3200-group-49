@@ -289,12 +289,19 @@ class UserRoleLinkResponse(UserRoleLinkBase):
 
 # Variety schemas
 class VarietyBase(BaseSchema):
+    # Client must provide the genus for UI convenience/validation; the DB stores species_id on Variety
+    genus_id: Optional[int] = None
     species_id: Optional[int] = None
     common_name: Optional[str] = None
     variety: Optional[str] = None
-    genetic_source_id: Optional[int] = None
+
 
 class VarietyCreate(VarietyBase):
+    genus_id: Optional[int] = None
+    species_id: Optional[int] = None
+    variety_id: Optional[int] = None
+    variety: Optional[str] = None
+    common_name: Optional[str] = None
     pass
 
 class VarietyResponse(VarietyBase):

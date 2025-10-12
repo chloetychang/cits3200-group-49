@@ -32,7 +32,7 @@ from App.routes.Manage_Lookup_Routes import manage_zone_aspect
 from App.routes.Manage_Lookup_Routes import manage_zone_aspect
 from App.routes.Add_Routes import add_acquisitions
 from App.routes.Add_Routes import add_provenances
-
+from App.routes.Add_Routes import add_varieties
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
@@ -68,6 +68,7 @@ app.include_router(manage_lookup_species_utility.router_s)
 app.include_router(manage_zone_aspect.router)
 app.include_router(add_acquisitions.router)
 app.include_router(add_provenances.router)
+app.include_router(add_varieties.router)
 
 
 app.add_middleware(
