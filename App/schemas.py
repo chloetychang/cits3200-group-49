@@ -76,7 +76,14 @@ class ContainerUpdate(ContainerBase):
 
 # Family schemas
 class FamilyBase(BaseSchema):
-    famiy_name: str  # Note: typo preserved from schema
+    family_name: str
+    propagation_type_id: int
+    female_parent_id: int
+    breeding_team_id: int
+    lot_number: str
+    generation_number: int
+    male_parent_id: Optional[int] = None
+    species_variety_id: Optional[int] = None
 
 class FamilyCreate(FamilyBase):
     pass
@@ -144,8 +151,7 @@ class PropagationTypeUpdate(PropagationTypeBase):
 class PropagationTypeResponse(PropagationTypeBase):
     propagation_type_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 # Provenance schemas
 class ProvenanceBase(BaseSchema):

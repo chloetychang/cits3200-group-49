@@ -259,7 +259,7 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   // ------------------------------- New Family  --------------------------------
 
   // GET propagation type dropdown  
-  static Future<List<String>> getPropagationTypeDropdown() async {
+  static Future<List<Map<String, dynamic>>> getPropagationTypeDropdown() async {
     final res = await http.get(Uri.parse('$baseUrl/newFamily/propagation_types'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
@@ -269,8 +269,8 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
   // GET female parent dropdown
-  static Future<List<String>> getFemaleParentDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/family/female_parents'));
+  static Future<List<Map<String, dynamic>>> getFemaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/female_parents'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.map((item) => item as Map<String, dynamic>).toList();
@@ -279,8 +279,8 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
   // GET male parent dropdown
-  static Future<List<String>> getMaleParentDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/family/male_parents'));
+  static Future<List<Map<String, dynamic>>> getMaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/male_parents'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.map((item) => item as Map<String, dynamic>).toList();
@@ -289,8 +289,8 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   }
 
   // GET breeding team dropdown
-  static Future<List<String>> getBreedingTeamDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/family/breeding_teams'));
+  static Future<List<Map<String, dynamic>>> getBreedingTeamDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/breeding_teams'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
       return data.map((item) => item as Map<String, dynamic>).toList();

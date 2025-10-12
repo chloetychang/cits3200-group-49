@@ -1404,6 +1404,10 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                         if (val is DropDownValueModel) {
                                                           _model.selectedPropagationTypeId = int.tryParse(val.value);
                                                           _model.selectedPropagationTypeName = val.name;
+                                                        } else if (val is String) {
+                                                          _model.selectedPropagationTypeName = val;
+                                                          _model.selectedPropagationTypeId = null; // Will be created as new
+                                                          _model.propagationTypeComboController.setDropDown(DropDownValueModel(name: val, value: val));
                                                         }
                                                       });
                                                     },
@@ -1571,8 +1575,9 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                   dropDownItemCount: 6,
                                                   dropDownList: _model.femaleParentDropdown
                                                     .map((item) => DropDownValueModel(
-                                                        name: item['genetic_source_id'].toString(),
-                                                        value: item['genetic_source_id'].toString()))
+                                                      name: '${item['full_species_name'] ?? ''} from ${item['provenance_location'] ?? ''} - Lot: ${item['supplier_lot_number'] ?? ''} Gen. ${item['generation_number'] ?? ''}',
+                                                      value: item['genetic_source_id'].toString(),
+                                                    ))
                                                     .toList(),
                                                   onChanged: (val) {
                                                     setState(() {
@@ -1656,9 +1661,9 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                   ),
                                                   dropDownItemCount: 6,
                                                   dropDownList: _model.maleParentDropdown
-                                                    .map((item) => DropDownValueModel(
-                                                        name: item['genetic_source_id'].toString(),
-                                                        value: item['genetic_source_id'].toString()))
+                          .map((item) => DropDownValueModel(
+                            name: '${item['full_species_name'] ?? ''} from ${item['provenance_location'] ?? ''} - Lot: ${item['supplier_lot_number'] ?? ''} Gen. ${item['generation_number'] ?? ''}',
+                            value: item['genetic_source_id'].toString()))
                                                     .toList(),
                                                   onChanged: (val) {
                                                     setState(() {

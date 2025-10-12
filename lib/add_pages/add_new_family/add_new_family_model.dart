@@ -1,14 +1,11 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import 'package:intl/intl.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/index.dart';
 import 'add_new_family_widget.dart' show AddNewFamilyWidget;
 import 'package:flutter/material.dart';
 import '/backend/api_service.dart'; 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
-
-
-
-
 
 class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   
@@ -36,9 +33,10 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
   String? selectedPropagationTypeName;
   FormFieldController<String>? propagationTypeDropdownController;
 
-  List<Map<String, dynamic>> generationNumberDropdown = [];
+  // Generation Number DropDown widget
+  List<int> generationNumberDropdown = [];
   int? selectedGenerationNumber;
-  FormFieldController<String>? generationNumberDropdownController;
+  FormFieldController<int>? generationNumberDropdownController;
 
   List<Map<String, dynamic>> femaleParentDropdown = [];
   int? selectedFemaleParentId;
@@ -57,7 +55,7 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
 
   // Text fields
   FocusNode? textFieldFocusNode1;
-  TextEditingController? textController1; // Creation date
+    TextEditingController? textController1; // Creation date
   String? Function(BuildContext, String?)? textController1Validator;
 
   FocusNode? textFieldFocusNode2;
@@ -89,9 +87,8 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     propagationTypeDropdown = rawList;
   }
 
-  Future<void> loadGenerationNumberDropdown() async {
-    final rawList = await ApiService.getGenerationNumberDropdown();
-    generationNumberDropdown = rawList;
+ Future<void> loadGenerationNumberDropdown() async {
+    generationNumberDropdown = await ApiService.getGenerationNumberDropdown();
   }
 
   Future<void> loadFemaleParentDropdown() async {
@@ -124,16 +121,14 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
 
     await ApiService.createFamily(
       creationDate: textController1!.text,
-      familyId: textController2?.text,
-      propagationTypeId: selectedPropagationTypeId,
+      //familyId: textController2?.text ?? '',
+      propagationTypeId: selectedPropagationTypeId!,
       generationNumber: selectedGenerationNumber ?? 0,
-      femaleParentId: selectedFemaleParentId,
+      femaleParentId: selectedFemaleParentId!,
       maleParentId: selectedMaleParentId,
       varietyId: selectedSpeciesVarietyId,
-      breedingTeamId: selectedBreedingTeamId,
+      breedingTeamId: selectedBreedingTeamId!,
       lotNumber: textController3!.text,
-      weight: int.tryParse(textController4?.text ?? ''),
-      viability: int.tryParse(textController5?.text ?? ''),
     );
   }
 
@@ -146,7 +141,11 @@ class AddNewFamilyModel extends FlutterFlowModel<AddNewFamilyWidget> {
     femaleParentComboController = SingleValueDropDownController();
     maleParentComboController = SingleValueDropDownController();
     breedingTeamComboController = SingleValueDropDownController();
-  // provenanceLocationComboController removed
+    // provenanceLocationComboController removed
+
+    final now = DateTime.now();
+    final formatted = DateFormat('yyyy-MM-dd HH:mm').format(now);
+    textController1 = TextEditingController(text: formatted);
   }
 
   @override
