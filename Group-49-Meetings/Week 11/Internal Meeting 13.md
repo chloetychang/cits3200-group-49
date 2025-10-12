@@ -66,4 +66,5 @@
 
 ## Meeting Closed:
 11:45
+
 ## Next Scheduled Meeting:
