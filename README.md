@@ -7,6 +7,11 @@ This project consists of:
 - **Backend**: FastAPI Python application
 - **Database**: PostgreSQL
 
+## Important Documentation
+- [Backend API and Database Setup](#backend-api-and-database-setup)
+- [README.md Documentation for Migration](Migration/README_Migration.md)
+- [README.md Documentation for Testing](test/README_tests.md)
+
 ## ERD Diagram
 ![ERD Diagram](assets/ERD/Yanchep_V2_ERD.jpg)
 
