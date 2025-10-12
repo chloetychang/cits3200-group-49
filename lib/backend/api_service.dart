@@ -346,6 +346,54 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
     throw Exception('Failed to create family: \\${res.statusCode}, error: \\${res.body}');
   }
 
+  static Future<Map<String, dynamic>> updateFamily({
+    required int geneticSourceId,
+    required String acquisitionDate,
+    required int femaleGeneticSource,
+    required int propagationType,
+    required String supplierLotNumber,
+    required int supplierId,
+    int? generationNumber,
+    int? maleGeneticSource,
+    int? varietyId,
+    double? price,
+    int? gramWeight,
+    int? provenanceId,
+    int? viability,
+    bool? landscapeOnly,
+    String? researchNotes,
+  }) async {
+    final Map<String, dynamic> requestBody = {
+      'acquisition_date': acquisitionDate,
+      'female_genetic_source': femaleGeneticSource,
+      'propagation_type': propagationType,
+      'supplier_lot_number': supplierLotNumber,
+      'supplier_id': supplierId,
+      if (generationNumber != null) 'generation_number': generationNumber,
+      if (maleGeneticSource != null) 'male_genetic_source': maleGeneticSource,
+      if (varietyId != null) 'variety_id': varietyId,
+      if (price != null) 'price': price,
+      if (gramWeight != null) 'gram_weight': gramWeight,
+      if (provenanceId != null) 'provenance_id': provenanceId,
+      if (viability != null) 'viability': viability,
+      if (landscapeOnly != null) 'landscape_only': landscapeOnly,
+      if (researchNotes != null && researchNotes.isNotEmpty) 'research_notes': researchNotes,
+    };
+
+    final res = await http.put(
+      Uri.parse('$baseUrl/newFamily/$geneticSourceId'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
+    }
+
+    print('Update request body: \\${jsonEncode(requestBody)}');
+    throw Exception('Failed to update family: \\${res.statusCode}, error: \\${res.body}');
+  }
+
   // ------------------------------- Progeny --------------------------------
 
   // GET Family name dropdown - there's an intentional miss spell of family to famiy. Due to current DB storing this column name
