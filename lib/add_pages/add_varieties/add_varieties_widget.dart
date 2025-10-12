@@ -7,6 +7,8 @@ import '/index.dart';
 import 'package:flutter/material.dart';
 import 'add_varieties_model.dart';
 export 'add_varieties_model.dart';
+import 'package:dropdown_textfield/dropdown_textfield.dart';
+import '/backend/api_service.dart';
 
 class AddVarietiesWidget extends StatefulWidget {
   const AddVarietiesWidget({
@@ -33,6 +35,11 @@ class _AddVarietiesWidgetState extends State<AddVarietiesWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AddVarietiesModel());
+
+    // Load genus list and preload species-with-variety list used by the searchable species dropdown
+  // Load genus list and preload species-with-variety list used by the searchable species dropdown
+  _model.loadGenus().then((_) => setState(() {}));
+  _model.loadSpeciesWithVarietyDropdown().then((_) => setState(() {}));
 
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
@@ -944,64 +951,69 @@ class _AddVarietiesWidgetState extends State<AddVarietiesWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                FlutterFlowDropDown<String>(
-                                                  controller: _model
-                                                          .dropDownValueController1 ??=
-                                                      FormFieldController<
-                                                          String>(null),
-                                                  options: [
-                                                    'Option 1',
-                                                    'Option 2',
-                                                    'Option 3'
-                                                  ],
-                                                  onChanged: (val) =>
-                                                      safeSetState(() => _model
-                                                              .dropDownValue1 =
-                                                          val),
-                                                  width: 400.0,
-                                                  height: 50.0,
-                                                  textStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily,
-                                                            letterSpacing: 0.0,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumIsCustom,
-                                                          ),
-                                                  hintText: 'Select...',
-                                                  icon: Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down_rounded,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryText,
-                                                    size: 24.0,
+                                                Container(
+                                                  constraints: BoxConstraints(maxWidth: 400),
+                                                  child: DropDownTextField(
+                                                    controller: _model.genusComboController,
+                                                    clearOption: true,
+                                                    enableSearch: true,
+                                                    textFieldDecoration: InputDecoration(
+                                                      labelText: 'Genus (searchable)',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                      ),
+                                                      filled: true,
+                                                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    ),
+                                                    dropDownItemCount: 8,
+                                                    dropDownList: _model.genusOptions
+                                                        .map((g) => DropDownValueModel(name: g, value: g))
+                                                        .toList(),
+                                                    onChanged: (val) async {
+                                                      // val may be DropDownValueModel or String
+                                                      safeSetState(() {
+                                                        if (val is DropDownValueModel) {
+                                                          _model.dropDownValue1 = val.name;
+                                                          // find selected genus id
+                                                          final found = _model.genusData.firstWhere(
+                                                              (g) => g['genus'] == val.name,
+                                                              orElse: () => <String, dynamic>{});
+                                                          _model.selectedGenusId = found['genus_id'] as int?;
+                                                        } else if (val is String) {
+                                                          _model.dropDownValue1 = val;
+                                                          final found = _model.genusData.firstWhere(
+                                                              (g) => g['genus'] == val,
+                                                              orElse: () => <String, dynamic>{});
+                                                          _model.selectedGenusId = found['genus_id'] as int?;
+                                                        } else {
+                                                          _model.dropDownValue1 = null;
+                                                          _model.selectedGenusId = null;
+                                                        }
+                                                        // reset species selections
+                                                        _model.speciesOptions = [];
+                                                        _model.speciesData = [];
+                                                        _model.selectedSpeciesId = null;
+                                                        _model.dropDownValue2 = null;
+                                                        // clear species searchable controller selection
+                                                        try {
+                                                          _model.speciesComboController.clearDropDown();
+                                                        } catch (_) {}
+                                                      });
+
+                                                      // after setting genus id, load species for that genus
+                                                      if (_model.selectedGenusId != null && _model.hasGenusIds) {
+                                                        // fire-and-forget the loader but update UI when done
+                                                        _model.loadSpeciesForGenus(_model.selectedGenusId!).whenComplete(() {
+                                                          if (mounted) setState(() {});
+                                                        });
+                                                      } else {
+                                                        // fallback: no numeric genus ids available; load by genus name
+                                                        _model.loadSpeciesForGenusName(_model.dropDownValue1 ?? '').whenComplete(() {
+                                                          if (mounted) setState(() {});
+                                                        });
+                                                      }
+                                                    },
                                                   ),
-                                                  fillColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .secondaryBackground,
-                                                  elevation: 2.0,
-                                                  borderColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryText,
-                                                  borderWidth: 0.0,
-                                                  borderRadius: 8.0,
-                                                  margin: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          12.0, 0.0, 12.0, 0.0),
-                                                  hidesUnderline: true,
-                                                  isOverButton: false,
-                                                  isSearchable: false,
-                                                  isMultiSelect: false,
                                                 ),
                                               ],
                                             ),
@@ -1060,64 +1072,60 @@ class _AddVarietiesWidgetState extends State<AddVarietiesWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                FlutterFlowDropDown<String>(
-                                                  controller: _model
-                                                          .dropDownValueController2 ??=
-                                                      FormFieldController<
-                                                          String>(null),
-                                                  options: [
-                                                    'Option 1',
-                                                    'Option 2',
-                                                    'Option 3'
-                                                  ],
-                                                  onChanged: (val) =>
-                                                      safeSetState(() => _model
-                                                              .dropDownValue2 =
-                                                          val),
-                                                  width: 400.0,
-                                                  height: 50.0,
-                                                  textStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily,
-                                                            letterSpacing: 0.0,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumIsCustom,
-                                                          ),
-                                                  hintText: 'Select...',
-                                                  icon: Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down_rounded,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryText,
-                                                    size: 24.0,
+                                                // Replace the non-searchable FlutterFlowDropDown with a searchable DropDownTextField
+                                                Container(
+                                                  constraints: BoxConstraints(maxWidth: 400),
+                                                  child: DropDownTextField(
+                                                    controller: _model.speciesComboController,
+                                                    clearOption: true,
+                                                    enableSearch: true,
+                                                    textFieldDecoration: InputDecoration(
+                                                      labelText: 'Species (searchable)',
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                      ),
+                                                      filled: true,
+                                                      fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    ),
+                                                    dropDownItemCount: 8,
+                                                    dropDownList: (() {
+                                                      final genusSelected = (_model.dropDownValue1 ?? '').toString().trim();
+                                                      if (_model.speciesOptions.isNotEmpty) {
+                                                        return _model.speciesData.map((item) => DropDownValueModel(
+                                                            name: (item['full_species_name'] ?? item['species']) as String,
+                                                            value: (item['species_id'] != null ? (item['species_id'] as int).toString() : ((item['full_species_name'] ?? item['species']) as String))
+                                                        )).toList();
+                                                      }
+                                                      if (genusSelected.isNotEmpty) {
+                                                        final filtered = _model.speciesWithVarietyDropdown.where((item) {
+                                                          final full = (item['full_species_name'] ?? '') as String;
+                                                          final first = full.split(' ').isNotEmpty ? full.split(' ').first : full;
+                                                          return first.toLowerCase() == genusSelected.toLowerCase();
+                                                        }).map((item) => DropDownValueModel(name: item['full_species_name'] ?? '', value: (item['species_id']?.toString() ?? ''))).toList();
+                                                        if (filtered.isNotEmpty) return filtered;
+                                                      }
+                                                      // fallback to full list
+                                                      if (_model.speciesWithVarietyDropdown.isNotEmpty) {
+                                                        return _model.speciesWithVarietyDropdown.map((item) => DropDownValueModel(name: item['full_species_name'] ?? '', value: (item['species_id']?.toString() ?? ''))).toList();
+                                                      }
+                                                      return _model.speciesOptions.map((s) => DropDownValueModel(name: s, value: s)).toList();
+                                                    })(),
+                                                    onChanged: (val) {
+                                                      setState(() {
+                                                        if (val is DropDownValueModel) {
+                                                          _model.selectedSpeciesId = int.tryParse(val.value);
+                                                          _model.selectedSpeciesWithFullName = val.name;
+                                                          _model.dropDownValue2 = val.name;
+                                                        } else if (val is String) {
+                                                          // manual entry
+                                                          _model.selectedSpeciesWithFullName = val;
+                                                          _model.selectedSpeciesId = null;
+                                                          _model.dropDownValue2 = val;
+                                                          _model.speciesComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                                                        }
+                                                      });
+                                                    },
                                                   ),
-                                                  fillColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .secondaryBackground,
-                                                  elevation: 2.0,
-                                                  borderColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryText,
-                                                  borderWidth: 0.0,
-                                                  borderRadius: 8.0,
-                                                  margin: EdgeInsetsDirectional
-                                                      .fromSTEB(
-                                                          12.0, 0.0, 12.0, 0.0),
-                                                  hidesUnderline: true,
-                                                  isOverButton: false,
-                                                  isSearchable: false,
-                                                  isMultiSelect: false,
                                                 ),
                                               ],
                                             ),
@@ -1172,57 +1180,69 @@ class _AddVarietiesWidgetState extends State<AddVarietiesWidget> {
                                                       .titleMediumIsCustom,
                                             ),
                                       ),
-                                      Expanded(
-                                        child: FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController3 ??=
-                                              FormFieldController<String>(null),
-                                          options: [
-                                            'Option 1',
-                                            'Option 2',
-                                            'Option 3'
-                                          ],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue3 = val),
-                                          width: 400.0,
-                                          height: 50.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                          hintText: 'Select...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
-                                          ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          elevation: 2.0,
-                                          borderColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
-                                        ),
+                    Expanded(
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 400),
+                      child: DropDownTextField(
+                        controller: _model.speciesComboController,
+                        clearOption: true,
+                        enableSearch: true,
+                        textFieldDecoration: InputDecoration(
+                          labelText: 'Species (searchable)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          filled: true,
+                          fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                        ),
+                        dropDownItemCount: 8,
+                        dropDownList: (() {
+                          final genusSelected = (_model.dropDownValue1 ?? '').toString().trim();
+                          if (_model.speciesOptions.isNotEmpty) {
+                            return _model.speciesData.map((item) => DropDownValueModel(
+                                name: (item['full_species_name'] ?? item['species']) as String,
+                                value: (item['species_id'] != null ? (item['species_id'] as int).toString() : ((item['full_species_name'] ?? item['species']) as String))
+                            )).toList();
+                          }
+                          if (genusSelected.isNotEmpty) {
+                            final filtered = _model.speciesWithVarietyDropdown.where((item) {
+                              final full = (item['full_species_name'] ?? '') as String;
+                              final first = full.split(' ').isNotEmpty ? full.split(' ').first : full;
+                              return first.toLowerCase() == genusSelected.toLowerCase();
+                            }).map((item) => DropDownValueModel(name: item['full_species_name'] ?? '', value: (item['species_id']?.toString() ?? ''))).toList();
+                            if (filtered.isNotEmpty) return filtered;
+                          }
+                          if (_model.speciesWithVarietyDropdown.isNotEmpty) {
+                            return _model.speciesWithVarietyDropdown.map((item) => DropDownValueModel(name: item['full_species_name'] ?? '', value: (item['species_id']?.toString() ?? ''))).toList();
+                          }
+                          return _model.speciesOptions.map((s) => DropDownValueModel(name: s, value: s)).toList();
+                        })(),
+                        onChanged: (val) {
+                          setState(() {
+                            if (val is DropDownValueModel) {
+                              _model.dropDownValue3 = val.name;
+                              _model.selectedSpeciesId = int.tryParse(val.value);
+                              _model.selectedSpeciesWithFullName = val.name;
+                              _model.dropDownValue2 = val.name;
+                              // keep the main controller synced
+                              _model.speciesComboController.setDropDown(val);
+                            } else if (val is String) {
+                              _model.dropDownValue3 = val;
+                              _model.selectedSpeciesWithFullName = val;
+                              _model.selectedSpeciesId = null;
+                              _model.dropDownValue2 = val;
+                              _model.speciesComboController.setDropDown(DropDownValueModel(name: val, value: val));
+                            } else {
+                              _model.dropDownValue3 = null;
+                              _model.selectedSpeciesId = null;
+                              _model.selectedSpeciesWithFullName = null;
+                              _model.dropDownValue2 = null;
+                              _model.speciesComboController.clearDropDown();
+                            }
+                          });
+                        },
+                      ),
+                    ),
                                       ),
                                     ]
                                         .divide(SizedBox(width: 16.0))
@@ -1639,8 +1659,52 @@ class _AddVarietiesWidgetState extends State<AddVarietiesWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                            onPressed: () async {
+                              // Gather fields
+                              final speciesId = _model.selectedSpeciesId;
+                              final varietyText = _model.textController1?.text;
+                              final commonNameText = _model.textController2?.text;
+
+                              if (speciesId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Please select a species before saving.')),
+                                );
+                                return;
+                              }
+
+                              try {
+                                // show a quick loader while saving
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Saving variety...')),
+                                );
+
+                                final res = await ApiService.createVariety(
+                                  speciesId: speciesId,
+                                  variety: varietyText,
+                                  commonName: commonNameText,
+                                );
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Variety created (id: ${res['variety_id'] ?? 'unknown'})')),
+                                );
+
+                                // Reset form
+                                setState(() {
+                                  _model.dropDownValue1 = null;
+                                  _model.dropDownValue2 = null;
+                                  _model.dropDownValue3 = null;
+                                  _model.speciesOptions = [];
+                                  _model.speciesData = [];
+                                  _model.selectedGenusId = null;
+                                  _model.selectedSpeciesId = null;
+                                  _model.textController1?.clear();
+                                  _model.textController2?.clear();
+                                });
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Failed to create variety: $e')),
+                                );
+                              }
                             },
                             text: 'Save',
                             options: FFButtonOptions(

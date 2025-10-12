@@ -731,4 +731,69 @@ static Future<Map<String, dynamic>> updateZoneAspect(int id, String aspect) asyn
     }
     throw Exception('Failed to create provenance: ${res.statusCode}, error: ${res.body}');
   }
+    // ------------------------------- Variety --------------------------------
+  // Create a new Variety
+  static Future<Map<String, dynamic>> createVariety({
+    required int speciesId,
+    String? variety,
+    String? commonName,
+  }) async {
+    final Map<String, dynamic> body = {};
+    body['species_id'] = speciesId;
+    if (variety != null && variety.isNotEmpty) body['variety'] = variety;
+    if (commonName != null && commonName.isNotEmpty) body['common_name'] = commonName;
+
+    try {
+      final res = await http
+          .post(
+        Uri.parse('$baseUrl/varieties/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      )
+          .timeout(const Duration(seconds: 8));
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return jsonDecode(res.body) as Map<String, dynamic>;
+      }
+      print('createVariety request body: $body');
+      throw Exception('Failed to create variety: ${res.statusCode}, error: ${res.body}');
+    } catch (e) {
+      print('ApiService.createVariety: error -> $e');
+      rethrow;
+    }
+  }
+  // GET genus dropdown for Add Varieties (matches App/routes/Add_Routes/add_varieties.py)
+  static Future<List<Map<String, dynamic>>> getGenusDropdown() async {
+    final uri = Uri.parse('$baseUrl/varieties/genus');
+    print('ApiService.getGenusDropdown: GET $uri');
+    try {
+      final res = await http.get(uri).timeout(const Duration(seconds: 6));
+      print('ApiService.getGenusDropdown: status=${res.statusCode} body=${res.body}');
+      if (res.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(res.body);
+        return data.cast<Map<String, dynamic>>();
+      }
+      throw Exception('Failed to load genus dropdown: ${res.statusCode} ${res.body}');
+    } catch (e) {
+      print('ApiService.getGenusDropdown: error -> $e');
+      rethrow;
+    }
+  }
+
+  // Get species for a given genus id by filtering the /species endpoint
+  // (backend provides species rows with a genus_id field)
+  static Future<List<Map<String, dynamic>>> getSpeciesByGenus(int genusId) async {
+    try {
+      // Use the preloading endpoint with a large limit so we get all species for client-side filtering.
+      // This avoids paging/truncation problems that can make the dropdown appear empty.
+      final allSpecies = await getSpeciesForPreloading(limit: 1000);
+      final filtered = allSpecies.where((s) => (s['genus_id'] as int?) == genusId).toList();
+      print('ApiService.getSpeciesByGenus: genusId=$genusId found=${filtered.length}');
+      return filtered;
+    } catch (e) {
+      print('ApiService.getSpeciesByGenus: error for genusId=$genusId -> $e');
+      rethrow;
+    }
+  }
+
 }
