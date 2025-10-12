@@ -30,13 +30,34 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+
   Future<void> _loadPropagationTypeDropdown() async {
     await _model.loadPropagationTypeDropdown();
     setState(() {});
   }
 
-  Future<void> _loadProvenanceLocationDropdown() async {
-    await _model.loadProvenanceLocationDropdown();
+  Future<void> _loadGenerationNumberDropdown() async {
+    await _model.loadGenerationNumberDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadFemaleParentDropdown() async {
+    await _model.loadFemaleParentDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadMaleParentDropdown() async {
+    await _model.loadMaleParentDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadBreedingTeamDropdown() async {
+    await _model.loadBreedingTeamDropdown();
+    setState(() {});
+  }
+
+  Future<void> _loadSpeciesVarietyDropdown() async {
+    await _model.loadSpeciesVarietyDropdown();
     setState(() {});
   }
 
@@ -49,9 +70,6 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
         text: dateTimeFormat("y:MM:d h:m", getCurrentTimestamp));
     _model.textFieldFocusNode1 ??= FocusNode();
 
-    _loadPropagationTypeDropdown();
-    _loadProvenanceLocationDropdown();
-
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
 
@@ -60,6 +78,13 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
 
     _model.textController4 ??= TextEditingController();
     _model.textFieldFocusNode4 ??= FocusNode();
+
+    _loadPropagationTypeDropdown();
+    _loadGenerationNumberDropdown();
+    _loadFemaleParentDropdown();
+    _loadMaleParentDropdown();
+    _loadBreedingTeamDropdown();
+    _loadSpeciesVarietyDropdown();
   }
 
   @override
@@ -1357,7 +1382,7 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                 child: Container(
                                                   constraints: BoxConstraints(maxWidth: 400),
                                                   child: DropDownTextField(
-                                                    controller: _model.PropagationTypeComboController,
+                                                    controller: _model.propagationTypeComboController,
                                                     clearOption: true,
                                                     enableSearch: true,
                                                     textFieldDecoration: InputDecoration(
@@ -1369,21 +1394,20 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                       filled: true,
                                                     ),
                                                     dropDownItemCount: 6,
-                                                    dropDownList: _model.PropagationTypeDropdown
-                                                        .map((s) => DropDownValueModel(name: s, value: s))
-                                                        .toList(),
+                                                    dropDownList: _model.propagationTypeDropdown
+                                                      .map((item) => DropDownValueModel(
+                                                          name: item['propagation_type'] ?? 'Unknown',
+                                                          value: item['propagation_type_id'].toString()))
+                                                      .toList(),
                                                     onChanged: (val) {
                                                       setState(() {
                                                         if (val is DropDownValueModel) {
-                                                          _model.selectedPropagationType = val.value;
+                                                          _model.selectedPropagationTypeId = int.tryParse(val.value);
+                                                          _model.selectedPropagationTypeName = val.name;
                                                         } else if (val is String) {
-                                                          _model.selectedPropagationType = val;
-                                                          if (!_model.PropagationTypeDropdown.contains(val)) {
-                                                            _model.PropagationTypeDropdown.add(val);
-                                                          }
-                                                          _model.PropagationTypeComboController.setDropDown(
-                                                            DropDownValueModel(name: val, value: val),
-                                                          );
+                                                          _model.selectedPropagationTypeName = val;
+                                                          _model.selectedPropagationTypeId = null; // Will be created as new
+                                                          _model.propagationTypeComboController.setDropDown(DropDownValueModel(name: val, value: val));
                                                         }
                                                       });
                                                     },
@@ -1449,60 +1473,32 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                                   .bodyMediumIsCustom,
                                                         ),
                                               ),
-                                              FlutterFlowDropDown<String>(
-                                                controller: _model
-                                                        .dropDownValueController3 ??=
-                                                    FormFieldController<String>(
-                                                        null),
-                                                options: [
-                                                  'Option 1',
-                                                  'Option 2',
-                                                  'Option 3'
-                                                ],
-                                                onChanged: (val) =>
-                                                    safeSetState(() => _model
-                                                        .dropDownValue3 = val),
-                                                width: 400.0,
-                                                height: 50.0,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts:
-                                                              !FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMediumIsCustom,
-                                                        ),
-                                                hintText: 'Select...',
-                                                icon: Icon(
-                                                  Icons
-                                                      .keyboard_arrow_down_rounded,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryText,
-                                                  size: 24.0,
+                                              Container(
+                                                constraints: BoxConstraints(maxWidth: 400),
+                                                child: DropDownTextField(
+                                                  controller: _model.generationNumberComboController,
+                                                  clearOption: true,
+                                                  enableSearch: true,
+                                                  textFieldDecoration: InputDecoration(
+                                                    labelText: 'Generation Number',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    filled: true,
+                                                  ),
+                                                  dropDownItemCount: 6,
+                                                  dropDownList: _model.generationNumberDropdown
+                                                    .map((n) => DropDownValueModel(name: n.toString(), value: n.toString()))
+                                                    .toList(),
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (val is DropDownValueModel) {
+                                                        _model.selectedGenerationNumber = int.tryParse(val.value);
+                                                      }
+                                                    });
+                                                  },
                                                 ),
-                                                fillColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                elevation: 2.0,
-                                                borderColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                borderWidth: 0.0,
-                                                borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        12.0, 0.0, 12.0, 0.0),
-                                                hidesUnderline: true,
-                                                isOverButton: false,
-                                                isSearchable: false,
-                                                isMultiSelect: false,
                                               ),
                                             ],
                                           ),
@@ -1562,60 +1558,35 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              FlutterFlowDropDown<String>(
-                                                controller: _model
-                                                        .dropDownValueController4 ??=
-                                                    FormFieldController<String>(
-                                                        null),
-                                                options: [
-                                                  'Option 1',
-                                                  'Option 2',
-                                                  'Option 3'
-                                                ],
-                                                onChanged: (val) =>
-                                                    safeSetState(() => _model
-                                                        .dropDownValue4 = val),
-                                                width: 400.0,
-                                                height: 50.0,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts:
-                                                              !FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMediumIsCustom,
-                                                        ),
-                                                hintText: 'Select...',
-                                                icon: Icon(
-                                                  Icons
-                                                      .keyboard_arrow_down_rounded,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryText,
-                                                  size: 24.0,
+                                              Container(
+                                                constraints: BoxConstraints(maxWidth: 400),
+                                                child: DropDownTextField(
+                                                  controller: _model.femaleParentComboController,
+                                                  clearOption: true,
+                                                  enableSearch: true,
+                                                  textFieldDecoration: InputDecoration(
+                                                    labelText: 'Female Parent',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    filled: true,
+                                                  ),
+                                                  dropDownItemCount: 6,
+                                                  dropDownList: _model.femaleParentDropdown
+                                                    .map((item) => DropDownValueModel(
+                                                      name: '${item['full_species_name'] ?? ''} from ${item['provenance_location'] ?? ''} - Lot: ${item['supplier_lot_number'] ?? ''} Gen. ${item['generation_number'] ?? ''}',
+                                                      value: item['genetic_source_id'].toString(),
+                                                    ))
+                                                    .toList(),
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (val is DropDownValueModel) {
+                                                        _model.selectedFemaleParentId = int.tryParse(val.value);
+                                                      }
+                                                    });
+                                                  },
                                                 ),
-                                                fillColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                elevation: 2.0,
-                                                borderColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                borderWidth: 0.0,
-                                                borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        12.0, 0.0, 12.0, 0.0),
-                                                hidesUnderline: true,
-                                                isOverButton: false,
-                                                isSearchable: false,
-                                                isMultiSelect: false,
                                               ),
                                             ],
                                           ),
@@ -1674,60 +1645,34 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                                   .bodyMediumIsCustom,
                                                         ),
                                               ),
-                                              FlutterFlowDropDown<String>(
-                                                controller: _model
-                                                        .dropDownValueController5 ??=
-                                                    FormFieldController<String>(
-                                                        null),
-                                                options: [
-                                                  'Option 1',
-                                                  'Option 2',
-                                                  'Option 3'
-                                                ],
-                                                onChanged: (val) =>
-                                                    safeSetState(() => _model
-                                                        .dropDownValue5 = val),
-                                                width: 400.0,
-                                                height: 50.0,
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts:
-                                                              !FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMediumIsCustom,
-                                                        ),
-                                                hintText: 'Select...',
-                                                icon: Icon(
-                                                  Icons
-                                                      .keyboard_arrow_down_rounded,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryText,
-                                                  size: 24.0,
+                                              Container(
+                                                constraints: BoxConstraints(maxWidth: 400),
+                                                child: DropDownTextField(
+                                                  controller: _model.maleParentComboController,
+                                                  clearOption: true,
+                                                  enableSearch: true,
+                                                  textFieldDecoration: InputDecoration(
+                                                    labelText: 'Male Parent',
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    filled: true,
+                                                  ),
+                                                  dropDownItemCount: 6,
+                                                  dropDownList: _model.maleParentDropdown
+                          .map((item) => DropDownValueModel(
+                            name: '${item['full_species_name'] ?? ''} from ${item['provenance_location'] ?? ''} - Lot: ${item['supplier_lot_number'] ?? ''} Gen. ${item['generation_number'] ?? ''}',
+                            value: item['genetic_source_id'].toString()))
+                                                    .toList(),
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      if (val is DropDownValueModel) {
+                                                        _model.selectedMaleParentId = int.tryParse(val.value);
+                                                      }
+                                                    });
+                                                  },
                                                 ),
-                                                fillColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                elevation: 2.0,
-                                                borderColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText,
-                                                borderWidth: 0.0,
-                                                borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        12.0, 0.0, 12.0, 0.0),
-                                                hidesUnderline: true,
-                                                isOverButton: false,
-                                                isSearchable: false,
-                                                isMultiSelect: false,
                                               ),
                                             ],
                                           ),
@@ -1784,51 +1729,35 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                       .titleMediumIsCustom,
                                             ),
                                       ),
-                                      FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController6 ??=
-                                            FormFieldController<String>(null),
-                                        options: [
-                                          'Option 1',
-                                          'Option 2',
-                                          'Option 3'
-                                        ],
-                                        onChanged: (val) => safeSetState(
-                                            () => _model.dropDownValue6 = val),
-                                        width: 400.0,
-                                        height: 50.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                      Container(
+                                        constraints: BoxConstraints(maxWidth: 400),
+                                        child: DropDownTextField(
+                                          controller: _model.speciesVarietyComboController,
+                                          clearOption: true,
+                                          enableSearch: true,
+                                          textFieldDecoration: InputDecoration(
+                                            labelText: 'Species + Variety',
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
                                             ),
-                                        hintText: 'Select...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                            fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                            filled: true,
+                                          ),
+                                          dropDownItemCount: 6,
+                                          dropDownList: _model.speciesVarietyDropdown
+                                            .map((item) => DropDownValueModel(
+                                                name: '${item['full_species_name'] ?? 'Unknown Species'} - ${item['variety_id']?.toString() ?? 'Unknown ID'}',
+                                                value: item['variety_id'].toString()))
+                                            .toList(),
+                                          onChanged: (val) {
+                                            setState(() {
+                                              if (val is DropDownValueModel) {
+                                                _model.selectedSpeciesVarietyId = int.tryParse(val.value);
+                                                _model.selectedSpeciesVarietyName = val.name;
+                                              }
+                                            });
+                                          },
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        elevation: 2.0,
-                                        borderColor:
-                                            FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
                                       ),
                                     ],
                                   ),
@@ -1890,55 +1819,35 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                                         .titleMediumIsCustom,
                                               ),
                                         ),
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController7 ??=
-                                              FormFieldController<String>(null),
-                                          options: [
-                                            'Option 1',
-                                            'Option 2',
-                                            'Option 3'
-                                          ],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownValue7 = val),
-                                          width: 400.0,
-                                          height: 50.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                        Container(
+                                          constraints: BoxConstraints(maxWidth: 400),
+                                          child: DropDownTextField(
+                                            controller: _model.breedingTeamComboController,
+                                            clearOption: true,
+                                            enableSearch: true,
+                                            textFieldDecoration: InputDecoration(
+                                              labelText: 'Breeding Team',
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
-                                          hintText: 'Select...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              filled: true,
+                                            ),
+                                            dropDownItemCount: 6,
+                                            dropDownList: _model.breedingTeamDropdown
+                                              .map((item) => DropDownValueModel(
+                                                  name: item['full_name'] ?? 'Unknown',
+                                                  value: item['user_id'].toString()))
+                                              .toList(),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                if (val is DropDownValueModel) {
+                                                  _model.selectedBreedingTeamId = int.tryParse(val.value);
+                                                  _model.selectedBreedingTeamName = val.name;
+                                                }
+                                              });
+                                            },
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          elevation: 2.0,
-                                          borderColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .primaryText,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
                                       ],
                                     ),
@@ -2402,12 +2311,10 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                             safeSetState(() => _model
                                                 .checkboxValue1 = newValue!);
                                           },
-                                          side: (Colors.black != null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: Colors.black,
-                                                )
-                                              : null,
+                                          side: BorderSide(
+                                            width: 2,
+                                            color: Colors.black,
+                                          ),
                                           activeColor: Color(0xFF0000FF),
                                           checkColor:
                                               FlutterFlowTheme.of(context)
@@ -2430,149 +2337,6 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                                     verticalDirection: VerticalDirection.down,
                                     clipBehavior: Clip.none,
                                     children: [
-                                      Text(
-                                        'Provenances:',
-                                        style: FlutterFlowTheme.of(context)
-                                            .titleMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleMediumFamily,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              fontSize: () {
-                                                if (MediaQuery.sizeOf(context)
-                                                        .width <
-                                                    kBreakpointSmall) {
-                                                  return 16.0;
-                                                } else if (MediaQuery.sizeOf(
-                                                            context)
-                                                        .width <
-                                                    kBreakpointMedium) {
-                                                  return 24.0;
-                                                } else if (MediaQuery.sizeOf(
-                                                            context)
-                                                        .width <
-                                                    kBreakpointLarge) {
-                                                  return 24.0;
-                                                } else {
-                                                  return 24.0;
-                                                }
-                                              }(),
-                                              letterSpacing: 0.0,
-                                              fontWeight: FontWeight.bold,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .titleMediumIsCustom,
-                                            ),
-                                      ),
-                                        // Provenance Location Dropdown
-                                        Flexible(
-                                        child: Container(
-                                          constraints: BoxConstraints(maxWidth: 400),
-                                          child: DropDownTextField(
-                                          controller: _model.ProvenanceLocationComboController,
-                                          clearOption: true,
-                                          enableSearch: true,
-                                          textFieldDecoration: InputDecoration(
-                                            labelText: 'Provenance Location',
-                                            border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          dropDownItemCount: 6,
-                                          dropDownList: _model.ProvenanceLocationDropdown
-                                            .map((s) => DropDownValueModel(name: s, value: s))
-                                            .toList(),
-                                          onChanged: (val) {
-                                            setState(() {
-                                            if (val is DropDownValueModel) {
-                                              _model.selectedProvenanceLocation = val.value;
-                                            } else if (val is String) {
-                                              _model.selectedProvenanceLocation = val;
-                                              if (!_model.ProvenanceLocationDropdown.contains(val)) {
-                                              _model.ProvenanceLocationDropdown.add(val);
-                                              }
-                                              _model.ProvenanceLocationComboController.setDropDown(
-                                              DropDownValueModel(name: val, value: val),
-                                              );
-                                            }
-                                            });
-                                          },
-                                          ),
-                                        ),
-                                        ),
-                                      Text(
-                                        'Landscape only?',
-                                        style: FlutterFlowTheme.of(context)
-                                            .titleMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleMediumFamily,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              fontSize: () {
-                                                if (MediaQuery.sizeOf(context)
-                                                        .width <
-                                                    kBreakpointSmall) {
-                                                  return 16.0;
-                                                } else if (MediaQuery.sizeOf(
-                                                            context)
-                                                        .width <
-                                                    kBreakpointMedium) {
-                                                  return 24.0;
-                                                } else if (MediaQuery.sizeOf(
-                                                            context)
-                                                        .width <
-                                                    kBreakpointLarge) {
-                                                  return 24.0;
-                                                } else {
-                                                  return 24.0;
-                                                }
-                                              }(),
-                                              letterSpacing: 0.0,
-                                              fontWeight: FontWeight.bold,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .titleMediumIsCustom,
-                                            ),
-                                      ),
-                                      Theme(
-                                        data: ThemeData(
-                                          checkboxTheme: CheckboxThemeData(
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                            ),
-                                          ),
-                                          unselectedWidgetColor: Colors.black,
-                                        ),
-                                        child: Checkbox(
-                                          value: _model.checkboxValue2 ??= true,
-                                          onChanged: (newValue) async {
-                                            safeSetState(() => _model
-                                                .checkboxValue2 = newValue!);
-                                          },
-                                          side: (Colors.black != null)
-                                              ? BorderSide(
-                                                  width: 2,
-                                                  color: Colors.black,
-                                                )
-                                              : null,
-                                          activeColor: Color(0xFF0000FF),
-                                          checkColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                        ),
-                                      ),
                                     ],
                                   ),
                                 ),
@@ -2629,8 +2393,23 @@ class _AddNewFamilyWidgetState extends State<AddNewFamilyWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: FFButtonWidget(
-                            onPressed: () {
-                              print('Button pressed ...');
+                            onPressed: () async {
+                              try {
+                                await _model.saveFamily();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('New Family record saved successfully!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to save New Family record: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                             text: 'Save',
                             options: FFButtonOptions(

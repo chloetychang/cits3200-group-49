@@ -372,25 +372,91 @@ static Future<List<Map<String, dynamic>>> getView_Subzones() async {
   // ------------------------------- New Family  --------------------------------
 
   // GET propagation type dropdown  
-  static Future<List<String>> getPropagationTypeDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/newfamily/propagation_type'));
+  static Future<List<Map<String, dynamic>>> getPropagationTypeDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/propagation_types'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['propagation_type'] as String).toList();
+      return data.map((item) => item as Map<String, dynamic>).toList();
     }
     throw Exception('Failed to load propagation type dropdown: ${res.statusCode}');
   }
 
-  // GET breeding team dropdown - missing data 25/09/25, to be implemented
-
-  // GET provenance location dropdown
-  static Future<List<String>> getProvenanceLocationDropdown() async {
-    final res = await http.get(Uri.parse('$baseUrl/newfamily/provenance_locations'));
+  // GET female parent dropdown
+  static Future<List<Map<String, dynamic>>> getFemaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/female_parents'));
     if (res.statusCode == 200) {
       final List<dynamic> data = jsonDecode(res.body);
-      return data.map((item) => item['location'] as String).toList();
+      return data.map((item) => item as Map<String, dynamic>).toList();
     }
-    throw Exception('Failed to load provenance location dropdown: ${res.statusCode}');
+    throw Exception('Failed to load female parent dropdown: ${res.statusCode}');
+  }
+
+  // GET male parent dropdown
+  static Future<List<Map<String, dynamic>>> getMaleParentDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/male_parents'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
+    throw Exception('Failed to load male parent dropdown: ${res.statusCode}');
+  }
+
+  // GET breeding team dropdown
+  static Future<List<Map<String, dynamic>>> getBreedingTeamDropdown() async {
+    final res = await http.get(Uri.parse('$baseUrl/newFamily/breeding_teams'));
+    if (res.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(res.body);
+      return data.map((item) => item as Map<String, dynamic>).toList();
+    }
+    throw Exception('Failed to load breeding team dropdown: ${res.statusCode}');
+  }
+
+  // POST Save button - Create new family
+  static Future<Map<String, dynamic>> createFamily({
+    required String acquisitionDate,
+    required int femaleGeneticSource,
+    required int propagationType,
+    required String supplierLotNumber,
+    required int supplierId, //supplierId is non-nullable
+    int? generationNumber,
+    int? maleGeneticSource,
+    int? varietyId,
+    double? price,
+    int? gramWeight,
+    int? provenanceId,
+    int? viability,
+    bool? landscapeOnly,
+    String? researchNotes,
+  }) async {
+    final Map<String, dynamic> requestBody = {
+      'acquisition_date': acquisitionDate,
+      'female_genetic_source': femaleGeneticSource,
+      'propagation_type': propagationType,
+      'supplier_lot_number': supplierLotNumber,
+      'supplier_id': supplierId,
+      if (generationNumber != null) 'generation_number': generationNumber,
+      if (maleGeneticSource != null) 'male_genetic_source': maleGeneticSource,
+      if (varietyId != null) 'variety_id': varietyId,
+      if (price != null) 'price': price,
+      if (gramWeight != null) 'gram_weight': gramWeight,
+      if (provenanceId != null) 'provenance_id': provenanceId,
+      if (viability != null) 'viability': viability,
+      if (landscapeOnly != null) 'landscape_only': landscapeOnly,
+      if (researchNotes != null && researchNotes.isNotEmpty) 'research_notes': researchNotes,
+    };
+
+    final res = await http.post(
+      Uri.parse('$baseUrl/newFamily/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return jsonDecode(res.body);
+    }
+
+    print('Request body: \\${jsonEncode(requestBody)}');
+    throw Exception('Failed to create family: \\${res.statusCode}, error: \\${res.body}');
   }
 
   // ------------------------------- Progeny --------------------------------

@@ -31,6 +31,7 @@ from App.routes.Manage_Lookup_Routes import manage_lookup_species_utility
 from App.routes.Manage_Lookup_Routes import manage_zone_aspect
 from App.routes.Manage_Lookup_Routes import manage_zone_aspect
 from App.routes.Add_Routes import add_acquisitions
+from App.routes.Add_Routes import add_new_family
 from App.routes.Add_Routes import add_provenances
 from App.routes.Add_Routes import add_plantings
 
@@ -40,13 +41,6 @@ app = FastAPI(
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
     
-)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -69,6 +63,7 @@ app.include_router(manage_lookup_species_utility.router_su)
 app.include_router(manage_lookup_species_utility.router_s)
 app.include_router(manage_zone_aspect.router)
 app.include_router(add_acquisitions.router)
+app.include_router(add_new_family.router)
 app.include_router(add_provenances.router)
 app.include_router(add_plantings.router)
 app.include_router(add_varieties.router)
@@ -156,23 +151,6 @@ def get_container_type_dropdown(db: Session = Depends(get_db)):
     """Get all container types for dropdown (A→Z)."""
     container_type_list = db.query(models.Container).order_by(models.Container.container_type.asc()).all()
     return [schemas.ContainerResponse.model_validate(ct).model_dump() for ct in container_type_list]
-
-# -------------------- API for New Family Source Page --------------------------
-# Creation of a Propagation Type dropdown
-@app.get("/newfamily/propagation_type", response_model=List[schemas.PropagationTypeResponse])
-def get_propagation_type_dropdown(db: Session = Depends(get_db)):
-    """Get all propagation types for dropdown (A→Z)."""
-    propagation_type_list = db.query(models.PropagationType).order_by(models.PropagationType.propagation_type.asc()).all()
-    return [schemas.PropagationTypeResponse.model_validate(pt).model_dump() for pt in propagation_type_list]
-
-# TODO: Creation of a Breeding Team dropdown (To be done - currently missing data 25/09/25)
-
-# Creation of a provenance dropdown
-@app.get("/newfamily/provenance_locations", response_model=List[schemas.ProvenanceResponse])
-def get_provenance_location_dropdown(db: Session = Depends(get_db)):
-    """Get all provenance locations for dropdown (A→Z)."""
-    provenances = db.query(models.Provenance).order_by(models.Provenance.location.asc())
-    return [schemas.ProvenanceResponse.model_validate(p).model_dump() for p in provenances]
 
 # -------------------- API for Progeny Source Page --------------------------
 # Creation of a Family name dropdown 
